@@ -1,0 +1,17 @@
+fastapi
+uvicorn
+sqlalchemy
+psycopg2-binary
+pydantic
+pydantic-settings
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart
+boto3
+azure-mgmt-compute
+azure-mgmt-resource
+azure-mgmt-storage
+azure-mgmt-network
+azure-identity
+openai
+python-dotenv
