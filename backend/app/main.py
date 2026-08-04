@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.api.routes import router as api_router
 
 app = FastAPI(
     title="AI Cloud Security Scanner",
@@ -15,6 +16,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(api_router)
+
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the AI Cloud Security Scanner API"}
@@ -22,3 +25,4 @@ def read_root():
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
+
