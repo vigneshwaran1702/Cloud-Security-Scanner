@@ -1,20 +1,17 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Shield, LayoutDashboard, Cloud, Settings, LogOut, Bell, X, Loader2, CheckCircle } from 'lucide-react';
+import { Shield, LayoutDashboard, Cloud, Settings, LogOut, Bell, X, Loader2, CheckCircle, Users } from 'lucide-react';
 import { useState, useEffect } from 'react';
-
-const navItems = [
-  { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { path: '/resources', label: 'Resources', icon: Cloud },
-  { path: '/settings', label: 'Settings', icon: Settings },
-];
+import { useAuth } from '../context/AuthContext';
 
 const pageTitles = {
   '/dashboard': 'Overview',
   '/resources': 'Cloud Resources',
   '/settings': 'Settings',
+  '/admin/users': 'User Governance',
 };
 
 export default function MainLayout() {
+  const { user, logout, isAdmin } = useAuth();
   const location = useLocation();
   const currentPath = location.pathname;
   const pageTitle = pageTitles[currentPath] || 'Overview';
@@ -22,6 +19,13 @@ export default function MainLayout() {
   const [isScanning, setIsScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
   const [scanComplete, setScanComplete] = useState(false);
+
+  const navItems = [
+    { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { path: '/resources', label: 'Resources', icon: Cloud },
+    { path: '/settings', label: 'Settings', icon: Settings },
+    ...(isAdmin ? [{ path: '/admin/users', label: 'User Management', icon: Users }] : []),
+  ];
 
   const startScan = () => {
     setIsScanning(true);
@@ -48,6 +52,8 @@ export default function MainLayout() {
   const closeScanModal = () => {
     setIsScanning(false);
   };
+
+  const userInitials = user?.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'US';
 
   return (
     <div className="flex" style={{ minHeight: '100vh', position: 'relative' }}>
@@ -86,7 +92,13 @@ export default function MainLayout() {
           })}
         </nav>
 
-        <div className="flex items-center gap-4" style={{ color: 'var(--text-muted)', cursor: 'pointer', padding: '12px', marginTop: 'auto' }}>
+        <div
+          onClick={logout}
+          className="flex items-center gap-4"
+          style={{ color: 'var(--text-muted)', cursor: 'pointer', padding: '12px', marginTop: 'auto', transition: 'var(--transition)' }}
+          onMouseEnter={(e) => e.currentTarget.style.color = 'var(--critical)'}
+          onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+        >
           <LogOut size={20} />
           <span>Logout</span>
         </div>
@@ -107,12 +119,37 @@ export default function MainLayout() {
               <div style={{ position: 'absolute', top: '-2px', right: '-2px', width: '8px', height: '8px', background: 'var(--critical)', borderRadius: '50%' }}></div>
             </div>
             <div className="flex items-center gap-4">
-              <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
-                AD
+              <div style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                background: isAdmin ? 'linear-gradient(135deg, var(--accent), #7c3aed)' : 'var(--primary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 'bold',
+                color: 'white',
+                fontSize: '0.9rem'
+              }}>
+                {userInitials}
               </div>
               <div>
-                <div style={{ fontSize: '0.9rem', fontWeight: 600 }}>Admin User</div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>AWS & Azure</div>
+                <div className="flex items-center gap-2" style={{ fontSize: '0.9rem', fontWeight: 600 }}>
+                  {user?.name || 'User'}
+                  <span style={{
+                    fontSize: '0.7rem',
+                    padding: '2px 8px',
+                    borderRadius: '12px',
+                    background: isAdmin ? 'rgba(139, 92, 246, 0.25)' : 'rgba(59, 130, 246, 0.25)',
+                    color: isAdmin ? '#c084fc' : '#60a5fa',
+                    border: `1px solid ${isAdmin ? 'rgba(139, 92, 246, 0.4)' : 'rgba(59, 130, 246, 0.4)'}`,
+                    fontWeight: 700,
+                    textTransform: 'uppercase'
+                  }}>
+                    {user?.role || 'USER'}
+                  </span>
+                </div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{user?.email}</div>
               </div>
             </div>
           </div>

@@ -1,9 +1,19 @@
 import datetime
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
+from app.auth.jwt import get_password_hash, verify_password
 
 class SecurityStore:
     def __init__(self):
+        self.users: List[Dict[str, Any]] = []
+        self.next_user_id = 1
         self.reset_data()
+        self.seed_users()
+
+    def seed_users(self):
+        if not self.users:
+            self.create_user("Admin User", "admin@cloudguard.io", "admin123", role="admin")
+            self.create_user("Security Analyst", "user@cloudguard.io", "user123", role="user")
+            self.create_user("Compliance Auditor", "auditor@cloudguard.io", "user123", role="user")
 
     def reset_data(self):
         self.scan_state = {
@@ -98,8 +108,8 @@ class SecurityStore:
                 "risk_analysis": "Security group sg-0198a allows inbound traffic on TCP port 22 from any IPv4 address.",
                 "impacts": ["Brute-force SSH attacks", "Unauthorized remote command execution"],
                 "fixes": [
-                    "Update security group rule to restrict port 22 to VPN CIDR",
-                    "Enable AWS Systems Manager Session Manager"
+                    "Restrict SSH access to corporate VPN IP range",
+                    "Use AWS Systems Manager Session Manager instead of direct SSH"
                 ],
                 "status": "open",
                 "auto_fixable": True
@@ -107,36 +117,33 @@ class SecurityStore:
         ]
 
         self.resources = [
-            {"id": "res-101", "name": "customer-data-prod", "type": "S3 Bucket", "cloud": "AWS", "region": "us-east-1", "severity": "critical", "status": "Non-compliant", "issue": "Public Read Access Enabled"},
-            {"id": "res-102", "name": "app-service-identity-prod", "type": "Managed Identity", "cloud": "Azure", "region": "eastus2", "severity": "high", "status": "Non-compliant", "issue": "Subscription Owner Role Assigned"},
-            {"id": "res-103", "name": "user-db-instance-gcp", "type": "Cloud SQL", "cloud": "GCP", "region": "us-central1", "severity": "critical", "status": "Non-compliant", "issue": "Default Encryption Key Used"},
-            {"id": "res-104", "name": "i-09f8231a44c9d", "type": "EC2 Instance", "cloud": "AWS", "region": "us-west-2", "severity": "high", "status": "Non-compliant", "issue": "SSH Port open to 0.0.0.0/0"},
-            {"id": "res-105", "name": "payment-vault-kv", "type": "Key Vault", "cloud": "Azure", "region": "westeurope", "severity": "medium", "status": "Compliant", "issue": "Purge Protection Enabled"},
-            {"id": "res-106", "name": "prod-k8s-cluster", "type": "EKS Cluster", "cloud": "AWS", "region": "us-east-1", "severity": "low", "status": "Compliant", "issue": "Private Endpoint Active"},
-            {"id": "res-107", "name": "analytics-bq-dataset", "type": "BigQuery", "cloud": "GCP", "region": "us-multiregion", "severity": "medium", "status": "Non-compliant", "issue": "IAM External Sharing Enabled"},
-            {"id": "res-108", "name": "logs-archive-storage", "type": "Blob Container", "cloud": "Azure", "region": "eastus", "severity": "low", "status": "Compliant", "issue": "TLS 1.2 Enforced"}
+            {"id": "res-1", "name": "customer-data-prod", "type": "S3 Bucket", "cloud": "AWS", "severity": "critical", "status": "Non-Compliant", "issue": "Public Access Enabled"},
+            {"id": "res-2", "name": "app-service-identity-prod", "type": "Managed Identity", "cloud": "Azure", "severity": "high", "status": "Non-Compliant", "issue": "Overprivileged Owner Role"},
+            {"id": "res-3", "name": "user-db-instance-gcp", "type": "Cloud SQL", "cloud": "GCP", "severity": "critical", "status": "Non-Compliant", "issue": "No Customer KMS Encryption"},
+            {"id": "res-4", "name": "i-09f8231a44c9d", "type": "EC2 Instance", "cloud": "AWS", "severity": "high", "status": "Non-Compliant", "issue": "SSH Open to Internet (0.0.0.0/0)"},
+            {"id": "res-5", "name": "prod-vnet-peering", "type": "VNet Peering", "cloud": "Azure", "severity": "medium", "status": "Warning", "issue": "Transitive Routing Enabled"},
+            {"id": "res-6", "name": "gcp-storage-logs-2026", "type": "Cloud Storage", "cloud": "GCP", "severity": "low", "status": "Compliant", "issue": "Versioned & Encrypted"},
+            {"id": "res-7", "name": "k8s-cluster-prod-aws", "type": "EKS Cluster", "cloud": "AWS", "severity": "medium", "status": "Warning", "issue": "API Endpoint Publicly Accessible"},
+            {"id": "res-8", "name": "azure-keyvault-sec-01", "type": "Key Vault", "cloud": "Azure", "severity": "low", "status": "Compliant", "issue": "Purge Protection Enabled"}
         ]
 
         self.settings = {
             "aws": {
-                "enabled": True,
-                "access_key_id": "AKIA************",
-                "secret_access_key": "********************************",
-                "region": "us-east-1"
+                "account_id": "891230912401",
+                "region": "us-east-1",
+                "scan_enabled": True
             },
             "azure": {
-                "enabled": True,
-                "tenant_id": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-                "client_id": "3b290918-a402-4a02-a16f-998811aabbcc",
-                "subscription_id": "00000000-0000-0000-0000-000000000000"
+                "subscription_id": "sub-89123-az-4019",
+                "region": "eastus2",
+                "scan_enabled": True
             },
             "gcp": {
-                "enabled": True,
-                "project_id": "cloud-sec-scanner-prod",
-                "service_account_email": "scanner-sa@cloud-sec-scanner-prod.iam.gserviceaccount.com"
+                "project_id": "cloudguard-sec-prod",
+                "region": "us-central1",
+                "scan_enabled": True
             },
             "general": {
-                "auto_remediation": False,
                 "scan_frequency": "Every 6 Hours",
                 "min_severity": "Medium",
                 "email_notifications": True,
@@ -160,7 +167,6 @@ class SecurityStore:
         for rec in self.recommendations:
             if rec["id"] == rec_id:
                 rec["status"] = "resolved"
-                # Improve stats
                 if rec["severity"] == "critical" and self.stats["critical_issues"] > 0:
                     self.stats["critical_issues"] -= 1
                     self.stats["security_score"] = min(100, self.stats["security_score"] + 3)
@@ -168,12 +174,84 @@ class SecurityStore:
                     self.stats["high_issues"] -= 1
                     self.stats["security_score"] = min(100, self.stats["security_score"] + 2)
                 
-                # Update resource status
                 for res in self.resources:
                     if rec["resource"] in res["name"]:
                         res["status"] = "Compliant"
                         res["severity"] = "low"
                         res["issue"] = "Fixed via CloudGuard AI Auto-Remediation"
+                return True
+        return False
+
+    def get_user_by_email(self, email: str) -> Optional[Dict[str, Any]]:
+        for user in self.users:
+            if user["email"].lower() == email.lower():
+                return user
+        return None
+
+    def get_user_by_id(self, user_id: int) -> Optional[Dict[str, Any]]:
+        for user in self.users:
+            if user["id"] == user_id:
+                return user
+        return None
+
+    def create_user(self, name: str, email: str, plain_password: str, role: str = "user") -> Dict[str, Any]:
+        existing = self.get_user_by_email(email)
+        if existing:
+            raise ValueError(f"User with email {email} already exists")
+        
+        user_id = self.next_user_id
+        self.next_user_id += 1
+        user = {
+            "id": user_id,
+            "name": name,
+            "email": email.lower(),
+            "password_hash": get_password_hash(plain_password),
+            "role": role.lower() if role in ["admin", "user"] else "user",
+            "is_active": True,
+            "created_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        self.users.append(user)
+        return user
+
+    def authenticate_user(self, email: str, plain_password: str) -> Optional[Dict[str, Any]]:
+        user = self.get_user_by_email(email)
+        if not user:
+            return None
+        if not verify_password(plain_password, user["password_hash"]):
+            return None
+        return user
+
+    def get_all_users(self) -> List[Dict[str, Any]]:
+        return [
+            {
+                "id": u["id"],
+                "name": u["name"],
+                "email": u["email"],
+                "role": u["role"],
+                "is_active": u["is_active"],
+                "created_at": u["created_at"]
+            }
+            for u in self.users
+        ]
+
+    def update_user_role(self, user_id: int, new_role: str) -> Optional[Dict[str, Any]]:
+        user = self.get_user_by_id(user_id)
+        if not user:
+            return None
+        user["role"] = new_role.lower() if new_role in ["admin", "user"] else "user"
+        return {
+            "id": user["id"],
+            "name": user["name"],
+            "email": user["email"],
+            "role": user["role"],
+            "is_active": user["is_active"],
+            "created_at": user["created_at"]
+        }
+
+    def delete_user(self, user_id: int) -> bool:
+        for i, user in enumerate(self.users):
+            if user["id"] == user_id:
+                del self.users[i]
                 return True
         return False
 

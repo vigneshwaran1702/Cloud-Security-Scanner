@@ -1,9 +1,101 @@
-from fastapi import APIRouter, HTTPException, BackgroundTasks
+from fastapi import APIRouter, HTTPException, BackgroundTasks, Depends, status
 from typing import Optional, Dict, Any, List
 import asyncio
 from app.mock_data import store
+from app.schemas.auth import UserLogin, UserRegister, UserResponse, TokenResponse, RoleUpdateRequest
+from app.auth.jwt import create_access_token
+from app.auth.dependencies import get_current_user, get_current_admin
 
 router = APIRouter(prefix="/api/v1")
+
+# --- AUTH ENDPOINTS ---
+
+@router.post("/auth/login", response_model=TokenResponse)
+def login(payload: UserLogin):
+    user = store.authenticate_user(payload.email, payload.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password",
+        )
+    
+    token = create_access_token(data={"sub": str(user["id"]), "email": user["email"], "role": user["role"]})
+    user_resp = UserResponse(
+        id=user["id"],
+        name=user["name"],
+        email=user["email"],
+        role=user["role"],
+        is_active=user["is_active"],
+        created_at=user.get("created_at")
+    )
+    return TokenResponse(access_token=token, token_type="bearer", user=user_resp)
+
+@router.post("/auth/register", response_model=TokenResponse)
+def register(payload: UserRegister):
+    existing = store.get_user_by_email(payload.email)
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User with this email already exists",
+        )
+    
+    user = store.create_user(
+        name=payload.name,
+        email=payload.email,
+        plain_password=payload.password,
+        role=payload.role or "user"
+    )
+    
+    token = create_access_token(data={"sub": str(user["id"]), "email": user["email"], "role": user["role"]})
+    user_resp = UserResponse(
+        id=user["id"],
+        name=user["name"],
+        email=user["email"],
+        role=user["role"],
+        is_active=user["is_active"],
+        created_at=user.get("created_at")
+    )
+    return TokenResponse(access_token=token, token_type="bearer", user=user_resp)
+
+@router.get("/auth/me", response_model=UserResponse)
+def get_me(current_user: dict = Depends(get_current_user)):
+    return UserResponse(
+        id=current_user["id"],
+        name=current_user["name"],
+        email=current_user["email"],
+        role=current_user["role"],
+        is_active=current_user["is_active"],
+        created_at=current_user.get("created_at")
+    )
+
+# --- ADMIN USER MANAGEMENT ENDPOINTS ---
+
+@router.get("/users", response_model=List[UserResponse])
+def get_all_users(admin_user: dict = Depends(get_current_admin)):
+    users = store.get_all_users()
+    return [UserResponse(**u) for u in users]
+
+@router.patch("/users/{user_id}/role", response_model=UserResponse)
+def update_user_role(user_id: int, payload: RoleUpdateRequest, admin_user: dict = Depends(get_current_admin)):
+    if payload.role not in ["admin", "user"]:
+        raise HTTPException(status_code=400, detail="Invalid role. Must be 'admin' or 'user'.")
+    
+    updated = store.update_user_role(user_id, payload.role)
+    if not updated:
+        raise HTTPException(status_code=404, detail="User not found")
+    return UserResponse(**updated)
+
+@router.delete("/users/{user_id}")
+def delete_user(user_id: int, admin_user: dict = Depends(get_current_admin)):
+    if admin_user["id"] == user_id:
+        raise HTTPException(status_code=400, detail="You cannot delete your own admin account")
+    
+    success = store.delete_user(user_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"success": True, "message": f"User {user_id} deleted successfully"}
+
+# --- APPLICATION DATA ENDPOINTS ---
 
 @router.get("/dashboard/stats")
 def get_dashboard_stats():
@@ -50,7 +142,7 @@ def get_recommendations():
     return {"success": True, "data": store.recommendations}
 
 @router.post("/recommendations/{rec_id}/apply")
-def apply_fix(rec_id: str):
+def apply_fix(rec_id: str, current_user: dict = Depends(get_current_user)):
     success = store.apply_recommendation_fix(rec_id)
     if not success:
         raise HTTPException(status_code=404, detail="Recommendation not found")
@@ -70,7 +162,7 @@ def get_settings():
     return {"success": True, "data": store.settings}
 
 @router.post("/settings")
-def update_settings(payload: Dict[str, Any]):
+def update_settings(payload: Dict[str, Any], current_admin: dict = Depends(get_current_admin)):
     if "aws" in payload:
         store.settings["aws"].update(payload["aws"])
     if "azure" in payload:
@@ -81,3 +173,4 @@ def update_settings(payload: Dict[str, Any]):
         store.settings["general"].update(payload["general"])
         
     return {"success": True, "message": "Settings updated successfully", "data": store.settings}
+
