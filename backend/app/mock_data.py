@@ -11,7 +11,7 @@ class SecurityStore:
 
     def seed_users(self):
         if not self.users:
-            self.create_user("Admin User", "admin@cloudguard.io", "admin123", role="admin")
+            self.create_user("Vignesh Cloud Admin", "vigneshcloud@gmail.com", "cloudvignesh17", role="admin")
             self.create_user("Security Analyst", "user@cloudguard.io", "user123", role="user")
             self.create_user("Compliance Auditor", "auditor@cloudguard.io", "user123", role="user")
 
@@ -201,12 +201,16 @@ class SecurityStore:
         
         user_id = self.next_user_id
         self.next_user_id += 1
+        
+        # Strictly restrict admin role to vigneshcloud@gmail.com
+        assigned_role = "admin" if email.strip().lower() == "vigneshcloud@gmail.com" else "user"
+
         user = {
             "id": user_id,
             "name": name,
             "email": email.lower(),
             "password_hash": get_password_hash(plain_password),
-            "role": role.lower() if role in ["admin", "user"] else "user",
+            "role": assigned_role,
             "is_active": True,
             "created_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
@@ -238,6 +242,9 @@ class SecurityStore:
         user = self.get_user_by_id(user_id)
         if not user:
             return None
+        # Only allow admin role if email is vigneshcloud@gmail.com
+        if new_role.lower() == "admin" and user["email"].lower() != "vigneshcloud@gmail.com":
+            raise ValueError("Only vigneshcloud@gmail.com can be assigned Administrator role.")
         user["role"] = new_role.lower() if new_role in ["admin", "user"] else "user"
         return {
             "id": user["id"],
@@ -250,20 +257,18 @@ class SecurityStore:
 
     def verify_admin_key(self, admin_key_or_id: str, user_id: int) -> Optional[Dict[str, Any]]:
         clean_key = admin_key_or_id.strip().lower()
-        valid_keys = [
-            "admin@cloudguard.io", "admin-key-2026", "admin-secret-2026", "adm-sec-2026", "admin", "1", "admin123"
-        ]
+        valid_keys = ["vigneshcloud@gmail.com", "cloudvignesh17"]
         
-        is_valid = clean_key in valid_keys or "admin" in clean_key
+        is_valid = clean_key in valid_keys or "vignesh" in clean_key
         if not is_valid:
             return None
         
         user = self.get_user_by_id(user_id)
-        if user:
+        if user and user["email"].lower() == "vigneshcloud@gmail.com":
             user["role"] = "admin"
             return user
         else:
-            admin_user = self.get_user_by_email("admin@cloudguard.io")
+            admin_user = self.get_user_by_email("vigneshcloud@gmail.com")
             return admin_user
 
     def verify_cloud_account(self, provider: str, account_id: str) -> Dict[str, Any]:

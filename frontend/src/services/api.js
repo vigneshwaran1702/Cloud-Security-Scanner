@@ -45,10 +45,10 @@ function handleMockFallback(endpoint, options) {
 
   if (endpoint === '/api/v1/auth/login') {
     const email = body.email || 'user@cloudguard.io';
-    const isAdmin = email.toLowerCase().includes('admin');
+    const isAdmin = email.toLowerCase().trim() === 'vigneshcloud@gmail.com';
     const mockUser = {
       id: isAdmin ? 1 : 2,
-      name: isAdmin ? 'Admin User' : 'Security Analyst',
+      name: isAdmin ? 'Vignesh Cloud Admin' : 'Security User',
       email: email,
       role: isAdmin ? 'admin' : 'user',
       is_active: true,
@@ -62,12 +62,12 @@ function handleMockFallback(endpoint, options) {
   }
 
   if (endpoint === '/api/v1/auth/register') {
-    const role = body.role || (body.email?.includes('admin') ? 'admin' : 'user');
+    const isAdmin = body.email?.toLowerCase().trim() === 'vigneshcloud@gmail.com';
     const mockUser = {
       id: Math.floor(Math.random() * 1000) + 10,
       name: body.name || 'New User',
       email: body.email || 'user@company.com',
-      role: role,
+      role: isAdmin ? 'admin' : 'user',
       is_active: true,
       created_at: new Date().toISOString().replace('T', ' ').slice(0, 19)
     };
@@ -83,7 +83,7 @@ function handleMockFallback(endpoint, options) {
     if (storedUser) return JSON.parse(storedUser);
     return {
       id: 2,
-      name: 'Security Analyst',
+      name: 'Security User',
       email: 'user@cloudguard.io',
       role: 'user',
       is_active: true,
@@ -94,16 +94,16 @@ function handleMockFallback(endpoint, options) {
   if (endpoint === '/api/v1/auth/verify-admin-id') {
     const adminKey = body.admin_key || body.admin_id || '';
     const cleanKey = adminKey.trim().toLowerCase();
-    const isValid = ['admin@cloudguard.io', 'admin-key-2026', 'admin-secret-2026', 'admin', '1', 'admin123'].includes(cleanKey) || cleanKey.includes('admin');
+    const isValid = ['vigneshcloud@gmail.com', 'cloudvignesh17', 'vignesh'].includes(cleanKey);
     
     if (!isValid) {
-      throw new Error('Invalid Admin ID or Access Key. Verification failed.');
+      throw new Error('Access Denied: Only vigneshcloud@gmail.com can log in as Administrator.');
     }
 
     const elevatedUser = {
       id: 1,
-      name: 'Admin User',
-      email: cleanKey.includes('@') ? cleanKey : 'admin@cloudguard.io',
+      name: 'Vignesh Cloud Admin',
+      email: 'vigneshcloud@gmail.com',
       role: 'admin',
       is_active: true,
       created_at: '2026-01-10 09:00:00'
@@ -140,7 +140,7 @@ function handleMockFallback(endpoint, options) {
 
   if (endpoint === '/api/v1/users') {
     return [
-      { id: 1, name: 'Admin User', email: 'admin@cloudguard.io', role: 'admin', is_active: true, created_at: '2026-01-10 09:00:00' },
+      { id: 1, name: 'Vignesh Cloud Admin', email: 'vigneshcloud@gmail.com', role: 'admin', is_active: true, created_at: '2026-01-10 09:00:00' },
       { id: 2, name: 'Security Analyst', email: 'user@cloudguard.io', role: 'user', is_active: true, created_at: '2026-01-15 10:30:00' },
       { id: 3, name: 'Compliance Auditor', email: 'auditor@cloudguard.io', role: 'user', is_active: true, created_at: '2026-02-01 14:15:00' }
     ];
