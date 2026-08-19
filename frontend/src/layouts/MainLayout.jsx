@@ -1,7 +1,9 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Shield, LayoutDashboard, Cloud, Settings, LogOut, Bell, X, Loader2, CheckCircle, Users } from 'lucide-react';
+import { Shield, LayoutDashboard, Cloud, Settings, LogOut, Bell, X, Loader2, CheckCircle, Users, MessageSquare, ShieldCheck, Sparkles } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import SecurityChatDrawer from '../components/SecurityChatDrawer';
+import CloudAccountVerifierModal from '../components/CloudAccountVerifierModal';
 
 const pageTitles = {
   '/dashboard': 'Overview',
@@ -19,6 +21,9 @@ export default function MainLayout() {
   const [isScanning, setIsScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
   const [scanComplete, setScanComplete] = useState(false);
+
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isVerifierOpen, setIsVerifierOpen] = useState(false);
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -109,7 +114,47 @@ export default function MainLayout() {
         {/* Top Header */}
         <header className="glass-panel flex justify-between items-center" style={{ marginBottom: '24px', padding: '16px 24px', borderRadius: '24px' }}>
           <h1 style={{ fontSize: '1.5rem', margin: 0 }}>{pageTitle}</h1>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
+            <button
+              className="btn"
+              onClick={() => setIsVerifierOpen(true)}
+              style={{
+                background: 'rgba(16, 185, 129, 0.15)',
+                border: '1px solid rgba(16, 185, 129, 0.3)',
+                color: '#a7f3d0',
+                padding: '8px 14px',
+                borderRadius: '12px',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              <ShieldCheck size={18} color="var(--success)" />
+              Verify Cloud Status
+            </button>
+
+            <button
+              className="btn"
+              onClick={() => setIsChatOpen(!isChatOpen)}
+              style={{
+                background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(59, 130, 246, 0.25))',
+                border: '1px solid rgba(139, 92, 246, 0.4)',
+                color: '#c084fc',
+                padding: '8px 14px',
+                borderRadius: '12px',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              <Sparkles size={18} color="#c084fc" />
+              Security Chat
+            </button>
+
             <button className="btn btn-primary" onClick={startScan}>
               <Shield size={18} />
               Run Scan
@@ -217,9 +262,18 @@ export default function MainLayout() {
                 </>
               )}
             </div>
-          </div>
-        </div>
-      )}
+      {/* AI Security Assistant Floating Chat Drawer */}
+      <SecurityChatDrawer
+        isOpen={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+        onOpenCloudVerifier={() => setIsVerifierOpen(true)}
+      />
+
+      {/* Cloud Account Status Verifier Modal */}
+      <CloudAccountVerifierModal
+        isOpen={isVerifierOpen}
+        onClose={() => setIsVerifierOpen(false)}
+      />
     </div>
   );
 }

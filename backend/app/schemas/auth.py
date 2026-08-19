@@ -29,3 +29,11 @@ class TokenResponse(BaseModel):
 
 class RoleUpdateRequest(BaseModel):
     role: str
+
+class VerifyAdminRequest(BaseModel):
+    admin_key: str
+
+class CloudAccountVerifyRequest(BaseModel):
+    provider: str
+    account_id: str
+

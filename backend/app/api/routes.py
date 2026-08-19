@@ -68,6 +68,34 @@ def get_me(current_user: dict = Depends(get_current_user)):
         created_at=current_user.get("created_at")
     )
 
+@router.post("/auth/verify-admin-id", response_model=TokenResponse)
+def verify_admin_id(payload: Dict[str, Any], current_user: dict = Depends(get_current_user)):
+    admin_key = payload.get("admin_key") or payload.get("admin_id") or ""
+    elevated_user = store.verify_admin_key(admin_key, current_user["id"])
+    if not elevated_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid Admin ID or Access Key. Verification failed.",
+        )
+    
+    token = create_access_token(data={"sub": str(elevated_user["id"]), "email": elevated_user["email"], "role": elevated_user["role"]})
+    user_resp = UserResponse(
+        id=elevated_user["id"],
+        name=elevated_user["name"],
+        email=elevated_user["email"],
+        role=elevated_user["role"],
+        is_active=elevated_user["is_active"],
+        created_at=elevated_user.get("created_at")
+    )
+    return TokenResponse(access_token=token, token_type="bearer", user=user_resp)
+
+@router.post("/cloud/verify-account")
+def verify_cloud_account(payload: Dict[str, Any]):
+    provider = payload.get("provider", "AWS")
+    account_id = payload.get("account_id", "891230912401")
+    result = store.verify_cloud_account(provider, account_id)
+    return {"success": True, "account_status": result}
+
 # --- ADMIN USER MANAGEMENT ENDPOINTS ---
 
 @router.get("/users", response_model=List[UserResponse])

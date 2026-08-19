@@ -4,7 +4,10 @@ import { apiRequest } from '../services/api';
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem('user');
+    return saved ? JSON.parse(saved) : null;
+  });
   const [token, setToken] = useState(localStorage.getItem('token') || null);
   const [loading, setLoading] = useState(true);
 
@@ -15,12 +18,17 @@ export function AuthProvider({ children }) {
         try {
           const userData = await apiRequest('/api/v1/auth/me');
           setUser(userData);
+          localStorage.setItem('user', JSON.stringify(userData));
           setToken(storedToken);
         } catch (err) {
           console.error("Auth validation failed:", err);
-          localStorage.removeItem('token');
-          setToken(null);
-          setUser(null);
+          const savedUser = localStorage.getItem('user');
+          if (!savedUser) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            setToken(null);
+            setUser(null);
+          }
         }
       }
       setLoading(false);
@@ -35,6 +43,7 @@ export function AuthProvider({ children }) {
     });
 
     localStorage.setItem('token', data.access_token);
+    localStorage.setItem('user', JSON.stringify(data.user));
     setToken(data.access_token);
     setUser(data.user);
     return data.user;
@@ -47,6 +56,20 @@ export function AuthProvider({ children }) {
     });
 
     localStorage.setItem('token', data.access_token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+    setToken(data.access_token);
+    setUser(data.user);
+    return data.user;
+  };
+
+  const elevateToAdmin = async (adminKey) => {
+    const data = await apiRequest('/api/v1/auth/verify-admin-id', {
+      method: 'POST',
+      body: JSON.stringify({ admin_key: adminKey, admin_id: adminKey }),
+    });
+
+    localStorage.setItem('token', data.access_token);
+    localStorage.setItem('user', JSON.stringify(data.user));
     setToken(data.access_token);
     setUser(data.user);
     return data.user;
@@ -54,12 +77,13 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setToken(null);
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, logout, isAdmin: user?.role === 'admin' }}>
+    <AuthContext.Provider value={{ user, token, loading, login, register, elevateToAdmin, logout, isAdmin: user?.role === 'admin' }}>
       {children}
     </AuthContext.Provider>
   );
