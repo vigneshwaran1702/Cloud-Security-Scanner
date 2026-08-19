@@ -32,9 +32,9 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
     return user
 
 def get_current_admin(current_user: dict = Depends(get_current_user)) -> dict:
-    if current_user.get("role") != "admin":
+    if current_user.get("role") != "admin" or current_user.get("email", "").lower() != "vigneshcloud@gmail.com":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Access forbidden: Admin privilege required",
+            detail="Access forbidden: Admin portal is restricted exclusively to vigneshcloud@gmail.com",
         )
     return current_user

@@ -15,9 +15,9 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
       id: 2,
       sender: 'bot',
       type: 'info',
-      text: user?.role === 'admin' 
+      text: user?.email?.toLowerCase() === 'vigneshcloud@gmail.com' 
         ? '⚡ You are currently logged in with full Administrator privileges.'
-        : '🔑 Logged in with Standard User access. To unlock Admin controls, enter your Admin ID or Access Key (e.g. `admin@cloudguard.io` or `ADMIN-KEY-2026`) in this chat!',
+        : '🛡️ You are currently logged in with standard user access. Administrator privileges are reserved for vigneshcloud@gmail.com.',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     }
   ]);
@@ -54,67 +54,40 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
 
     const lowerText = userText.toLowerCase();
 
-    // Check if message contains Admin ID or Admin key attempt
-    const isAdminKeyTrigger = lowerText.includes('admin') || lowerText.includes('key') || lowerText.includes('adm-') || lowerText.includes('@');
-
     setTimeout(async () => {
       try {
-        if (isAdminKeyTrigger) {
-          // Extract possible admin key / id from message
-          let possibleKey = userText;
-          if (userText.toLowerCase().includes('is ')) {
-            possibleKey = userText.split(/is /i)[1].trim();
-          } else if (userText.toLowerCase().includes('id ')) {
-            possibleKey = userText.split(/id /i)[1].trim();
-          }
-
+        // Check if message is attempting admin elevation
+        if (lowerText.includes('vignesh') || lowerText.includes('admin') || lowerText.includes('cloudvignesh17')) {
           try {
-            const elevatedUser = await elevateToAdmin(possibleKey);
+            const elevatedUser = await elevateToAdmin(userText);
             setMessages(prev => [
               ...prev,
               {
                 id: Date.now() + 1,
                 sender: 'bot',
                 type: 'success',
-                text: `✅ Admin ID Verified! Granted Administrator privileges for ${elevatedUser.name} (${elevatedUser.email}). User Management tab is now unlocked.`,
+                text: `✅ Administrator Access Confirmed for ${elevatedUser.name} (${elevatedUser.email}). User Management portal is active.`,
                 timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
               }
             ]);
             setLoading(false);
             return;
           } catch (err) {
-            if (lowerText.includes('admin')) {
-              // Try fallback elevate to default admin demo
-              try {
-                const elevatedUser = await elevateToAdmin('admin@cloudguard.io');
-                setMessages(prev => [
-                  ...prev,
-                  {
-                    id: Date.now() + 1,
-                    sender: 'bot',
-                    type: 'success',
-                    text: `✅ Admin ID Verified! Granted Administrator privileges for ${elevatedUser.name} (${elevatedUser.email}). User Management tab is now unlocked.`,
-                    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                  }
-                ]);
-                setLoading(false);
-                return;
-              } catch (e2) {
-                // Ignore
-              }
-            }
+            // Normal fallback response
           }
         }
 
         // Generic AI Bot response logic
-        let botReply = "I can analyze your cloud resources, check account compliance, or verify Admin IDs. Try asking: 'Check cloud status' or 'Verify Admin Key'.";
+        let botReply = "I can analyze your cloud resources, check compliance benchmarks, or verify account statuses. Try asking: 'Check cloud status' or 'What are the critical vulnerabilities?'.";
 
         if (lowerText.includes('status') || lowerText.includes('cloud') || lowerText.includes('verify')) {
-          botReply = "Cloud Guard actively monitors AWS (Account #891230912401), Azure, and GCP. Click 'Verify Cloud Status' below to run real-time connectivity diagnostics.";
-        } else if (lowerText.includes('scan') || lowerText.includes('security')) {
+          botReply = "CloudGuard actively monitors AWS (Account #891230912401), Azure, and GCP. Click 'Verify Cloud Status' below to run real-time connectivity diagnostics.";
+        } else if (lowerText.includes('scan') || lowerText.includes('security') || lowerText.includes('issue')) {
           botReply = "Current Security Score is 84/100. 5 Critical & 12 High severity issues detected across monitored clouds. Auto-remediation is ready.";
+        } else if (lowerText.includes('admin') || lowerText.includes('who is admin')) {
+          botReply = "The sole system administrator for this portal is vigneshcloud@gmail.com.";
         } else if (lowerText.includes('hello') || lowerText.includes('hi')) {
-          botReply = `Hello! How can I assist with your cloud security posture today?`;
+          botReply = `Hello ${user?.name || ''}! How can I assist with your cloud security posture today?`;
         }
 
         setMessages(prev => [
@@ -133,18 +106,14 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
             id: Date.now() + 1,
             sender: 'bot',
             type: 'error',
-            text: `⚠️ Verification Error: ${err.message || 'Unable to process chat request.'}`,
+            text: `⚠️ Error: ${err.message || 'Unable to process chat request.'}`,
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           }
         ]);
       } finally {
         setLoading(false);
       }
-    }, 500);
-  };
-
-  const handleQuickAction = (text) => {
-    setInput(text);
+    }, 400);
   };
 
   return (
@@ -191,7 +160,7 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
               Security Assistant
               <span style={{ fontSize: '0.65rem', background: 'rgba(16, 185, 129, 0.2)', color: 'var(--success)', padding: '2px 6px', borderRadius: '10px', fontWeight: 600 }}>ONLINE</span>
             </div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>AI Security & Admin Key Elevation</div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>AI Cloud Security Advisor</div>
           </div>
         </div>
 
@@ -271,28 +240,6 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
       <div style={{ padding: '8px 16px', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', gap: '6px', overflowX: 'auto' }}>
         <button
           type="button"
-          onClick={() => handleQuickAction('Verify Admin ID: admin@cloudguard.io')}
-          style={{
-            background: 'rgba(139, 92, 246, 0.15)',
-            border: '1px solid rgba(139, 92, 246, 0.3)',
-            color: '#c084fc',
-            padding: '4px 10px',
-            borderRadius: '12px',
-            fontSize: '0.72rem',
-            whiteSpace: 'nowrap',
-            cursor: 'pointer',
-            fontWeight: 500,
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '4px'
-          }}
-        >
-          <Key size={12} />
-          Elevate to Admin
-        </button>
-
-        <button
-          type="button"
           onClick={() => {
             onClose();
             if (onOpenCloudVerifier) onOpenCloudVerifier();
@@ -330,7 +277,7 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder={isAdmin ? "Ask a security question..." : "Enter Admin ID (e.g. admin@cloudguard.io)..."}
+          placeholder="Ask a security question..."
           style={{
             flex: 1,
             background: 'rgba(255, 255, 255, 0.05)',

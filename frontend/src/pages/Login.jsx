@@ -1,36 +1,40 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Shield, Mail, Lock, LogIn, UserCheck, ShieldAlert, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Shield, Mail, Lock, LogIn, ShieldAlert, ArrowRight, ShieldCheck, UserPlus } from 'lucide-react';
 
 export default function Login() {
+  const location = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [infoMessage, setInfoMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (location.state?.registeredEmail) {
+      setEmail(location.state.registeredEmail);
+      setInfoMessage('Account registered successfully! Please enter your password to log in.');
+    }
+  }, [location.state]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setInfoMessage('');
     setLoading(true);
 
     try {
-      await login(email, password);
+      await login(email.trim().toLowerCase(), password);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.message || 'Login failed. Please check your credentials.');
+      setError(err.message || 'Login failed. Please check your credentials or register first.');
     } finally {
       setLoading(false);
     }
-  };
-
-  const fillDemoAccount = (demoEmail, demoPass) => {
-    setEmail(demoEmail);
-    setPassword(demoPass);
-    setError('');
   };
 
   return (
@@ -50,7 +54,7 @@ export default function Login() {
         boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)',
       }}>
         {/* Header Branding */}
-        <div className="flex flex-col items-center gap-3 text-center" style={{ marginBottom: '32px' }}>
+        <div className="flex flex-col items-center gap-3 text-center" style={{ marginBottom: '28px' }}>
           <div style={{
             background: 'linear-gradient(135deg, var(--primary), var(--accent))',
             padding: '14px',
@@ -70,61 +74,48 @@ export default function Login() {
           </div>
         </div>
 
-        {/* Demo Credentials Shortcuts */}
+        {/* Info Banner / Registration Guidance */}
         <div style={{
           background: 'rgba(255, 255, 255, 0.03)',
           border: '1px solid var(--border-color)',
           borderRadius: '16px',
           padding: '16px',
-          marginBottom: '24px'
+          marginBottom: '20px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px'
         }}>
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '10px' }}>
-            Quick Demo Login:
+          <div className="flex items-center gap-2" style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--primary)' }}>
+            <UserPlus size={16} />
+            <span>First Time Here?</span>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <button
-              type="button"
-              onClick={() => fillDemoAccount('admin@cloudguard.io', 'admin123')}
-              style={{
-                background: email === 'admin@cloudguard.io' ? 'rgba(139, 92, 246, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-                border: `1px solid ${email === 'admin@cloudguard.io' ? 'var(--accent)' : 'var(--border-color)'}`,
-                borderRadius: '10px',
-                padding: '10px 12px',
-                color: 'white',
-                cursor: 'pointer',
-                textAlign: 'left',
-                transition: 'var(--transition)'
-              }}
-            >
-              <div className="flex items-center gap-2" style={{ fontWeight: 600, fontSize: '0.85rem', color: 'var(--accent)' }}>
-                <ShieldAlert size={16} />
-                Admin Account
-              </div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>Full Control</div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => fillDemoAccount('user@cloudguard.io', 'user123')}
-              style={{
-                background: email === 'user@cloudguard.io' ? 'rgba(59, 130, 246, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-                border: `1px solid ${email === 'user@cloudguard.io' ? 'var(--primary)' : 'var(--border-color)'}`,
-                borderRadius: '10px',
-                padding: '10px 12px',
-                color: 'white',
-                cursor: 'pointer',
-                textAlign: 'left',
-                transition: 'var(--transition)'
-              }}
-            >
-              <div className="flex items-center gap-2" style={{ fontWeight: 600, fontSize: '0.85rem', color: 'var(--primary)' }}>
-                <UserCheck size={16} />
-                User Account
-              </div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>Standard Access</div>
-            </button>
+          <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>
+            All users must <strong>register their own account</strong> with name, email & password before logging in.
+          </p>
+          <div style={{ marginTop: '4px', paddingTop: '8px', borderTop: '1px solid rgba(255,255,255,0.05)', fontSize: '0.75rem', color: '#c084fc', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <ShieldCheck size={14} color="var(--accent)" />
+            <span>Admin Portal is exclusively restricted to <strong>vigneshcloud@gmail.com</strong></span>
           </div>
         </div>
+
+        {/* Registration Success Message */}
+        {infoMessage && (
+          <div style={{
+            background: 'rgba(16, 185, 129, 0.15)',
+            border: '1px solid var(--success)',
+            borderRadius: '12px',
+            padding: '12px 16px',
+            color: '#a7f3d0',
+            fontSize: '0.85rem',
+            marginBottom: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px'
+          }}>
+            <ShieldCheck size={18} color="var(--success)" style={{ flexShrink: 0 }} />
+            <span>{infoMessage}</span>
+          </div>
+        )}
 
         {/* Error Alert */}
         {error && (
@@ -211,7 +202,7 @@ export default function Login() {
               borderRadius: '12px',
               fontSize: '1rem',
               fontWeight: 600,
-              marginTop: '12px'
+              marginTop: '8px'
             }}
           >
             {loading ? (
@@ -226,8 +217,8 @@ export default function Login() {
         </form>
 
         {/* Footer link to Register */}
-        <div style={{ textAlignment: 'center', textAlign: 'center', marginTop: '24px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-          Don't have an account?{' '}
+        <div style={{ textAlign: 'center', marginTop: '24px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+          Don't have a registered account?{' '}
           <Link to="/register" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
             Register Now <ArrowRight size={14} />
           </Link>

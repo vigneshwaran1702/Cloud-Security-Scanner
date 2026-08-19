@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { apiRequest } from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import { Users, Shield, UserCheck, ShieldAlert, Trash2, Search, CheckCircle, RefreshCw, AlertCircle } from 'lucide-react';
+import { Users, Shield, ShieldAlert, Trash2, Search, CheckCircle, RefreshCw, AlertCircle, UserCheck, ShieldCheck } from 'lucide-react';
 
 export default function AdminUsers() {
   const { user: currentUser } = useAuth();
@@ -28,23 +28,12 @@ export default function AdminUsers() {
     fetchUsers();
   }, []);
 
-  const handleRoleChange = async (userId, currentRole) => {
-    const newRole = currentRole === 'admin' ? 'user' : 'admin';
-    try {
-      const updated = await apiRequest(`/api/v1/users/${userId}/role`, {
-        method: 'PATCH',
-        body: JSON.stringify({ role: newRole }),
-      });
-      setUsers(prev => prev.map(u => u.id === userId ? updated : u));
-      setActionSuccess(`Role for ${updated.name} updated to ${updated.role.toUpperCase()}`);
-      setTimeout(() => setActionSuccess(''), 4000);
-    } catch (err) {
-      setError(err.message || 'Failed to update role');
+  const handleDeleteUser = async (userId, name, email) => {
+    if (email.toLowerCase() === 'vigneshcloud@gmail.com') {
+      alert('The Primary Administrator account cannot be deleted.');
+      return;
     }
-  };
-
-  const handleDeleteUser = async (userId, name) => {
-    if (!window.confirm(`Are you sure you want to delete user "${name}"?`)) return;
+    if (!window.confirm(`Are you sure you want to delete user "${name}" (${email})?`)) return;
     try {
       await apiRequest(`/api/v1/users/${userId}`, {
         method: 'DELETE',
@@ -72,9 +61,22 @@ export default function AdminUsers() {
             <Users size={28} color="var(--accent)" />
           </div>
           <div>
-            <h2 style={{ margin: 0, fontSize: '1.4rem' }}>User & Access Management</h2>
+            <div className="flex items-center gap-2">
+              <h2 style={{ margin: 0, fontSize: '1.4rem' }}>User Governance & Security Portal</h2>
+              <span style={{
+                fontSize: '0.7rem',
+                background: 'rgba(139, 92, 246, 0.25)',
+                color: '#c084fc',
+                padding: '2px 8px',
+                borderRadius: '12px',
+                border: '1px solid rgba(139, 92, 246, 0.4)',
+                fontWeight: 700
+              }}>
+                ADMIN EXCLUSIVE
+              </span>
+            </div>
             <p style={{ margin: '4px 0 0 0', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-              Manage registered users, assign administrator privileges, and audit system access.
+              Audit registered users, oversee access control, and manage security directory accounts.
             </p>
           </div>
         </div>
@@ -83,6 +85,29 @@ export default function AdminUsers() {
           <RefreshCw size={16} />
           Refresh
         </button>
+      </div>
+
+      {/* Admin Notice */}
+      <div style={{
+        background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(59, 130, 246, 0.15))',
+        border: '1px solid rgba(139, 92, 246, 0.3)',
+        borderRadius: '16px',
+        padding: '16px 20px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+      }}>
+        <div className="flex items-center gap-3">
+          <ShieldCheck size={24} color="#c084fc" />
+          <div>
+            <div style={{ fontWeight: 600, color: 'white', fontSize: '0.95rem' }}>
+              Sole System Administrator: <span style={{ color: '#c084fc' }}>vigneshcloud@gmail.com</span>
+            </div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+              All other accounts are standard users who registered their credentials. Administrator rights are exclusively protected.
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Action Notification */}
@@ -143,8 +168,8 @@ export default function AdminUsers() {
 
         <div className="flex items-center gap-6" style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
           <div>Total Users: <strong style={{ color: 'white' }}>{users.length}</strong></div>
-          <div>Admins: <strong style={{ color: 'var(--accent)' }}>{users.filter(u => u.role === 'admin').length}</strong></div>
-          <div>Standard Users: <strong style={{ color: 'var(--primary)' }}>{users.filter(u => u.role === 'user').length}</strong></div>
+          <div>Primary Admin: <strong style={{ color: 'var(--accent)' }}>1</strong></div>
+          <div>Registered Users: <strong style={{ color: 'var(--primary)' }}>{users.filter(u => u.email.toLowerCase() !== 'vigneshcloud@gmail.com').length}</strong></div>
         </div>
       </div>
 
@@ -164,14 +189,14 @@ export default function AdminUsers() {
               <tr style={{ background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-muted)' }}>
                 <th style={{ padding: '16px 24px', fontWeight: 600 }}>User Profile</th>
                 <th style={{ padding: '16px 24px', fontWeight: 600 }}>Email Address</th>
-                <th style={{ padding: '16px 24px', fontWeight: 600 }}>Role</th>
-                <th style={{ padding: '16px 24px', fontWeight: 600 }}>Registered</th>
+                <th style={{ padding: '16px 24px', fontWeight: 600 }}>Role & Authority</th>
+                <th style={{ padding: '16px 24px', fontWeight: 600 }}>Registered Date</th>
                 <th style={{ padding: '16px 24px', fontWeight: 600, textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredUsers.map((u) => {
-                const isAdmin = u.role === 'admin';
+                const isSoleAdmin = u.email.toLowerCase() === 'vigneshcloud@gmail.com';
                 const isSelf = currentUser?.id === u.id;
                 const initials = u.name ? u.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'US';
 
@@ -183,7 +208,7 @@ export default function AdminUsers() {
                           width: '38px',
                           height: '38px',
                           borderRadius: '50%',
-                          background: isAdmin ? 'linear-gradient(135deg, var(--accent), #7c3aed)' : 'linear-gradient(135deg, var(--primary), #2563eb)',
+                          background: isSoleAdmin ? 'linear-gradient(135deg, var(--accent), #7c3aed)' : 'linear-gradient(135deg, var(--primary), #2563eb)',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -215,12 +240,12 @@ export default function AdminUsers() {
                         borderRadius: '20px',
                         fontSize: '0.8rem',
                         fontWeight: 600,
-                        background: isAdmin ? 'rgba(139, 92, 246, 0.2)' : 'rgba(59, 130, 246, 0.2)',
-                        color: isAdmin ? '#c084fc' : '#60a5fa',
-                        border: `1px solid ${isAdmin ? 'rgba(139, 92, 246, 0.4)' : 'rgba(59, 130, 246, 0.4)'}`
+                        background: isSoleAdmin ? 'rgba(139, 92, 246, 0.2)' : 'rgba(59, 130, 246, 0.2)',
+                        color: isSoleAdmin ? '#c084fc' : '#60a5fa',
+                        border: `1px solid ${isSoleAdmin ? 'rgba(139, 92, 246, 0.4)' : 'rgba(59, 130, 246, 0.4)'}`
                       }}>
-                        {isAdmin ? <ShieldAlert size={14} /> : <UserCheck size={14} />}
-                        {isAdmin ? 'ADMINISTRATOR' : 'STANDARD USER'}
+                        {isSoleAdmin ? <ShieldAlert size={14} /> : <UserCheck size={14} />}
+                        {isSoleAdmin ? 'PRIMARY ADMINISTRATOR' : 'STANDARD USER'}
                       </span>
                     </td>
 
@@ -230,43 +255,30 @@ export default function AdminUsers() {
 
                     <td style={{ padding: '16px 24px', textAlign: 'right' }}>
                       <div className="flex items-center gap-2" style={{ justifyContent: 'flex-end' }}>
-                        <button
-                          onClick={() => handleRoleChange(u.id, u.role)}
-                          style={{
-                            background: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid var(--border-color)',
-                            color: isAdmin ? '#f97316' : '#a855f7',
-                            padding: '6px 12px',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                            fontSize: '0.8rem',
-                            fontWeight: 500,
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '4px'
-                          }}
-                          title={`Click to switch role to ${isAdmin ? 'User' : 'Admin'}`}
-                        >
-                          <Shield size={14} />
-                          {isAdmin ? 'Demote to User' : 'Promote to Admin'}
-                        </button>
-
-                        {!isSelf && (
+                        {isSoleAdmin ? (
+                          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontStyle: 'italic', padding: '6px 12px' }}>
+                            Protected Admin
+                          </span>
+                        ) : (
                           <button
-                            onClick={() => handleDeleteUser(u.id, u.name)}
+                            onClick={() => handleDeleteUser(u.id, u.name, u.email)}
                             style={{
                               background: 'rgba(239, 68, 68, 0.1)',
                               border: '1px solid rgba(239, 68, 68, 0.3)',
                               color: 'var(--critical)',
-                              padding: '6px 10px',
+                              padding: '6px 12px',
                               borderRadius: '8px',
                               cursor: 'pointer',
                               display: 'inline-flex',
-                              alignItems: 'center'
+                              alignItems: 'center',
+                              gap: '6px',
+                              fontSize: '0.8rem',
+                              fontWeight: 500
                             }}
                             title="Delete user"
                           >
-                            <Trash2 size={16} />
+                            <Trash2 size={15} />
+                            Remove User
                           </button>
                         )}
                       </div>

@@ -82,8 +82,10 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+  const isAdmin = user?.role === 'admin' && user?.email?.toLowerCase() === 'vigneshcloud@gmail.com';
+
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, elevateToAdmin, logout, isAdmin: user?.role === 'admin' }}>
+    <AuthContext.Provider value={{ user, token, loading, login, register, elevateToAdmin, logout, isAdmin }}>
       {children}
     </AuthContext.Provider>
   );

@@ -12,8 +12,6 @@ class SecurityStore:
     def seed_users(self):
         if not self.users:
             self.create_user("Vignesh Cloud Admin", "vigneshcloud@gmail.com", "cloudvignesh17", role="admin")
-            self.create_user("Security Analyst", "user@cloudguard.io", "user123", role="user")
-            self.create_user("Compliance Auditor", "auditor@cloudguard.io", "user123", role="user")
 
     def reset_data(self):
         self.scan_state = {
