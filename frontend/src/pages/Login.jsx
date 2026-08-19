@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Shield, Mail, Lock, LogIn, ShieldAlert, ArrowRight, ShieldCheck, UserPlus } from 'lucide-react';
+import { Shield, Mail, Lock, LogIn, ShieldAlert, ArrowRight, ShieldCheck } from 'lucide-react';
 
 export default function Login() {
   const location = useLocation();
@@ -71,30 +71,6 @@ export default function Login() {
             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '4px' }}>
               Sign in to your Cloud Security Portal
             </p>
-          </div>
-        </div>
-
-        {/* Info Banner / Registration Guidance */}
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.03)',
-          border: '1px solid var(--border-color)',
-          borderRadius: '16px',
-          padding: '16px',
-          marginBottom: '20px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px'
-        }}>
-          <div className="flex items-center gap-2" style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--primary)' }}>
-            <UserPlus size={16} />
-            <span>First Time Here?</span>
-          </div>
-          <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>
-            All users must <strong>register their own account</strong> with name, email & password before logging in.
-          </p>
-          <div style={{ marginTop: '4px', paddingTop: '8px', borderTop: '1px solid rgba(255,255,255,0.05)', fontSize: '0.75rem', color: '#c084fc', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <ShieldCheck size={14} color="var(--accent)" />
-            <span>Admin Portal is exclusively restricted to <strong>vigneshcloud@gmail.com</strong></span>
           </div>
         </div>
 
