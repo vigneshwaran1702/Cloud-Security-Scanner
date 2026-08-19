@@ -262,6 +262,10 @@ export default function MainLayout() {
                 </>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
       {/* AI Security Assistant Floating Chat Drawer */}
       <SecurityChatDrawer
         isOpen={isChatOpen}
@@ -277,4 +281,5 @@ export default function MainLayout() {
     </div>
   );
 }
+
 
