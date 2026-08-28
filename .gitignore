@@ -9,6 +9,15 @@ dist/
 frontend/dist/
 build/
 
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+frontend/.env
+frontend/.env.local
+
 # Temporary / Cache files
 .vite/
 frontend/node_modules/.vite/
@@ -19,12 +28,6 @@ backend/**/__pycache__/
 *.pyo
 *.pyd
 .pytest_cache/
-
-# Environment Variables
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
 
 # Logs
 npm-debug.log*
