@@ -8,35 +8,38 @@ import AdminUsers from './pages/AdminUsers';
 import Layout from './layouts/MainLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
+import { NotificationProvider } from './context/NotificationContext';
 
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+      <NotificationProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
-          {/* Protected Routes for Authenticated Users */}
-          <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<Layout />}>
-              <Route index element={<Navigate to="/dashboard" replace />} />
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="resources" element={<Resources />} />
-              <Route path="settings" element={<Settings />} />
+            {/* Protected Routes for Authenticated Users */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/" element={<Layout />}>
+                <Route index element={<Navigate to="/dashboard" replace />} />
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="resources" element={<Resources />} />
+                <Route path="settings" element={<Settings />} />
 
-              {/* Admin Only Route */}
-              <Route element={<ProtectedRoute requiredRole="admin" />}>
-                <Route path="admin/users" element={<AdminUsers />} />
+                {/* Admin Only Route */}
+                <Route element={<ProtectedRoute requiredRole="admin" />}>
+                  <Route path="admin/users" element={<AdminUsers />} />
+                </Route>
               </Route>
             </Route>
-          </Route>
 
-          {/* Fallback */}
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
-      </BrowserRouter>
+            {/* Fallback */}
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </NotificationProvider>
     </AuthProvider>
   );
 }
