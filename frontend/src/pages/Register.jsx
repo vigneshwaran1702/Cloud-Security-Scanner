@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Shield, User, Mail, Lock, UserPlus, ShieldAlert, CheckCircle2, ArrowLeft } from 'lucide-react';
+import { Shield, User, Mail, Lock, UserPlus, ShieldAlert, CheckCircle2, ArrowLeft, Eye, EyeOff, Sparkles } from 'lucide-react';
 
 export default function Register() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
@@ -21,10 +23,32 @@ export default function Register() {
     }
   }, [user, navigate]);
 
+  const handleFillDemo = () => {
+    const randomId = Math.floor(Math.random() * 900) + 100;
+    setName(`Security Analyst ${randomId}`);
+    setEmail(`analyst${randomId}@cloudguard.io`);
+    setPassword('SecurityPass123!');
+    setConfirmPassword('SecurityPass123!');
+    setError('');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
+
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanName = name.trim();
+
+    if (!cleanName) {
+      setError('Please enter your full name.');
+      return;
+    }
+
+    if (!cleanEmail || !cleanEmail.includes('@')) {
+      setError('Please enter a valid email address.');
+      return;
+    }
 
     if (password.length < 6) {
       setError('Password must be at least 6 characters in length.');
@@ -32,7 +56,7 @@ export default function Register() {
     }
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match. Please verify and try again.');
+      setError('Passwords do not match. Please verify both passwords match.');
       return;
     }
 
@@ -40,13 +64,13 @@ export default function Register() {
 
     try {
       // Standard users are registered and authenticated automatically
-      await register(name.trim(), email.trim().toLowerCase(), password, 'user');
-      setSuccess('Account created successfully! Logging you in...');
+      await register(cleanName, cleanEmail, password, 'user');
+      setSuccess('Account created successfully! Redirecting to Dashboard...');
       setTimeout(() => {
         navigate('/dashboard', { replace: true });
-      }, 800);
+      }, 700);
     } catch (err) {
-      setError(err.message || 'Registration failed. Please try again.');
+      setError(err.message || 'Registration failed. Please try again or use another email.');
     } finally {
       setLoading(false);
     }
@@ -69,7 +93,7 @@ export default function Register() {
         boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)',
       }}>
         {/* Header Branding */}
-        <div className="flex flex-col items-center gap-3 text-center" style={{ marginBottom: '24px' }}>
+        <div className="flex flex-col items-center gap-3 text-center" style={{ marginBottom: '20px' }}>
           <div style={{
             background: 'linear-gradient(135deg, var(--primary), var(--accent))',
             padding: '14px',
@@ -81,29 +105,36 @@ export default function Register() {
           </div>
           <div>
             <h1 className="gradient-text" style={{ fontSize: '1.75rem', fontWeight: 700, margin: 0 }}>
-              User Registration
+              Create Account
             </h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '4px' }}>
-              Register your account to access CloudGuard AI
+              Register your profile to access CloudGuard AI
             </p>
           </div>
         </div>
 
-        {/* Info Banner */}
-        <div style={{
-          background: 'rgba(59, 130, 246, 0.1)',
-          border: '1px solid rgba(59, 130, 246, 0.25)',
-          borderRadius: '12px',
-          padding: '12px 14px',
-          color: '#93c5fd',
-          fontSize: '0.82rem',
-          marginBottom: '20px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px'
-        }}>
-          <Shield size={16} color="var(--primary)" style={{ flexShrink: 0 }} />
-          <span>Create your account to automatically log in and access the dashboard.</span>
+        {/* Quick Demo Fill Button */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '14px' }}>
+          <button
+            type="button"
+            onClick={handleFillDemo}
+            style={{
+              background: 'rgba(59, 130, 246, 0.12)',
+              border: '1px solid rgba(59, 130, 246, 0.3)',
+              color: '#93c5fd',
+              borderRadius: '8px',
+              padding: '4px 10px',
+              fontSize: '0.78rem',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '5px',
+              transition: 'var(--transition)'
+            }}
+          >
+            <Sparkles size={12} color="#60a5fa" />
+            Quick Demo Fill
+          </button>
         </div>
 
         {/* Success Alert */}
@@ -115,7 +146,7 @@ export default function Register() {
             padding: '12px 16px',
             color: '#a7f3d0',
             fontSize: '0.85rem',
-            marginBottom: '20px',
+            marginBottom: '18px',
             display: 'flex',
             alignItems: 'center',
             gap: '10px'
@@ -134,7 +165,7 @@ export default function Register() {
             padding: '12px 16px',
             color: '#fca5a5',
             fontSize: '0.85rem',
-            marginBottom: '20px',
+            marginBottom: '18px',
             display: 'flex',
             alignItems: 'center',
             gap: '10px'
@@ -157,7 +188,7 @@ export default function Register() {
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. John Doe"
+                placeholder="e.g. Alex Morgan"
                 style={{
                   width: '100%',
                   padding: '12px 14px 12px 42px',
@@ -184,7 +215,7 @@ export default function Register() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="yourname@domain.com"
+                placeholder="yourname@company.com"
                 style={{
                   width: '100%',
                   padding: '12px 14px 12px 42px',
@@ -207,7 +238,7 @@ export default function Register() {
             <div style={{ position: 'relative' }}>
               <Lock size={18} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 required
                 minLength={6}
                 value={password}
@@ -215,7 +246,7 @@ export default function Register() {
                 placeholder="At least 6 characters"
                 style={{
                   width: '100%',
-                  padding: '12px 14px 12px 42px',
+                  padding: '12px 42px 12px 42px',
                   background: 'rgba(15, 23, 42, 0.6)',
                   border: '1px solid var(--border-color)',
                   borderRadius: '10px',
@@ -225,6 +256,26 @@ export default function Register() {
                   transition: 'var(--transition)'
                 }}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                  padding: '4px',
+                  display: 'flex',
+                  alignItems: 'center'
+                }}
+                title={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
           </div>
 
@@ -235,7 +286,7 @@ export default function Register() {
             <div style={{ position: 'relative' }}>
               <Lock size={18} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               <input
-                type="password"
+                type={showConfirmPassword ? 'text' : 'password'}
                 required
                 minLength={6}
                 value={confirmPassword}
@@ -243,7 +294,7 @@ export default function Register() {
                 placeholder="Re-enter password"
                 style={{
                   width: '100%',
-                  padding: '12px 14px 12px 42px',
+                  padding: '12px 42px 12px 42px',
                   background: 'rgba(15, 23, 42, 0.6)',
                   border: '1px solid var(--border-color)',
                   borderRadius: '10px',
@@ -253,6 +304,26 @@ export default function Register() {
                   transition: 'var(--transition)'
                 }}
               />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                  padding: '4px',
+                  display: 'flex',
+                  alignItems: 'center'
+                }}
+                title={showConfirmPassword ? 'Hide password' : 'Show password'}
+              >
+                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
           </div>
 
@@ -266,11 +337,11 @@ export default function Register() {
               borderRadius: '12px',
               fontSize: '1rem',
               fontWeight: 600,
-              marginTop: '10px'
+              marginTop: '6px'
             }}
           >
             {loading ? (
-              <span>Registering User Account...</span>
+              <span>Registering Account...</span>
             ) : (
               <>
                 <UserPlus size={20} />

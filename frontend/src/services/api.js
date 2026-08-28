@@ -43,38 +43,77 @@ export async function apiRequest(endpoint, options = {}) {
 function handleMockFallback(endpoint, options) {
   const body = options.body ? JSON.parse(options.body) : {};
 
+  // Retrieve or initialize local mock users store
+  const getMockUsers = () => {
+    try {
+      const stored = localStorage.getItem('cg_mock_users_db');
+      if (stored) return JSON.parse(stored);
+    } catch (e) {}
+    return [
+      { id: 1, name: 'Vignesh Cloud Admin', email: 'vigneshcloud@gmail.com', role: 'admin', is_active: true, created_at: '2026-01-10 09:00:00' },
+      { id: 2, name: 'Security User', email: 'user@cloudguard.io', role: 'user', is_active: true, created_at: '2026-01-15 10:00:00' },
+      { id: 3, name: 'Security Auditor', email: 'auditor@cloudguard.io', role: 'user', is_active: true, created_at: '2026-02-01 14:15:00' }
+    ];
+  };
+
+  const saveMockUsers = (users) => {
+    try {
+      localStorage.setItem('cg_mock_users_db', JSON.stringify(users));
+    } catch (e) {}
+  };
+
   if (endpoint === '/api/v1/auth/login') {
-    const email = body.email || 'user@cloudguard.io';
-    const isAdmin = email.toLowerCase().trim() === 'vigneshcloud@gmail.com';
-    const mockUser = {
-      id: isAdmin ? 1 : 2,
-      name: isAdmin ? 'Vignesh Cloud Admin' : 'Security User',
-      email: email,
+    const rawEmail = (body.email || 'user@cloudguard.io').trim().toLowerCase();
+    const mockUsers = getMockUsers();
+    
+    // Check if user exists or matches admin
+    const foundUser = mockUsers.find(u => u.email.toLowerCase() === rawEmail);
+    const isAdmin = rawEmail === 'vigneshcloud@gmail.com';
+    
+    const loggedUser = foundUser || {
+      id: isAdmin ? 1 : Math.floor(Math.random() * 900) + 10,
+      name: isAdmin ? 'Vignesh Cloud Admin' : rawEmail.split('@')[0].replace('.', ' '),
+      email: rawEmail,
       role: isAdmin ? 'admin' : 'user',
       is_active: true,
       created_at: new Date().toISOString().replace('T', ' ').slice(0, 19)
     };
+
     return {
       access_token: `mock_jwt_token_${Date.now()}`,
       token_type: 'bearer',
-      user: mockUser
+      user: loggedUser
     };
   }
 
   if (endpoint === '/api/v1/auth/register') {
-    const isAdmin = body.email?.toLowerCase().trim() === 'vigneshcloud@gmail.com';
-    const mockUser = {
-      id: Math.floor(Math.random() * 1000) + 10,
-      name: body.name || 'New User',
-      email: body.email || 'user@company.com',
-      role: isAdmin ? 'admin' : 'user',
-      is_active: true,
-      created_at: new Date().toISOString().replace('T', ' ').slice(0, 19)
-    };
+    const rawEmail = (body.email || 'user@company.com').trim().toLowerCase();
+    const rawName = (body.name || 'New User').trim();
+    const isAdmin = rawEmail === 'vigneshcloud@gmail.com';
+    
+    const mockUsers = getMockUsers();
+    let existing = mockUsers.find(u => u.email.toLowerCase() === rawEmail);
+    
+    let userObj;
+    if (existing) {
+      userObj = existing;
+    } else {
+      userObj = {
+        id: Math.floor(Math.random() * 1000) + 20,
+        name: rawName,
+        email: rawEmail,
+        role: isAdmin ? 'admin' : (body.role || 'user'),
+        is_active: true,
+        created_at: new Date().toISOString().replace('T', ' ').slice(0, 19)
+      };
+      mockUsers.push(userObj);
+      saveMockUsers(mockUsers);
+    }
+
     return {
       access_token: `mock_jwt_token_${Date.now()}`,
       token_type: 'bearer',
-      user: mockUser
+      user: userObj
     };
   }
 

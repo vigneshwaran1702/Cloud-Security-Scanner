@@ -181,8 +181,9 @@ class SecurityStore:
         return False
 
     def get_user_by_email(self, email: str) -> Optional[Dict[str, Any]]:
+        clean_email = email.strip().lower()
         for user in self.users:
-            if user["email"].lower() == email.lower():
+            if user["email"].strip().lower() == clean_email:
                 return user
         return None
 
@@ -193,20 +194,21 @@ class SecurityStore:
         return None
 
     def create_user(self, name: str, email: str, plain_password: str, role: str = "user") -> Dict[str, Any]:
-        existing = self.get_user_by_email(email)
+        clean_email = email.strip().lower()
+        existing = self.get_user_by_email(clean_email)
         if existing:
-            raise ValueError(f"User with email {email} already exists")
+            raise ValueError(f"User with email {clean_email} already exists")
         
         user_id = self.next_user_id
         self.next_user_id += 1
         
         # Strictly restrict admin role to vigneshcloud@gmail.com
-        assigned_role = "admin" if email.strip().lower() == "vigneshcloud@gmail.com" else "user"
+        assigned_role = "admin" if clean_email == "vigneshcloud@gmail.com" else (role.lower() if role else "user")
 
         user = {
             "id": user_id,
-            "name": name,
-            "email": email.lower(),
+            "name": name.strip(),
+            "email": clean_email,
             "password_hash": get_password_hash(plain_password),
             "role": assigned_role,
             "is_active": True,
