@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Shield, Mail, Lock, LogIn, ShieldAlert, ArrowRight, ShieldCheck, Eye, EyeOff, Sparkles, UserCheck } from 'lucide-react';
+import { Shield, Mail, Lock, LogIn, ShieldAlert, ArrowRight, ShieldCheck, Eye, EyeOff } from 'lucide-react';
 
 export default function Login() {
   const location = useLocation();
@@ -24,15 +24,9 @@ export default function Login() {
   useEffect(() => {
     if (location.state?.registeredEmail) {
       setEmail(location.state.registeredEmail);
-      setInfoMessage('Account registered successfully! Please enter your password to log in.');
+      setInfoMessage(location.state.registeredMessage || 'Account registered successfully! Please enter your password to log in.');
     }
   }, [location.state]);
-
-  const handleQuickFill = (demoEmail, demoPassword) => {
-    setEmail(demoEmail);
-    setPassword(demoPassword);
-    setError('');
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -69,7 +63,7 @@ export default function Login() {
         boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)',
       }}>
         {/* Header Branding */}
-        <div className="flex flex-col items-center gap-3 text-center" style={{ marginBottom: '24px' }}>
+        <div className="flex flex-col items-center gap-3 text-center" style={{ marginBottom: '28px' }}>
           <div style={{
             background: 'linear-gradient(135deg, var(--primary), var(--accent))',
             padding: '14px',
@@ -86,64 +80,6 @@ export default function Login() {
             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '4px' }}>
               Sign in to your Cloud Security Portal
             </p>
-          </div>
-        </div>
-
-        {/* Quick Demo Credentials */}
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.03)',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
-          borderRadius: '14px',
-          padding: '10px 12px',
-          marginBottom: '20px',
-        }}>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '5px' }}>
-            <Sparkles size={13} color="#60a5fa" />
-            Quick Demo Fill:
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-            <button
-              type="button"
-              onClick={() => handleQuickFill('vigneshcloud@gmail.com', 'cloudvignesh17')}
-              style={{
-                background: 'rgba(139, 92, 246, 0.12)',
-                border: '1px solid rgba(139, 92, 246, 0.3)',
-                color: '#c084fc',
-                borderRadius: '8px',
-                padding: '6px 8px',
-                fontSize: '0.76rem',
-                cursor: 'pointer',
-                textAlign: 'left',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                transition: 'var(--transition)'
-              }}
-            >
-              <UserCheck size={14} />
-              <span><strong>Admin</strong> (Vignesh)</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => handleQuickFill('user@cloudguard.io', 'user123456')}
-              style={{
-                background: 'rgba(59, 130, 246, 0.12)',
-                border: '1px solid rgba(59, 130, 246, 0.3)',
-                color: '#93c5fd',
-                borderRadius: '8px',
-                padding: '6px 8px',
-                fontSize: '0.76rem',
-                cursor: 'pointer',
-                textAlign: 'left',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                transition: 'var(--transition)'
-              }}
-            >
-              <UserCheck size={14} />
-              <span><strong>Standard User</strong></span>
-            </button>
           </div>
         </div>
 

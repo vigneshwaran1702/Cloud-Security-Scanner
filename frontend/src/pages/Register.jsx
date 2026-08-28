@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Shield, User, Mail, Lock, UserPlus, ShieldAlert, CheckCircle2, ArrowLeft, Eye, EyeOff, Sparkles } from 'lucide-react';
+import { Shield, User, Mail, Lock, UserPlus, ShieldAlert, CheckCircle2, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 
 export default function Register() {
   const [name, setName] = useState('');
@@ -22,15 +22,6 @@ export default function Register() {
       navigate('/dashboard', { replace: true });
     }
   }, [user, navigate]);
-
-  const handleFillDemo = () => {
-    const randomId = Math.floor(Math.random() * 900) + 100;
-    setName(`Security Analyst ${randomId}`);
-    setEmail(`analyst${randomId}@cloudguard.io`);
-    setPassword('SecurityPass123!');
-    setConfirmPassword('SecurityPass123!');
-    setError('');
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -63,12 +54,17 @@ export default function Register() {
     setLoading(true);
 
     try {
-      // Standard users are registered and authenticated automatically
       await register(cleanName, cleanEmail, password, 'user');
-      setSuccess('Account created successfully! Redirecting to Dashboard...');
+      setSuccess('Account created successfully! Please sign in with your email and password.');
       setTimeout(() => {
-        navigate('/dashboard', { replace: true });
-      }, 700);
+        navigate('/login', {
+          state: {
+            registeredEmail: cleanEmail,
+            registeredMessage: 'Registration successful! Please enter your password to sign in.'
+          },
+          replace: true
+        });
+      }, 1000);
     } catch (err) {
       setError(err.message || 'Registration failed. Please try again or use another email.');
     } finally {
@@ -93,7 +89,7 @@ export default function Register() {
         boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)',
       }}>
         {/* Header Branding */}
-        <div className="flex flex-col items-center gap-3 text-center" style={{ marginBottom: '20px' }}>
+        <div className="flex flex-col items-center gap-3 text-center" style={{ marginBottom: '28px' }}>
           <div style={{
             background: 'linear-gradient(135deg, var(--primary), var(--accent))',
             padding: '14px',
@@ -111,30 +107,6 @@ export default function Register() {
               Register your profile to access CloudGuard AI
             </p>
           </div>
-        </div>
-
-        {/* Quick Demo Fill Button */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '14px' }}>
-          <button
-            type="button"
-            onClick={handleFillDemo}
-            style={{
-              background: 'rgba(59, 130, 246, 0.12)',
-              border: '1px solid rgba(59, 130, 246, 0.3)',
-              color: '#93c5fd',
-              borderRadius: '8px',
-              padding: '4px 10px',
-              fontSize: '0.78rem',
-              cursor: 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '5px',
-              transition: 'var(--transition)'
-            }}
-          >
-            <Sparkles size={12} color="#60a5fa" />
-            Quick Demo Fill
-          </button>
         </div>
 
         {/* Success Alert */}

@@ -55,11 +55,8 @@ export function AuthProvider({ children }) {
       body: JSON.stringify({ name, email, password, role }),
     });
 
-    localStorage.setItem('token', data.access_token);
-    localStorage.setItem('user', JSON.stringify(data.user));
-    setToken(data.access_token);
-    setUser(data.user);
-    return data.user;
+    // Account created - do not auto-login. The user must manually log in.
+    return data;
   };
 
   const elevateToAdmin = async (adminKey) => {

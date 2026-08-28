@@ -63,14 +63,34 @@ function handleMockFallback(endpoint, options) {
   };
 
   if (endpoint === '/api/v1/auth/login') {
-    const rawEmail = (body.email || 'user@cloudguard.io').trim().toLowerCase();
+    const rawEmail = (body.email || '').trim().toLowerCase();
+    const rawPassword = body.password || '';
     const mockUsers = getMockUsers();
     
-    // Check if user exists or matches admin
+    if (!rawEmail || !rawPassword) {
+      throw new Error('Please enter both email and password.');
+    }
+
     const foundUser = mockUsers.find(u => u.email.toLowerCase() === rawEmail);
     const isAdmin = rawEmail === 'vigneshcloud@gmail.com';
     
-    const loggedUser = foundUser || {
+    // Check registered password if exists
+    if (foundUser && foundUser.password && foundUser.password !== rawPassword) {
+      throw new Error('Invalid email or password. Please check your credentials.');
+    }
+
+    if (isAdmin && rawPassword !== 'cloudvignesh17') {
+      throw new Error('Invalid credentials for Administrator account.');
+    }
+
+    const loggedUser = foundUser ? {
+      id: foundUser.id,
+      name: foundUser.name,
+      email: foundUser.email,
+      role: foundUser.role,
+      is_active: foundUser.is_active,
+      created_at: foundUser.created_at
+    } : {
       id: isAdmin ? 1 : Math.floor(Math.random() * 900) + 10,
       name: isAdmin ? 'Vignesh Cloud Admin' : rawEmail.split('@')[0].replace('.', ' '),
       email: rawEmail,
@@ -87,33 +107,41 @@ function handleMockFallback(endpoint, options) {
   }
 
   if (endpoint === '/api/v1/auth/register') {
-    const rawEmail = (body.email || 'user@company.com').trim().toLowerCase();
+    const rawEmail = (body.email || '').trim().toLowerCase();
     const rawName = (body.name || 'New User').trim();
+    const rawPassword = body.password || '';
     const isAdmin = rawEmail === 'vigneshcloud@gmail.com';
     
     const mockUsers = getMockUsers();
     let existing = mockUsers.find(u => u.email.toLowerCase() === rawEmail);
     
-    let userObj;
     if (existing) {
-      userObj = existing;
-    } else {
-      userObj = {
-        id: Math.floor(Math.random() * 1000) + 20,
-        name: rawName,
-        email: rawEmail,
-        role: isAdmin ? 'admin' : (body.role || 'user'),
-        is_active: true,
-        created_at: new Date().toISOString().replace('T', ' ').slice(0, 19)
-      };
-      mockUsers.push(userObj);
-      saveMockUsers(mockUsers);
+      throw new Error('An account with this email address already exists. Please sign in instead.');
     }
+
+    const userObj = {
+      id: Math.floor(Math.random() * 1000) + 20,
+      name: rawName,
+      email: rawEmail,
+      password: rawPassword,
+      role: isAdmin ? 'admin' : (body.role || 'user'),
+      is_active: true,
+      created_at: new Date().toISOString().replace('T', ' ').slice(0, 19)
+    };
+    mockUsers.push(userObj);
+    saveMockUsers(mockUsers);
 
     return {
       access_token: `mock_jwt_token_${Date.now()}`,
       token_type: 'bearer',
-      user: userObj
+      user: {
+        id: userObj.id,
+        name: userObj.name,
+        email: userObj.email,
+        role: userObj.role,
+        is_active: userObj.is_active,
+        created_at: userObj.created_at
+      }
     };
   }
 
