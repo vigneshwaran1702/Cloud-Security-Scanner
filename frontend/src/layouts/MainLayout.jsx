@@ -1,53 +1,36 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Shield, LayoutDashboard, Cloud, Settings, LogOut, Bell, X, Loader2, CheckCircle } from 'lucide-react';
-import { useState, useEffect } from 'react';
-
-const navItems = [
-  { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { path: '/resources', label: 'Resources', icon: Cloud },
-  { path: '/settings', label: 'Settings', icon: Settings },
-];
+import { Shield, LayoutDashboard, Cloud, Settings, LogOut, Bell, Users, ShieldCheck, Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
+import SecurityChatDrawer from '../components/SecurityChatDrawer';
+import CloudAccountVerifierModal from '../components/CloudAccountVerifierModal';
+import ScanModal from '../components/ScanModal';
 
 const pageTitles = {
   '/dashboard': 'Overview',
   '/resources': 'Cloud Resources',
   '/settings': 'Settings',
+  '/admin/users': 'User Governance',
 };
 
 export default function MainLayout() {
+  const { user, logout, isAdmin } = useAuth();
   const location = useLocation();
   const currentPath = location.pathname;
   const pageTitle = pageTitles[currentPath] || 'Overview';
   
   const [isScanning, setIsScanning] = useState(false);
-  const [scanProgress, setScanProgress] = useState(0);
-  const [scanComplete, setScanComplete] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isVerifierOpen, setIsVerifierOpen] = useState(false);
 
-  const startScan = () => {
-    setIsScanning(true);
-    setScanProgress(0);
-    setScanComplete(false);
-  };
+  const navItems = [
+    { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { path: '/resources', label: 'Resources', icon: Cloud },
+    { path: '/settings', label: 'Settings', icon: Settings },
+    ...(isAdmin ? [{ path: '/admin/users', label: 'User Management', icon: Users }] : []),
+  ];
 
-  useEffect(() => {
-    if (isScanning && !scanComplete) {
-      const interval = setInterval(() => {
-        setScanProgress(prev => {
-          if (prev >= 100) {
-            clearInterval(interval);
-            setScanComplete(true);
-            return 100;
-          }
-          return prev + Math.floor(Math.random() * 15) + 5;
-        });
-      }, 400);
-      return () => clearInterval(interval);
-    }
-  }, [isScanning, scanComplete]);
-
-  const closeScanModal = () => {
-    setIsScanning(false);
-  };
+  const userInitials = user?.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'US';
 
   return (
     <div className="flex" style={{ minHeight: '100vh', position: 'relative' }}>
@@ -85,11 +68,6 @@ export default function MainLayout() {
             );
           })}
         </nav>
-
-        <div className="flex items-center gap-4" style={{ color: 'var(--text-muted)', cursor: 'pointer', padding: '12px', marginTop: 'auto' }}>
-          <LogOut size={20} />
-          <span>Logout</span>
-        </div>
       </aside>
 
       {/* Main Content */}
@@ -97,8 +75,48 @@ export default function MainLayout() {
         {/* Top Header */}
         <header className="glass-panel flex justify-between items-center" style={{ marginBottom: '24px', padding: '16px 24px', borderRadius: '24px' }}>
           <h1 style={{ fontSize: '1.5rem', margin: 0 }}>{pageTitle}</h1>
-          <div className="flex items-center gap-6">
-            <button className="btn btn-primary" onClick={startScan}>
+          <div className="flex items-center gap-4">
+            <button
+              className="btn"
+              onClick={() => setIsVerifierOpen(true)}
+              style={{
+                background: 'rgba(16, 185, 129, 0.15)',
+                border: '1px solid rgba(16, 185, 129, 0.3)',
+                color: '#a7f3d0',
+                padding: '8px 14px',
+                borderRadius: '12px',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              <ShieldCheck size={18} color="var(--success)" />
+              Verify Cloud Status
+            </button>
+
+            <button
+              className="btn"
+              onClick={() => setIsChatOpen(!isChatOpen)}
+              style={{
+                background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(59, 130, 246, 0.25))',
+                border: '1px solid rgba(139, 92, 246, 0.4)',
+                color: '#c084fc',
+                padding: '8px 14px',
+                borderRadius: '12px',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              <Sparkles size={18} color="#c084fc" />
+              Security Chat
+            </button>
+
+            <button className="btn btn-primary" onClick={() => setIsScanning(true)}>
               <Shield size={18} />
               Run Scan
             </button>
@@ -106,14 +124,74 @@ export default function MainLayout() {
               <Bell size={20} color="var(--text-muted)" />
               <div style={{ position: 'absolute', top: '-2px', right: '-2px', width: '8px', height: '8px', background: 'var(--critical)', borderRadius: '50%' }}></div>
             </div>
-            <div className="flex items-center gap-4">
-              <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
-                AD
+            
+            {/* User Profile and Logout Button */}
+            <div className="flex items-center gap-3" style={{ paddingLeft: '8px', borderLeft: '1px solid rgba(255,255,255,0.1)' }}>
+              <div style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                background: isAdmin ? 'linear-gradient(135deg, var(--accent), #7c3aed)' : 'var(--primary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 'bold',
+                color: 'white',
+                fontSize: '0.9rem',
+                flexShrink: 0
+              }}>
+                {userInitials}
               </div>
               <div>
-                <div style={{ fontSize: '0.9rem', fontWeight: 600 }}>Admin User</div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>AWS & Azure</div>
+                <div className="flex items-center gap-2" style={{ fontSize: '0.9rem', fontWeight: 600 }}>
+                  {user?.name || 'User'}
+                  <span style={{
+                    fontSize: '0.7rem',
+                    padding: '2px 8px',
+                    borderRadius: '12px',
+                    background: isAdmin ? 'rgba(139, 92, 246, 0.25)' : 'rgba(59, 130, 246, 0.25)',
+                    color: isAdmin ? '#c084fc' : '#60a5fa',
+                    border: `1px solid ${isAdmin ? 'rgba(139, 92, 246, 0.4)' : 'rgba(59, 130, 246, 0.4)'}`,
+                    fontWeight: 700,
+                    textTransform: 'uppercase'
+                  }}>
+                    {user?.role || 'USER'}
+                  </span>
+                </div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{user?.email}</div>
               </div>
+
+              {/* Logout Button directly near User ID */}
+              <button
+                onClick={logout}
+                title="Log out of account"
+                style={{
+                  background: 'rgba(239, 68, 68, 0.12)',
+                  border: '1px solid rgba(239, 68, 68, 0.25)',
+                  color: '#fca5a5',
+                  padding: '7px 12px',
+                  borderRadius: '10px',
+                  fontSize: '0.82rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  marginLeft: '8px',
+                  transition: 'var(--transition)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(239, 68, 68, 0.22)';
+                  e.currentTarget.style.color = '#ef4444';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(239, 68, 68, 0.12)';
+                  e.currentTarget.style.color = '#fca5a5';
+                }}
+              >
+                <LogOut size={15} />
+                <span>Logout</span>
+              </button>
             </div>
           </div>
         </header>
@@ -124,66 +202,26 @@ export default function MainLayout() {
         </div>
       </main>
 
-      {/* Scan Modal Overlay */}
-      {isScanning && (
-        <div style={{
-          position: 'absolute',
-          top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(15, 23, 42, 0.7)',
-          backdropFilter: 'blur(8px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 50,
-          animation: 'fadeIn 0.3s ease'
-        }}>
-          <div className="glass-panel" style={{ width: '420px', padding: '32px', position: 'relative' }}>
-            <button 
-              onClick={closeScanModal}
-              style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
-            >
-              <X size={20} />
-            </button>
-            
-            <div className="flex flex-col items-center gap-4 text-center">
-              {scanComplete ? (
-                <>
-                  <CheckCircle size={48} color="var(--success)" />
-                  <h3 style={{ fontSize: '1.2rem', margin: 0 }}>Scan Complete</h3>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                    Successfully scanned 356 resources across AWS and Azure. 
-                    No new critical issues found.
-                  </p>
-                  <button className="btn btn-primary" onClick={closeScanModal} style={{ width: '100%', marginTop: '16px' }}>
-                    View Results
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Loader2 size={48} color="var(--primary)" style={{ animation: 'spin 1s linear infinite' }} />
-                  <h3 style={{ fontSize: '1.2rem', margin: 0 }}>Running Security Scan...</h3>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                    Analyzing cloud infrastructure and checking compliance rules.
-                  </p>
-                  
-                  <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', marginTop: '16px', overflow: 'hidden' }}>
-                    <div style={{ 
-                      width: `${Math.min(scanProgress, 100)}%`, 
-                      height: '100%', 
-                      background: 'var(--primary)',
-                      transition: 'width 0.4s ease'
-                    }}></div>
-                  </div>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                    {Math.min(scanProgress, 100)}% Complete
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Full-Screen Centered Multi-Cloud Scan Modal */}
+      <ScanModal
+        isOpen={isScanning}
+        onClose={() => setIsScanning(false)}
+      />
+
+      {/* AI Security Assistant Floating Chat Drawer */}
+      <SecurityChatDrawer
+        isOpen={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+        onOpenCloudVerifier={() => setIsVerifierOpen(true)}
+      />
+
+      {/* Cloud Account Status Verifier Modal */}
+      <CloudAccountVerifierModal
+        isOpen={isVerifierOpen}
+        onClose={() => setIsVerifierOpen(false)}
+      />
     </div>
   );
 }
+
 

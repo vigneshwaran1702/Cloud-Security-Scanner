@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { ShieldAlert, Server, AlertTriangle, CheckCircle, Activity, Box, Loader2, ShieldCheck } from 'lucide-react';
+import { ShieldAlert, Server, AlertTriangle, CheckCircle, Activity, Box, Loader2, ShieldCheck, Cloud, ArrowRight } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import CloudAccountVerifierModal from '../components/CloudAccountVerifierModal';
 
 const initialChartData = [
   { name: 'Mon', score: 72 },
@@ -99,6 +100,7 @@ export default function Dashboard() {
   const [recommendations, setRecommendations] = useState(initialRecommendations);
   const [fixingId, setFixingId] = useState(null);
   const [chartData, setChartData] = useState(initialChartData);
+  const [isVerifierOpen, setIsVerifierOpen] = useState(false);
 
   const handleApplyFix = async (rec) => {
     setFixingId(rec.id);
@@ -140,6 +142,41 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col gap-6 animate-fade-in">
+
+      {/* Cloud Account Status Verification Banner */}
+      <div className="glass-panel flex justify-between items-center" style={{
+        padding: '20px 24px',
+        background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(59, 130, 246, 0.12))',
+        border: '1px solid rgba(16, 185, 129, 0.3)',
+      }}>
+        <div className="flex items-center gap-4">
+          <div style={{ background: 'rgba(16, 185, 129, 0.2)', padding: '10px', borderRadius: '14px' }}>
+            <ShieldCheck size={26} color="var(--success)" />
+          </div>
+          <div>
+            <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'white' }}>Cloud Account Status Verification</h3>
+            <p style={{ margin: '2px 0 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+              Connected Accounts: <strong>AWS (891230912401)</strong>, <strong>Azure (sub-89123)</strong>, <strong>GCP (cloudguard-sec)</strong>
+            </p>
+          </div>
+        </div>
+
+        <button
+          className="btn"
+          onClick={() => setIsVerifierOpen(true)}
+          style={{
+            background: 'var(--success)',
+            color: '#0f172a',
+            fontWeight: 700,
+            padding: '10px 20px',
+            borderRadius: '12px',
+            fontSize: '0.88rem',
+            border: 'none',
+          }}
+        >
+          Verify Cloud Status <ArrowRight size={16} />
+        </button>
+      </div>
 
       {/* Top Stats Cards */}
       <div className="grid grid-cols-4 gap-6">
@@ -340,6 +377,11 @@ export default function Dashboard() {
           })}
         </div>
       </div>
+
+      <CloudAccountVerifierModal
+        isOpen={isVerifierOpen}
+        onClose={() => setIsVerifierOpen(false)}
+      />
 
     </div>
   );
