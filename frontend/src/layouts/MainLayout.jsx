@@ -1,9 +1,10 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Shield, LayoutDashboard, Cloud, Settings, LogOut, Bell, X, Loader2, CheckCircle, Users, MessageSquare, ShieldCheck, Sparkles } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { Shield, LayoutDashboard, Cloud, Settings, LogOut, Bell, Users, ShieldCheck, Sparkles } from 'lucide-react';
+import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import SecurityChatDrawer from '../components/SecurityChatDrawer';
 import CloudAccountVerifierModal from '../components/CloudAccountVerifierModal';
+import ScanModal from '../components/ScanModal';
 
 const pageTitles = {
   '/dashboard': 'Overview',
@@ -19,9 +20,6 @@ export default function MainLayout() {
   const pageTitle = pageTitles[currentPath] || 'Overview';
   
   const [isScanning, setIsScanning] = useState(false);
-  const [scanProgress, setScanProgress] = useState(0);
-  const [scanComplete, setScanComplete] = useState(false);
-
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isVerifierOpen, setIsVerifierOpen] = useState(false);
 
@@ -31,32 +29,6 @@ export default function MainLayout() {
     { path: '/settings', label: 'Settings', icon: Settings },
     ...(isAdmin ? [{ path: '/admin/users', label: 'User Management', icon: Users }] : []),
   ];
-
-  const startScan = () => {
-    setIsScanning(true);
-    setScanProgress(0);
-    setScanComplete(false);
-  };
-
-  useEffect(() => {
-    if (isScanning && !scanComplete) {
-      const interval = setInterval(() => {
-        setScanProgress(prev => {
-          if (prev >= 100) {
-            clearInterval(interval);
-            setScanComplete(true);
-            return 100;
-          }
-          return prev + Math.floor(Math.random() * 15) + 5;
-        });
-      }, 400);
-      return () => clearInterval(interval);
-    }
-  }, [isScanning, scanComplete]);
-
-  const closeScanModal = () => {
-    setIsScanning(false);
-  };
 
   const userInitials = user?.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'US';
 
@@ -96,17 +68,6 @@ export default function MainLayout() {
             );
           })}
         </nav>
-
-        <div
-          onClick={logout}
-          className="flex items-center gap-4"
-          style={{ color: 'var(--text-muted)', cursor: 'pointer', padding: '12px', marginTop: 'auto', transition: 'var(--transition)' }}
-          onMouseEnter={(e) => e.currentTarget.style.color = 'var(--critical)'}
-          onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
-        >
-          <LogOut size={20} />
-          <span>Logout</span>
-        </div>
       </aside>
 
       {/* Main Content */}
@@ -155,7 +116,7 @@ export default function MainLayout() {
               Security Chat
             </button>
 
-            <button className="btn btn-primary" onClick={startScan}>
+            <button className="btn btn-primary" onClick={() => setIsScanning(true)}>
               <Shield size={18} />
               Run Scan
             </button>
@@ -163,7 +124,9 @@ export default function MainLayout() {
               <Bell size={20} color="var(--text-muted)" />
               <div style={{ position: 'absolute', top: '-2px', right: '-2px', width: '8px', height: '8px', background: 'var(--critical)', borderRadius: '50%' }}></div>
             </div>
-            <div className="flex items-center gap-4">
+            
+            {/* User Profile and Logout Button */}
+            <div className="flex items-center gap-3" style={{ paddingLeft: '8px', borderLeft: '1px solid rgba(255,255,255,0.1)' }}>
               <div style={{
                 width: '40px',
                 height: '40px',
@@ -174,7 +137,8 @@ export default function MainLayout() {
                 justifyContent: 'center',
                 fontWeight: 'bold',
                 color: 'white',
-                fontSize: '0.9rem'
+                fontSize: '0.9rem',
+                flexShrink: 0
               }}>
                 {userInitials}
               </div>
@@ -196,6 +160,38 @@ export default function MainLayout() {
                 </div>
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{user?.email}</div>
               </div>
+
+              {/* Logout Button directly near User ID */}
+              <button
+                onClick={logout}
+                title="Log out of account"
+                style={{
+                  background: 'rgba(239, 68, 68, 0.12)',
+                  border: '1px solid rgba(239, 68, 68, 0.25)',
+                  color: '#fca5a5',
+                  padding: '7px 12px',
+                  borderRadius: '10px',
+                  fontSize: '0.82rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  marginLeft: '8px',
+                  transition: 'var(--transition)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(239, 68, 68, 0.22)';
+                  e.currentTarget.style.color = '#ef4444';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(239, 68, 68, 0.12)';
+                  e.currentTarget.style.color = '#fca5a5';
+                }}
+              >
+                <LogOut size={15} />
+                <span>Logout</span>
+              </button>
             </div>
           </div>
         </header>
@@ -206,65 +202,11 @@ export default function MainLayout() {
         </div>
       </main>
 
-      {/* Scan Modal Overlay */}
-      {isScanning && (
-        <div style={{
-          position: 'absolute',
-          top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(15, 23, 42, 0.7)',
-          backdropFilter: 'blur(8px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 50,
-          animation: 'fadeIn 0.3s ease'
-        }}>
-          <div className="glass-panel" style={{ width: '420px', padding: '32px', position: 'relative' }}>
-            <button 
-              onClick={closeScanModal}
-              style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
-            >
-              <X size={20} />
-            </button>
-            
-            <div className="flex flex-col items-center gap-4 text-center">
-              {scanComplete ? (
-                <>
-                  <CheckCircle size={48} color="var(--success)" />
-                  <h3 style={{ fontSize: '1.2rem', margin: 0 }}>Scan Complete</h3>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                    Successfully scanned 356 resources across AWS and Azure. 
-                    No new critical issues found.
-                  </p>
-                  <button className="btn btn-primary" onClick={closeScanModal} style={{ width: '100%', marginTop: '16px' }}>
-                    View Results
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Loader2 size={48} color="var(--primary)" style={{ animation: 'spin 1s linear infinite' }} />
-                  <h3 style={{ fontSize: '1.2rem', margin: 0 }}>Running Security Scan...</h3>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                    Analyzing cloud infrastructure and checking compliance rules.
-                  </p>
-                  
-                  <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', marginTop: '16px', overflow: 'hidden' }}>
-                    <div style={{ 
-                      width: `${Math.min(scanProgress, 100)}%`, 
-                      height: '100%', 
-                      background: 'var(--primary)',
-                      transition: 'width 0.4s ease'
-                    }}></div>
-                  </div>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                    {Math.min(scanProgress, 100)}% Complete
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Full-Screen Centered Multi-Cloud Scan Modal */}
+      <ScanModal
+        isOpen={isScanning}
+        onClose={() => setIsScanning(false)}
+      />
 
       {/* AI Security Assistant Floating Chat Drawer */}
       <SecurityChatDrawer
