@@ -12,8 +12,14 @@ export default function Register() {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { register } = useAuth();
+  const { register, user } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,12 +39,12 @@ export default function Register() {
     setLoading(true);
 
     try {
-      // Standard users are registered as 'user' role automatically by the backend/context
+      // Standard users are registered and authenticated automatically
       await register(name.trim(), email.trim().toLowerCase(), password, 'user');
-      setSuccess('Account created successfully! Redirecting to login...');
+      setSuccess('Account created successfully! Logging you in...');
       setTimeout(() => {
-        navigate('/login', { state: { registeredEmail: email.trim().toLowerCase() } });
-      }, 1500);
+        navigate('/dashboard', { replace: true });
+      }, 800);
     } catch (err) {
       setError(err.message || 'Registration failed. Please try again.');
     } finally {
@@ -97,7 +103,7 @@ export default function Register() {
           gap: '8px'
         }}>
           <Shield size={16} color="var(--primary)" style={{ flexShrink: 0 }} />
-          <span>Every user must register their own name, email, and password first before logging in.</span>
+          <span>Create your account to automatically log in and access the dashboard.</span>
         </div>
 
         {/* Success Alert */}
