@@ -10,7 +10,7 @@ const typeIcons = {
   info: { icon: Info, color: 'var(--primary)', bg: 'rgba(59, 130, 246, 0.15)', border: 'rgba(59, 130, 246, 0.3)' },
 };
 
-export default function NotificationsPopover({ isOpen, onClose }) {
+export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
   const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification, clearAll } = useNotifications();
   const [filter, setFilter] = useState('all');
   const popoverRef = useRef(null);
@@ -19,7 +19,11 @@ export default function NotificationsPopover({ isOpen, onClose }) {
   // Close when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
-      if (popoverRef.current && !popoverRef.current.contains(event.target)) {
+      if (
+        popoverRef.current &&
+        !popoverRef.current.contains(event.target) &&
+        (!triggerRef?.current || !triggerRef.current.contains(event.target))
+      ) {
         onClose();
       }
     }
@@ -29,7 +33,7 @@ export default function NotificationsPopover({ isOpen, onClose }) {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, triggerRef]);
 
   if (!isOpen) return null;
 
@@ -52,22 +56,22 @@ export default function NotificationsPopover({ isOpen, onClose }) {
       ref={popoverRef}
       style={{
         position: 'absolute',
-        top: '64px',
-        right: '180px',
-        width: '420px',
+        top: 'calc(100% + 10px)',
+        right: '0',
+        width: '380px',
         maxWidth: 'calc(100vw - 32px)',
         zIndex: 1100,
-        background: 'rgba(15, 23, 42, 0.95)',
+        background: 'rgba(15, 23, 42, 0.96)',
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
         border: '1px solid rgba(255, 255, 255, 0.15)',
         borderRadius: '20px',
-        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.15)',
+        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6), 0 0 24px rgba(59, 130, 246, 0.2)',
         overflow: 'hidden',
         animation: 'fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
         display: 'flex',
         flexDirection: 'column',
-        maxHeight: '560px',
+        maxHeight: '520px',
       }}
     >
       {/* Header */}
