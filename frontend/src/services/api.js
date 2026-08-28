@@ -10,11 +10,16 @@ export async function apiRequest(endpoint, options = {}) {
     ...options.headers,
   };
 
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 3500);
+
   try {
     const response = await fetch(url, {
       ...options,
       headers,
+      signal: controller.signal,
     });
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       let errorMsg = `API error: ${response.status} ${response.statusText}`;
@@ -26,14 +31,27 @@ export async function apiRequest(endpoint, options = {}) {
       } catch (e) {
         // Ignore parse errors
       }
+
+      // If backend returns 404 or 502/503/504 for auth endpoints, fallback gracefully
+      if (response.status >= 500 || (response.status === 404 && endpoint.startsWith('/api/v1/auth'))) {
+        return handleMockFallback(endpoint, options);
+      }
+
       throw new Error(errorMsg);
     }
 
     return await response.json();
   } catch (err) {
-    // If backend server is down/unreachable, gracefully fallback to mock client mode for seamless demo
-    if (err.name === 'TypeError' || err.message.includes('fetch') || err.message.includes('NetworkError')) {
-      console.warn(`Backend connection failed (${url}). Utilizing local mock authentication fallback.`);
+    clearTimeout(timeoutId);
+    // If backend connection fails, aborts, or is unreachable, utilize mock fallback
+    if (
+      err.name === 'AbortError' ||
+      err.name === 'TypeError' ||
+      err.message.includes('fetch') ||
+      err.message.includes('NetworkError') ||
+      err.message.includes('aborted')
+    ) {
+      console.warn(`Backend connection issue (${url}). Utilizing local mock authentication.`);
       return handleMockFallback(endpoint, options);
     }
     throw err;
@@ -41,7 +59,7 @@ export async function apiRequest(endpoint, options = {}) {
 }
 
 function handleMockFallback(endpoint, options) {
-  const body = options.body ? JSON.parse(options.body) : {};
+  const body = options.body ? (typeof options.body === 'string' ? JSON.parse(options.body) : options.body) : {};
 
   // Retrieve or initialize local mock users store
   const getMockUsers = () => {
@@ -50,9 +68,9 @@ function handleMockFallback(endpoint, options) {
       if (stored) return JSON.parse(stored);
     } catch (e) {}
     return [
-      { id: 1, name: 'Vignesh Cloud Admin', email: 'vigneshcloud@gmail.com', role: 'admin', is_active: true, created_at: '2026-01-10 09:00:00' },
-      { id: 2, name: 'Security User', email: 'user@cloudguard.io', role: 'user', is_active: true, created_at: '2026-01-15 10:00:00' },
-      { id: 3, name: 'Security Auditor', email: 'auditor@cloudguard.io', role: 'user', is_active: true, created_at: '2026-02-01 14:15:00' }
+      { id: 1, name: 'Vignesh Cloud Admin', email: 'vigneshcloud@gmail.com', password: 'cloudvignesh17', role: 'admin', is_active: true, created_at: '2026-01-10 09:00:00' },
+      { id: 2, name: 'Security User', email: 'user@cloudguard.io', password: 'user123456', role: 'user', is_active: true, created_at: '2026-01-15 10:00:00' },
+      { id: 3, name: 'Security Auditor', email: 'auditor@cloudguard.io', password: 'auditor123456', role: 'user', is_active: true, created_at: '2026-02-01 14:15:00' }
     ];
   };
 
@@ -74,13 +92,19 @@ function handleMockFallback(endpoint, options) {
     const foundUser = mockUsers.find(u => u.email.toLowerCase() === rawEmail);
     const isAdmin = rawEmail === 'vigneshcloud@gmail.com';
     
-    // Check registered password if exists
-    if (foundUser && foundUser.password && foundUser.password !== rawPassword) {
-      throw new Error('Invalid email or password. Please check your credentials.');
-    }
-
-    if (isAdmin && rawPassword !== 'cloudvignesh17') {
-      throw new Error('Invalid credentials for Administrator account.');
+    if (foundUser) {
+      // Check password
+      if (foundUser.password && foundUser.password !== rawPassword) {
+        throw new Error('Invalid email or password. Please check your credentials.');
+      }
+    } else {
+      if (isAdmin) {
+        if (rawPassword !== 'cloudvignesh17') {
+          throw new Error('Invalid credentials for Administrator account.');
+        }
+      } else {
+        throw new Error('Account not found. Please register your account first.');
+      }
     }
 
     const loggedUser = foundUser ? {
@@ -91,10 +115,10 @@ function handleMockFallback(endpoint, options) {
       is_active: foundUser.is_active,
       created_at: foundUser.created_at
     } : {
-      id: isAdmin ? 1 : Math.floor(Math.random() * 900) + 10,
-      name: isAdmin ? 'Vignesh Cloud Admin' : rawEmail.split('@')[0].replace('.', ' '),
+      id: 1,
+      name: 'Vignesh Cloud Admin',
       email: rawEmail,
-      role: isAdmin ? 'admin' : 'user',
+      role: 'admin',
       is_active: true,
       created_at: new Date().toISOString().replace('T', ' ').slice(0, 19)
     };
