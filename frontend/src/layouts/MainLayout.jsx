@@ -2,9 +2,11 @@ import { Outlet, Link, useLocation } from 'react-router-dom';
 import { Shield, LayoutDashboard, Cloud, Settings, LogOut, Bell, Users, ShieldCheck, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useNotifications } from '../context/NotificationContext';
 import SecurityChatDrawer from '../components/SecurityChatDrawer';
 import CloudAccountVerifierModal from '../components/CloudAccountVerifierModal';
 import ScanModal from '../components/ScanModal';
+import NotificationsPopover from '../components/NotificationsPopover';
 
 const pageTitles = {
   '/dashboard': 'Overview',
@@ -15,6 +17,7 @@ const pageTitles = {
 
 export default function MainLayout() {
   const { user, logout, isAdmin } = useAuth();
+  const { unreadCount } = useNotifications();
   const location = useLocation();
   const currentPath = location.pathname;
   const pageTitle = pageTitles[currentPath] || 'Overview';
@@ -22,6 +25,7 @@ export default function MainLayout() {
   const [isScanning, setIsScanning] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isVerifierOpen, setIsVerifierOpen] = useState(false);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -120,9 +124,50 @@ export default function MainLayout() {
               <Shield size={18} />
               Run Scan
             </button>
-            <div style={{ position: 'relative', cursor: 'pointer' }}>
-              <Bell size={20} color="var(--text-muted)" />
-              <div style={{ position: 'absolute', top: '-2px', right: '-2px', width: '8px', height: '8px', background: 'var(--critical)', borderRadius: '50%' }}></div>
+            <div style={{ position: 'relative' }}>
+              <button
+                type="button"
+                onClick={() => setIsNotifOpen(!isNotifOpen)}
+                style={{
+                  background: isNotifOpen ? 'rgba(255,255,255,0.1)' : 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '8px',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  position: 'relative'
+                }}
+                title="Security Notifications"
+              >
+                <Bell size={20} color={isNotifOpen ? 'white' : 'var(--text-muted)'} />
+                {unreadCount > 0 && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '4px',
+                    right: '4px',
+                    minWidth: '16px',
+                    height: '16px',
+                    padding: '0 4px',
+                    background: 'var(--critical)',
+                    color: 'white',
+                    fontSize: '0.65rem',
+                    fontWeight: 'bold',
+                    borderRadius: '10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </div>
+                )}
+              </button>
+
+              <NotificationsPopover
+                isOpen={isNotifOpen}
+                onClose={() => setIsNotifOpen(false)}
+              />
             </div>
             
             {/* User Profile and Logout Button */}
