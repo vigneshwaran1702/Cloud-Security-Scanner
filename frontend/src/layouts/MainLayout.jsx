@@ -1,6 +1,6 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { Shield, LayoutDashboard, Cloud, Settings, LogOut, Bell, Users, ShieldCheck, Sparkles } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNotifications } from '../context/NotificationContext';
 import SecurityChatDrawer from '../components/SecurityChatDrawer';
@@ -26,6 +26,7 @@ export default function MainLayout() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isVerifierOpen, setIsVerifierOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const bellBtnRef = useRef(null);
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -126,6 +127,7 @@ export default function MainLayout() {
             </button>
             <div style={{ position: 'relative' }}>
               <button
+                ref={bellBtnRef}
                 type="button"
                 onClick={() => setIsNotifOpen(!isNotifOpen)}
                 style={{
@@ -167,6 +169,7 @@ export default function MainLayout() {
               <NotificationsPopover
                 isOpen={isNotifOpen}
                 onClose={() => setIsNotifOpen(false)}
+                triggerRef={bellBtnRef}
               />
             </div>
             
