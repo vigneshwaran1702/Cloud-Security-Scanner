@@ -25,6 +25,7 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
+  const drawerRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -33,6 +34,37 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
   useEffect(() => {
     scrollToBottom();
   }, [messages, isOpen]);
+
+  // Close on outside click
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (drawerRef.current && !drawerRef.current.contains(event.target)) {
+        // Only if not clicking trigger button
+        if (!event.target.closest('[data-chat-trigger]')) {
+          onClose();
+        }
+      }
+    }
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, onClose]);
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -117,24 +149,27 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
   };
 
   return (
-    <div style={{
-      position: 'fixed',
-      bottom: '24px',
-      right: '24px',
-      width: '420px',
-      height: '600px',
-      maxHeight: 'calc(100vh - 48px)',
-      background: 'rgba(15, 23, 42, 0.95)',
-      backdropFilter: 'blur(16px)',
-      border: '1px solid rgba(255, 255, 255, 0.15)',
-      borderRadius: '24px',
-      boxShadow: '0 25px 60px rgba(0, 0, 0, 0.6)',
-      display: 'flex',
-      flexDirection: 'column',
-      zIndex: 1000,
-      overflow: 'hidden',
-      animation: 'fadeIn 0.3s ease-out',
-    }}>
+    <div
+      ref={drawerRef}
+      style={{
+        position: 'fixed',
+        top: '88px',
+        right: '24px',
+        width: '420px',
+        height: '620px',
+        maxHeight: 'calc(100vh - 110px)',
+        background: '#0d1527',
+        backdropFilter: 'blur(16px)',
+        border: '1px solid rgba(255, 255, 255, 0.18)',
+        borderRadius: '24px',
+        boxShadow: '0 25px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+        display: 'flex',
+        flexDirection: 'column',
+        zIndex: 2000,
+        overflow: 'hidden',
+        animation: 'fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+      }}
+    >
       {/* Header */}
       <div style={{
         padding: '16px 20px',
