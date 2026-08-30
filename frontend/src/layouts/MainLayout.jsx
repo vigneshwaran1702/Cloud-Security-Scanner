@@ -78,7 +78,7 @@ export default function MainLayout() {
       {/* Main Content */}
       <main className="flex-col flex" style={{ flex: 1, padding: '16px 16px 16px 0', overflow: 'hidden' }}>
         {/* Top Header */}
-        <header className="glass-panel flex justify-between items-center" style={{ marginBottom: '24px', padding: '16px 24px', borderRadius: '24px' }}>
+        <header className="glass-panel flex justify-between items-center" style={{ position: 'relative', zIndex: 100, marginBottom: '24px', padding: '16px 24px', borderRadius: '24px' }}>
           <h1 style={{ fontSize: '1.5rem', margin: 0 }}>{pageTitle}</h1>
           <div className="flex items-center gap-4">
             <button
@@ -131,19 +131,20 @@ export default function MainLayout() {
                 type="button"
                 onClick={() => setIsNotifOpen(!isNotifOpen)}
                 style={{
-                  background: isNotifOpen ? 'rgba(255,255,255,0.1)' : 'none',
-                  border: 'none',
+                  background: isNotifOpen ? 'rgba(59, 130, 246, 0.25)' : 'rgba(255, 255, 255, 0.05)',
+                  border: isNotifOpen ? '1px solid rgba(59, 130, 246, 0.4)' : '1px solid rgba(255, 255, 255, 0.1)',
                   cursor: 'pointer',
                   padding: '8px',
                   borderRadius: '10px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  position: 'relative'
+                  position: 'relative',
+                  transition: 'all 0.2s ease',
                 }}
                 title="Security Notifications"
               >
-                <Bell size={20} color={isNotifOpen ? 'white' : 'var(--text-muted)'} />
+                <Bell size={20} color={isNotifOpen ? '#ffffff' : 'var(--text-muted)'} />
                 {unreadCount > 0 && (
                   <div style={{
                     position: 'absolute',
@@ -159,7 +160,8 @@ export default function MainLayout() {
                     borderRadius: '10px',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
+                    boxShadow: '0 2px 6px rgba(239, 68, 68, 0.4)'
                   }}>
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </div>
