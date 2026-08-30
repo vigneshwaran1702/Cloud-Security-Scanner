@@ -27,6 +27,7 @@ export default function MainLayout() {
   const [isVerifierOpen, setIsVerifierOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const bellBtnRef = useRef(null);
+  const verifierBtnRef = useRef(null);
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -81,32 +82,47 @@ export default function MainLayout() {
         <header className="glass-panel flex justify-between items-center" style={{ position: 'relative', zIndex: 100, marginBottom: '24px', padding: '16px 24px', borderRadius: '24px' }}>
           <h1 style={{ fontSize: '1.5rem', margin: 0 }}>{pageTitle}</h1>
           <div className="flex items-center gap-4">
-            <button
-              className="btn"
-              onClick={() => setIsVerifierOpen(true)}
-              style={{
-                background: 'rgba(16, 185, 129, 0.15)',
-                border: '1px solid rgba(16, 185, 129, 0.3)',
-                color: '#a7f3d0',
-                padding: '8px 14px',
-                borderRadius: '12px',
-                fontSize: '0.85rem',
-                fontWeight: 600,
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px'
-              }}
-            >
-              <ShieldCheck size={18} color="var(--success)" />
-              Verify Cloud Status
-            </button>
+            {/* Verify Cloud Status Dropdown Popover */}
+            <div style={{ position: 'relative' }}>
+              <button
+                ref={verifierBtnRef}
+                className="btn"
+                type="button"
+                onClick={() => setIsVerifierOpen(!isVerifierOpen)}
+                style={{
+                  background: isVerifierOpen ? 'rgba(16, 185, 129, 0.28)' : 'rgba(16, 185, 129, 0.15)',
+                  border: isVerifierOpen ? '1px solid rgba(16, 185, 129, 0.5)' : '1px solid rgba(16, 185, 129, 0.3)',
+                  color: '#a7f3d0',
+                  padding: '8px 14px',
+                  borderRadius: '12px',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                }}
+                title="Verify Cloud Connection & Security Status"
+              >
+                <ShieldCheck size={18} color="var(--success)" />
+                Verify Cloud Status
+              </button>
+
+              <CloudAccountVerifierModal
+                isOpen={isVerifierOpen}
+                onClose={() => setIsVerifierOpen(false)}
+                triggerRef={verifierBtnRef}
+              />
+            </div>
 
             <button
               className="btn"
+              data-chat-trigger="true"
               onClick={() => setIsChatOpen(!isChatOpen)}
               style={{
-                background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(59, 130, 246, 0.25))',
-                border: '1px solid rgba(139, 92, 246, 0.4)',
+                background: isChatOpen ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.4), rgba(59, 130, 246, 0.4))' : 'linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(59, 130, 246, 0.25))',
+                border: isChatOpen ? '1px solid rgba(139, 92, 246, 0.6)' : '1px solid rgba(139, 92, 246, 0.4)',
                 color: '#c084fc',
                 padding: '8px 14px',
                 borderRadius: '12px',
@@ -114,7 +130,9 @@ export default function MainLayout() {
                 fontWeight: 600,
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '6px'
+                gap: '6px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
               }}
             >
               <Sparkles size={18} color="#c084fc" />
@@ -263,12 +281,6 @@ export default function MainLayout() {
         isOpen={isChatOpen}
         onClose={() => setIsChatOpen(false)}
         onOpenCloudVerifier={() => setIsVerifierOpen(true)}
-      />
-
-      {/* Cloud Account Status Verifier Modal */}
-      <CloudAccountVerifierModal
-        isOpen={isVerifierOpen}
-        onClose={() => setIsVerifierOpen(false)}
       />
     </div>
   );
