@@ -72,10 +72,10 @@ export default function AdminUsers() {
         <div className="flex justify-between items-center flex-wrap gap-4">
           <div className="flex items-center gap-4">
             <div style={{
-              background: 'linear-gradient(135deg, var(--accent), #7c3aed)',
+              background: 'linear-gradient(135deg, var(--primary), var(--accent))',
               padding: '12px',
               borderRadius: '16px',
-              boxShadow: '0 8px 24px rgba(139, 92, 246, 0.3)'
+              boxShadow: '0 8px 24px rgba(220, 38, 38, 0.3)'
             }}>
               <Users size={28} color="white" />
             </div>
@@ -97,10 +97,10 @@ export default function AdminUsers() {
               style={{
                 width: '100%',
                 padding: '10px 14px 10px 38px',
-                background: 'rgba(15, 23, 42, 0.6)',
+                background: 'var(--input-bg)',
                 border: '1px solid var(--border-color)',
                 borderRadius: '12px',
-                color: 'white',
+                color: 'var(--text-main)',
                 fontSize: '0.85rem',
                 outline: 'none',
               }}
@@ -116,7 +116,7 @@ export default function AdminUsers() {
           border: `1px solid ${actionMsg.type === 'error' ? 'var(--critical)' : 'var(--success)'}`,
           borderRadius: '12px',
           padding: '12px 16px',
-          color: actionMsg.type === 'error' ? '#fca5a5' : '#a7f3d0',
+          color: actionMsg.type === 'error' ? 'var(--critical)' : 'var(--success)',
           fontSize: '0.85rem',
           display: 'flex',
           alignItems: 'center',
@@ -128,11 +128,11 @@ export default function AdminUsers() {
       )}
 
       {/* Users Table */}
-      <div className="glass-panel" style={{ borderRadius: '24px', overflow: 'hidden' }}>
+      <div className="glass-panel" style={{ borderRadius: '24px', overflow: 'hidden', padding: 0 }}>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
             <thead>
-              <tr style={{ background: 'rgba(255, 255, 255, 0.02)', borderBottom: '1px solid var(--border-color)' }}>
+              <tr style={{ background: 'var(--panel-inner-bg)', borderBottom: '1px solid var(--border-color)' }}>
                 <th style={{ padding: '16px 20px', fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>USER</th>
                 <th style={{ padding: '16px 20px', fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>ROLE</th>
                 <th style={{ padding: '16px 20px', fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>STATUS</th>
@@ -157,25 +157,26 @@ export default function AdminUsers() {
                 filteredUsers.map(u => {
                   const isVigneshAdmin = u.email.toLowerCase() === 'vigneshcloud@gmail.com';
                   return (
-                    <tr key={u.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.04)', transition: 'background 0.2s' }}>
+                    <tr key={u.id} style={{ borderBottom: '1px solid var(--border-color)', transition: 'background 0.2s' }}>
                       <td style={{ padding: '16px 20px' }}>
                         <div className="flex items-center gap-3">
                           <div style={{
                             width: '36px',
                             height: '36px',
                             borderRadius: '50%',
-                            background: u.role === 'admin' ? 'linear-gradient(135deg, var(--accent), #7c3aed)' : 'var(--primary)',
+                            background: u.role === 'admin' ? 'linear-gradient(135deg, var(--primary), var(--accent))' : 'var(--primary)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             fontWeight: 'bold',
                             color: 'white',
-                            fontSize: '0.85rem'
+                            fontSize: '0.85rem',
+                            boxShadow: '0 2px 8px rgba(220, 38, 38, 0.3)'
                           }}>
                             {(u.name || 'User').charAt(0).toUpperCase()}
                           </div>
                           <div>
-                            <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{u.name}</div>
+                            <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-main)' }}>{u.name}</div>
                             <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{u.email}</div>
                           </div>
                         </div>
@@ -185,9 +186,9 @@ export default function AdminUsers() {
                           fontSize: '0.75rem',
                           padding: '4px 10px',
                           borderRadius: '12px',
-                          background: u.role === 'admin' ? 'rgba(139, 92, 246, 0.2)' : 'rgba(59, 130, 246, 0.2)',
-                          color: u.role === 'admin' ? '#c084fc' : '#60a5fa',
-                          border: `1px solid ${u.role === 'admin' ? 'rgba(139, 92, 246, 0.4)' : 'rgba(59, 130, 246, 0.4)'}`,
+                          background: u.role === 'admin' ? 'var(--badge-primary-bg)' : 'rgba(59, 130, 246, 0.15)',
+                          color: u.role === 'admin' ? 'var(--primary)' : 'var(--low)',
+                          border: `1px solid ${u.role === 'admin' ? 'var(--badge-primary-border)' : 'rgba(59, 130, 246, 0.3)'}`,
                           fontWeight: 700,
                           textTransform: 'uppercase'
                         }}>
@@ -200,7 +201,7 @@ export default function AdminUsers() {
                           padding: '4px 10px',
                           borderRadius: '12px',
                           background: 'rgba(16, 185, 129, 0.15)',
-                          color: '#a7f3d0',
+                          color: 'var(--success)',
                           border: '1px solid rgba(16, 185, 129, 0.3)',
                           display: 'inline-flex',
                           alignItems: 'center',
@@ -216,7 +217,7 @@ export default function AdminUsers() {
                       <td style={{ padding: '16px 20px', textAlign: 'right' }}>
                         <div className="flex items-center justify-end gap-2">
                           {isVigneshAdmin ? (
-                            <span style={{ fontSize: '0.75rem', color: 'var(--accent)', fontWeight: 600, padding: '6px 10px', background: 'rgba(139, 92, 246, 0.1)', borderRadius: '8px' }}>
+                            <span style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: 600, padding: '6px 10px', background: 'var(--badge-primary-bg)', border: '1px solid var(--badge-primary-border)', borderRadius: '8px' }}>
                               Primary SuperAdmin
                             </span>
                           ) : (
@@ -225,9 +226,9 @@ export default function AdminUsers() {
                                 onClick={() => handleRoleChange(u.id, u.role === 'admin' ? 'user' : 'admin')}
                                 title="Change user role"
                                 style={{
-                                  background: 'rgba(59, 130, 246, 0.1)',
-                                  border: '1px solid rgba(59, 130, 246, 0.3)',
-                                  color: '#93c5fd',
+                                  background: 'var(--panel-inner-bg)',
+                                  border: '1px solid var(--border-color)',
+                                  color: 'var(--text-main)',
                                   padding: '6px 10px',
                                   borderRadius: '8px',
                                   fontSize: '0.78rem',
@@ -246,7 +247,7 @@ export default function AdminUsers() {
                                 style={{
                                   background: 'rgba(239, 68, 68, 0.1)',
                                   border: '1px solid rgba(239, 68, 68, 0.3)',
-                                  color: '#fca5a5',
+                                  color: 'var(--critical)',
                                   padding: '6px',
                                   borderRadius: '8px',
                                   cursor: 'pointer',

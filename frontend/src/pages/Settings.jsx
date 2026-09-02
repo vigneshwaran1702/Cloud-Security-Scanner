@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Cloud, Shield, Key, Bell, Clock, AlertTriangle, Save, ToggleLeft, ToggleRight, Mail, MessageSquare, Zap, CreditCard, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Cloud, Shield, Key, Bell, Clock, AlertTriangle, Save, ToggleLeft, ToggleRight, Mail, MessageSquare, Zap, CreditCard, Sparkles, ArrowRight, ShieldCheck, Sun, Moon, Palette } from 'lucide-react';
 import { useSubscription } from '../context/SubscriptionContext';
+import { useTheme } from '../context/ThemeContext';
 
 const initialSettings = {
   aws: {
@@ -61,11 +62,11 @@ function SettingsInput({ label, value, onChange, type = 'text', placeholder }) {
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
         style={{
-          background: 'rgba(255,255,255,0.05)',
+          background: 'var(--input-bg)',
           border: '1px solid var(--border-color)',
           color: 'var(--text-main)',
           padding: '10px 14px',
-          borderRadius: '8px',
+          borderRadius: '10px',
           fontSize: '0.9rem',
           outline: 'none',
           transition: 'var(--transition)',
@@ -86,18 +87,18 @@ function SettingsSelect({ label, value, onChange, options }) {
         value={value}
         onChange={e => onChange(e.target.value)}
         style={{
-          background: 'rgba(255,255,255,0.05)',
+          background: 'var(--input-bg)',
           border: '1px solid var(--border-color)',
           color: 'var(--text-main)',
           padding: '10px 14px',
-          borderRadius: '8px',
+          borderRadius: '10px',
           fontSize: '0.9rem',
           outline: 'none',
           cursor: 'pointer',
         }}
       >
         {options.map(opt => (
-          <option key={opt} value={opt} style={{ background: 'var(--bg-color)' }}>{opt}</option>
+          <option key={opt} value={opt} style={{ background: 'var(--bg-color)', color: 'var(--text-main)' }}>{opt}</option>
         ))}
       </select>
     </div>
@@ -106,6 +107,7 @@ function SettingsSelect({ label, value, onChange, options }) {
 
 export default function Settings() {
   const { currentPlan, activeTier, isPro, invoices } = useSubscription();
+  const { theme, setTheme } = useTheme();
   const [settings, setSettings] = useState(initialSettings);
   const [saved, setSaved] = useState(false);
 
@@ -171,12 +173,126 @@ export default function Settings() {
 
   return (
     <div className="flex flex-col gap-6 animate-fade-in" style={{ maxWidth: '1000px', margin: '0 auto', paddingBottom: '32px' }}>
+      
+      {/* Appearance & Theme Selector */}
+      <div className="glass-panel" style={{ padding: '28px' }}>
+        <div className="flex items-center gap-3" style={{ marginBottom: '20px' }}>
+          <div style={{ padding: '10px', borderRadius: '12px', background: 'var(--badge-primary-bg)', border: '1px solid var(--badge-primary-border)' }}>
+            <Palette size={22} color="var(--primary)" />
+          </div>
+          <div>
+            <h3 style={{ fontSize: '1.2rem', margin: 0 }}>Appearance & Color Palette</h3>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: '2px 0 0' }}>
+              Choose between Light (White & Red) or Dark (Black) theme for your security portal
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-6">
+          {/* Light Theme Option Card */}
+          <div
+            onClick={() => setTheme('light')}
+            style={{
+              padding: '20px',
+              borderRadius: '16px',
+              cursor: 'pointer',
+              background: theme === 'light' ? 'rgba(220, 38, 38, 0.08)' : 'var(--panel-inner-bg)',
+              border: theme === 'light' ? '2px solid var(--primary)' : '1px solid var(--border-color)',
+              boxShadow: theme === 'light' ? '0 8px 24px rgba(220, 38, 38, 0.18)' : 'none',
+              transition: 'var(--transition)',
+              position: 'relative',
+            }}
+          >
+            {theme === 'light' && (
+              <span style={{
+                position: 'absolute',
+                top: '12px',
+                right: '12px',
+                fontSize: '0.72rem',
+                fontWeight: 700,
+                padding: '2px 8px',
+                borderRadius: '8px',
+                background: 'var(--primary)',
+                color: '#fff',
+              }}>
+                ACTIVE
+              </span>
+            )}
+            <div className="flex items-center gap-3" style={{ marginBottom: '12px' }}>
+              <div style={{ padding: '8px', borderRadius: '10px', background: '#dc2626', color: '#fff' }}>
+                <Sun size={20} />
+              </div>
+              <div>
+                <h4 style={{ fontSize: '1.05rem', margin: 0, color: 'var(--text-main)' }}>Light Theme</h4>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>White & Red Color Palette</span>
+              </div>
+            </div>
+
+            {/* Visual Palette Preview */}
+            <div className="flex gap-2" style={{ marginTop: '14px' }}>
+              <div style={{ flex: 1, height: '24px', borderRadius: '6px', background: '#ffffff', border: '1px solid #e2e8f0' }} title="Pure White Background" />
+              <div style={{ flex: 1, height: '24px', borderRadius: '6px', background: '#dc2626' }} title="Crimson Red Accent" />
+              <div style={{ flex: 1, height: '24px', borderRadius: '6px', background: '#e11d48' }} title="Rose Gradient" />
+              <div style={{ flex: 1, height: '24px', borderRadius: '6px', background: '#0f172a' }} title="Charcoal Text" />
+            </div>
+          </div>
+
+          {/* Dark Theme Option Card */}
+          <div
+            onClick={() => setTheme('dark')}
+            style={{
+              padding: '20px',
+              borderRadius: '16px',
+              cursor: 'pointer',
+              background: theme === 'dark' ? 'rgba(239, 68, 68, 0.14)' : 'var(--panel-inner-bg)',
+              border: theme === 'dark' ? '2px solid var(--primary)' : '1px solid var(--border-color)',
+              boxShadow: theme === 'dark' ? '0 8px 24px rgba(239, 68, 68, 0.25)' : 'none',
+              transition: 'var(--transition)',
+              position: 'relative',
+            }}
+          >
+            {theme === 'dark' && (
+              <span style={{
+                position: 'absolute',
+                top: '12px',
+                right: '12px',
+                fontSize: '0.72rem',
+                fontWeight: 700,
+                padding: '2px 8px',
+                borderRadius: '8px',
+                background: 'var(--primary)',
+                color: '#fff',
+              }}>
+                ACTIVE
+              </span>
+            )}
+            <div className="flex items-center gap-3" style={{ marginBottom: '12px' }}>
+              <div style={{ padding: '8px', borderRadius: '10px', background: '#ef4444', color: '#fff' }}>
+                <Moon size={20} />
+              </div>
+              <div>
+                <h4 style={{ fontSize: '1.05rem', margin: 0, color: 'var(--text-main)' }}>Dark Theme</h4>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Pure Black & Red Glow</span>
+              </div>
+            </div>
+
+            {/* Visual Palette Preview */}
+            <div className="flex gap-2" style={{ marginTop: '14px' }}>
+              <div style={{ flex: 1, height: '24px', borderRadius: '6px', background: '#030712', border: '1px solid rgba(255,255,255,0.2)' }} title="Pitch Black Background" />
+              <div style={{ flex: 1, height: '24px', borderRadius: '6px', background: '#ef4444' }} title="Cyber Red" />
+              <div style={{ flex: 1, height: '24px', borderRadius: '6px', background: '#e11d48' }} title="Ruby Accent" />
+              <div style={{ flex: 1, height: '24px', borderRadius: '6px', background: '#f8fafc' }} title="Pure White Text" />
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Subscription & Billing Management */}
-      <div className="glass-panel" style={{ padding: '28px', border: isPro ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid rgba(139, 92, 246, 0.4)' }}>
+      <div className="glass-panel" style={{ padding: '28px', border: isPro ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid var(--border-color)' }}>
         <div className="flex justify-between items-center" style={{ marginBottom: '20px' }}>
           <div className="flex items-center gap-3">
-            <div style={{ padding: '10px', borderRadius: '12px', background: isPro ? 'rgba(16, 185, 129, 0.15)' : 'rgba(139, 92, 246, 0.15)' }}>
-              <Zap size={22} color={isPro ? '#34d399' : '#c084fc'} />
+            <div style={{ padding: '10px', borderRadius: '12px', background: isPro ? 'rgba(16, 185, 129, 0.15)' : 'var(--badge-primary-bg)' }}>
+              <Zap size={22} color={isPro ? 'var(--success)' : 'var(--primary)'} />
             </div>
             <div>
               <h3 style={{ fontSize: '1.2rem', margin: 0 }}>Subscription & Plan Management</h3>
@@ -201,39 +317,39 @@ export default function Settings() {
         </div>
 
         <div className="grid grid-cols-3 gap-4" style={{ marginBottom: '16px' }}>
-          <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '14px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+          <div style={{ background: 'var(--panel-inner-bg)', padding: '14px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Active Plan</div>
-            <div style={{ fontSize: '1rem', fontWeight: 700, color: '#fff' }} className="flex items-center gap-2">
+            <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-main)' }} className="flex items-center gap-2">
               {activeTier.name}
-              <span style={{ fontSize: '0.7rem', padding: '2px 6px', borderRadius: '8px', background: isPro ? 'rgba(16,185,129,0.2)' : 'rgba(255,255,255,0.1)', color: isPro ? '#34d399' : '#cbd5e1' }}>
+              <span style={{ fontSize: '0.7rem', padding: '2px 6px', borderRadius: '8px', background: isPro ? 'rgba(16,185,129,0.2)' : 'var(--badge-primary-bg)', color: isPro ? 'var(--success)' : 'var(--primary)' }}>
                 {activeTier.badge}
               </span>
             </div>
           </div>
 
-          <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '14px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+          <div style={{ background: 'var(--panel-inner-bg)', padding: '14px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Safe Production Status</div>
-            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: isPro ? '#34d399' : 'var(--text-muted)' }} className="flex items-center gap-1.5">
-              <ShieldCheck size={16} color={isPro ? '#34d399' : 'var(--text-muted)'} />
+            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: isPro ? 'var(--success)' : 'var(--text-muted)' }} className="flex items-center gap-1.5">
+              <ShieldCheck size={16} color={isPro ? 'var(--success)' : 'var(--text-muted)'} />
               {isPro ? 'Unlocked & Active' : 'Upgrade to Unlock ($39)'}
             </div>
           </div>
 
-          <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '14px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+          <div style={{ background: 'var(--panel-inner-bg)', padding: '14px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>24/7 Instant Help Hotline</div>
-            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: isPro ? '#c084fc' : 'var(--text-muted)' }} className="flex items-center gap-1.5">
-              <Sparkles size={16} color={isPro ? '#c084fc' : 'var(--text-muted)'} />
+            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: isPro ? 'var(--primary)' : 'var(--text-muted)' }} className="flex items-center gap-1.5">
+              <Sparkles size={16} color={isPro ? 'var(--primary)' : 'var(--text-muted)'} />
               {isPro ? 'Priority AI SecOps' : 'Community Mode'}
             </div>
           </div>
         </div>
 
         {invoices.length > 0 && (
-          <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '12px' }}>
+          <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '12px' }}>
             <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600, marginBottom: '8px' }}>Recent Billing Invoices</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               {invoices.map(inv => (
-                <div key={inv.id} className="flex justify-between items-center" style={{ fontSize: '0.8rem', background: 'rgba(0,0,0,0.2)', padding: '8px 12px', borderRadius: '8px' }}>
+                <div key={inv.id} className="flex justify-between items-center" style={{ fontSize: '0.8rem', background: 'var(--panel-inner-bg)', padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
                   <span>{inv.id} • {inv.date} ({inv.planName})</span>
                   <span style={{ color: 'var(--success)', fontWeight: 700 }}>${inv.amount} Paid ✓</span>
                 </div>
@@ -250,7 +366,7 @@ export default function Settings() {
           <div key={provider.key} className="glass-panel" style={{ padding: '24px' }}>
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-3">
-                <div style={{ padding: '8px', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center' }}>
+                <div style={{ padding: '8px', borderRadius: '10px', background: 'var(--panel-inner-bg)', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center' }}>
                   {provider.icon}
                 </div>
                 <div>
@@ -274,7 +390,7 @@ export default function Settings() {
       {/* General Scanner Configuration */}
       <div className="glass-panel" style={{ padding: '28px' }}>
         <div className="flex items-center gap-4" style={{ marginBottom: '24px' }}>
-          <div style={{ padding: '10px', borderRadius: '12px', background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.3)' }}>
+          <div style={{ padding: '10px', borderRadius: '12px', background: 'var(--badge-primary-bg)', border: '1px solid var(--badge-primary-border)' }}>
             <Shield size={22} color="var(--primary)" />
           </div>
           <div>
@@ -304,7 +420,7 @@ export default function Settings() {
               label="Safe Production Auto-Remediation"
             />
             {settings.general.auto_remediation && (
-              <div style={{ padding: '12px 16px', background: 'rgba(234, 179, 8, 0.08)', border: '1px solid rgba(234, 179, 8, 0.2)', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--medium)' }} className="flex items-center gap-3">
+              <div style={{ padding: '12px 16px', background: 'rgba(234, 179, 8, 0.08)', border: '1px solid rgba(234, 179, 8, 0.25)', borderRadius: '10px', fontSize: '0.85rem', color: 'var(--medium)' }} className="flex items-center gap-3">
                 <AlertTriangle size={16} />
                 <span>Auto-remediation will automatically apply security fixes with pre-flight dry-run and rollback snapshots.</span>
               </div>
@@ -316,14 +432,14 @@ export default function Settings() {
       {/* Notifications */}
       <div className="glass-panel" style={{ padding: '28px' }}>
         <div className="flex items-center gap-4" style={{ marginBottom: '24px' }}>
-          <div style={{ padding: '10px', borderRadius: '12px', background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.3)' }}>
+          <div style={{ padding: '10px', borderRadius: '12px', background: 'var(--badge-primary-bg)', border: '1px solid var(--badge-primary-border)' }}>
             <Bell size={22} color="var(--primary)" />
           </div>
           <h3 style={{ fontSize: '1.1rem', margin: 0 }}>Notifications</h3>
         </div>
 
         <div className="flex flex-col gap-4">
-          <div style={{ padding: '16px 20px', borderRadius: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }} className="flex justify-between items-center">
+          <div style={{ padding: '16px 20px', borderRadius: '12px', background: 'var(--panel-inner-bg)', border: '1px solid var(--border-color)' }} className="flex justify-between items-center">
             <div className="flex items-center gap-3">
               <Mail size={18} color="var(--text-muted)" />
               <span style={{ fontWeight: 500 }}>Email Notifications</span>
@@ -347,11 +463,11 @@ export default function Settings() {
               value={settings.general.slack_webhook}
               onChange={e => updateGeneral('slack_webhook', e.target.value)}
               style={{
-                background: 'rgba(255,255,255,0.05)',
+                background: 'var(--input-bg)',
                 border: '1px solid var(--border-color)',
                 color: 'var(--text-main)',
                 padding: '10px 14px',
-                borderRadius: '8px',
+                borderRadius: '10px',
                 fontSize: '0.9rem',
                 outline: 'none',
                 width: '100%',
