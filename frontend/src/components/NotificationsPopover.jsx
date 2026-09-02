@@ -4,10 +4,10 @@ import { useNotifications } from '../context/NotificationContext';
 import { useNavigate } from 'react-router-dom';
 
 const typeIcons = {
-  critical: { icon: ShieldAlert, color: '#f87171', bg: 'rgba(239, 68, 68, 0.15)', border: 'rgba(239, 68, 68, 0.35)' },
-  high: { icon: AlertTriangle, color: '#fb923c', bg: 'rgba(249, 115, 22, 0.15)', border: 'rgba(249, 115, 22, 0.35)' },
-  success: { icon: CheckCircle2, color: '#34d399', bg: 'rgba(16, 185, 129, 0.15)', border: 'rgba(16, 185, 129, 0.35)' },
-  info: { icon: Info, color: '#60a5fa', bg: 'rgba(59, 130, 246, 0.15)', border: 'rgba(59, 130, 246, 0.35)' },
+  critical: { icon: ShieldAlert, color: 'var(--critical)', bg: 'var(--critical-bg)', border: 'var(--critical-border)' },
+  high: { icon: AlertTriangle, color: 'var(--high)', bg: 'var(--high-bg)', border: 'var(--high-border)' },
+  success: { icon: CheckCircle2, color: 'var(--success)', bg: 'var(--success-bg)', border: 'var(--success-border)' },
+  info: { icon: Info, color: 'var(--low)', bg: 'var(--low-bg)', border: 'var(--low-border)' },
 };
 
 export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
@@ -107,7 +107,7 @@ export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
                     fontWeight: 700,
                     padding: '2px 7px',
                     borderRadius: '10px',
-                    boxShadow: '0 2px 6px rgba(239, 68, 68, 0.4)',
+                    boxShadow: '0 2px 6px rgba(244, 63, 94, 0.4)',
                   }}
                 >
                   {unreadCount} new
@@ -225,7 +225,7 @@ export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
             }}
             onMouseEnter={e => {
               e.currentTarget.style.color = 'var(--critical)';
-              e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)';
+              e.currentTarget.style.background = 'var(--critical-bg)';
             }}
             onMouseLeave={e => {
               e.currentTarget.style.color = 'var(--text-muted)';

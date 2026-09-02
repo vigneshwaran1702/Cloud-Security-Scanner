@@ -252,14 +252,14 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
                 : msg.type === 'success'
                   ? 'rgba(16, 185, 129, 0.15)'
                   : msg.type === 'error'
-                    ? 'rgba(239, 68, 68, 0.15)'
+                    ? 'var(--critical-bg)'
                     : 'var(--panel-inner-bg)',
               border: msg.sender === 'user'
                 ? 'none'
                 : msg.type === 'success'
-                  ? '1px solid var(--success)'
+                  ? '1px solid var(--success-border)'
                   : msg.type === 'error'
-                    ? '1px solid var(--critical)'
+                    ? '1px solid var(--critical-border)'
                     : '1px solid var(--border-color)',
               color: msg.sender === 'user' ? '#ffffff' : 'var(--text-main)',
               fontSize: '0.88rem',
@@ -289,8 +289,8 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
             setInput('Help! Critical S3 bucket public access detected on production. What is the immediate safe remediation?');
           }}
           style={{
-            background: 'rgba(239, 68, 68, 0.12)',
-            border: '1px solid rgba(239, 68, 68, 0.3)',
+            background: 'var(--critical-bg)',
+            border: '1px solid var(--critical-border)',
             color: 'var(--critical)',
             padding: '4px 10px',
             borderRadius: '12px',

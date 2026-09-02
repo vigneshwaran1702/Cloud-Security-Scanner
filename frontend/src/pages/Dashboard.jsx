@@ -85,17 +85,17 @@ const initialRecommendations = [
 
 const severityStyles = {
   critical: {
-    bg: 'rgba(239, 68, 68, 0.06)',
-    border: '1px solid rgba(239, 68, 68, 0.25)',
+    bg: 'var(--critical-bg)',
+    border: '1px solid var(--critical-border)',
     leftBorder: '4px solid var(--critical)',
-    badgeBg: 'rgba(239, 68, 68, 0.12)',
+    badgeBg: 'var(--critical-bg)',
     color: 'var(--critical)',
   },
   high: {
-    bg: 'rgba(249, 115, 22, 0.06)',
-    border: '1px solid rgba(249, 115, 22, 0.25)',
+    bg: 'var(--high-bg)',
+    border: '1px solid var(--high-border)',
     leftBorder: '4px solid var(--high)',
-    badgeBg: 'rgba(249, 115, 22, 0.12)',
+    badgeBg: 'var(--high-bg)',
     color: 'var(--high)',
   },
 };
@@ -163,7 +163,7 @@ export default function Dashboard() {
             background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.95), rgba(5, 150, 105, 0.95))',
             color: '#fff',
             padding: '12px 20px',
-            borderRadius: '12px',
+            borderRadius: '14px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -190,8 +190,8 @@ export default function Dashboard() {
         <div
           className="glass-panel flex justify-between items-center"
           style={{
-            background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(225, 29, 72, 0.1))',
-            border: '1px solid rgba(239, 68, 68, 0.25)',
+            background: 'linear-gradient(135deg, var(--badge-primary-bg), rgba(6, 182, 212, 0.08))',
+            border: '1px solid var(--badge-primary-border)',
             padding: '16px 24px',
             borderRadius: '20px',
           }}
@@ -201,8 +201,11 @@ export default function Dashboard() {
               style={{
                 background: 'linear-gradient(135deg, var(--primary), var(--accent))',
                 padding: '10px',
-                borderRadius: '12px',
-                boxShadow: '0 4px 14px rgba(220, 38, 38, 0.35)',
+                borderRadius: '14px',
+                boxShadow: '0 4px 14px var(--primary-glow)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}
             >
               <Sparkles size={22} color="white" />
@@ -258,46 +261,54 @@ export default function Dashboard() {
       <div className="grid grid-cols-4 gap-6">
         <div className="glass-panel flex flex-col justify-between" style={{ padding: '24px' }}>
           <div className="flex justify-between items-center" style={{ marginBottom: '16px' }}>
-            <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: 500 }}>Security Score</span>
-            <Activity size={20} color="var(--success)" />
+            <span style={{ color: 'var(--text-muted)', fontSize: '0.88rem', fontWeight: 600 }}>Security Score</span>
+            <div style={{ padding: '6px', borderRadius: '8px', background: 'var(--success-bg)' }}>
+              <Activity size={18} color="var(--success)" />
+            </div>
           </div>
-          <div style={{ fontSize: '2.5rem', fontWeight: 700, color: 'var(--success)', transition: 'all 0.5s ease' }}>
-            {stats.securityScore}<span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 400 }}>/100</span>
+          <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--success)', letterSpacing: '-0.03em', transition: 'all 0.5s ease' }}>
+            {stats.securityScore}<span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 500 }}>/100</span>
           </div>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '8px' }}>+4% since last scan</div>
+          <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '8px' }}>+4% improvement vs last scan</div>
         </div>
 
         <div className="glass-panel flex flex-col justify-between" style={{ padding: '24px' }}>
           <div className="flex justify-between items-center" style={{ marginBottom: '16px' }}>
-            <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: 500 }}>Total Resources</span>
-            <Server size={20} color="var(--primary)" />
+            <span style={{ color: 'var(--text-muted)', fontSize: '0.88rem', fontWeight: 600 }}>Total Resources</span>
+            <div style={{ padding: '6px', borderRadius: '8px', background: 'var(--badge-primary-bg)' }}>
+              <Server size={18} color="var(--primary)" />
+            </div>
           </div>
-          <div style={{ fontSize: '2.5rem', fontWeight: 700, color: 'var(--text-main)' }}>{stats.totalResources}</div>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '8px' }}>Across 3 clouds</div>
+          <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.03em' }}>{stats.totalResources}</div>
+          <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '8px' }}>Across AWS, Azure & GCP</div>
         </div>
 
         <div className="glass-panel flex flex-col justify-between" style={{ padding: '24px' }}>
           <div className="flex justify-between items-center" style={{ marginBottom: '16px' }}>
-            <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: 500 }}>Critical Issues</span>
-            <ShieldAlert size={20} color="var(--critical)" />
+            <span style={{ color: 'var(--text-muted)', fontSize: '0.88rem', fontWeight: 600 }}>Critical Issues</span>
+            <div style={{ padding: '6px', borderRadius: '8px', background: 'var(--critical-bg)' }}>
+              <ShieldAlert size={18} color="var(--critical)" />
+            </div>
           </div>
-          <div style={{ fontSize: '2.5rem', fontWeight: 700, color: 'var(--critical)', transition: 'all 0.5s ease' }}>
+          <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--critical)', letterSpacing: '-0.03em', transition: 'all 0.5s ease' }}>
             {stats.criticalIssues}
           </div>
-          <div style={{ fontSize: '0.85rem', color: 'var(--critical)', marginTop: '8px' }}>
+          <div style={{ fontSize: '0.82rem', color: 'var(--critical)', marginTop: '8px', fontWeight: 600 }}>
             {stats.criticalIssues > 0 ? 'Requires immediate action' : 'All clear!'}
           </div>
         </div>
 
         <div className="glass-panel flex flex-col justify-between" style={{ padding: '24px' }}>
           <div className="flex justify-between items-center" style={{ marginBottom: '16px' }}>
-            <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: 500 }}>High Issues</span>
-            <AlertTriangle size={20} color="var(--high)" />
+            <span style={{ color: 'var(--text-muted)', fontSize: '0.88rem', fontWeight: 600 }}>High Issues</span>
+            <div style={{ padding: '6px', borderRadius: '8px', background: 'var(--high-bg)' }}>
+              <AlertTriangle size={18} color="var(--high)" />
+            </div>
           </div>
-          <div style={{ fontSize: '2.5rem', fontWeight: 700, color: 'var(--high)', transition: 'all 0.5s ease' }}>
+          <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--high)', letterSpacing: '-0.03em', transition: 'all 0.5s ease' }}>
             {stats.highIssues}
           </div>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '8px' }}>Schedule for safe auto-fix</div>
+          <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '8px' }}>Ready for safe auto-fix</div>
         </div>
       </div>
 
@@ -306,8 +317,11 @@ export default function Dashboard() {
         {/* Chart Area */}
         <div className="glass-panel" style={{ height: '400px', display: 'flex', flexDirection: 'column' }}>
           <div className="flex justify-between items-center" style={{ marginBottom: '20px' }}>
-            <h3 style={{ fontSize: '1.2rem', margin: 0 }}>Security Posture Trend</h3>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Continuous 7-Day Velocity</span>
+            <div>
+              <h3 style={{ fontSize: '1.15rem', margin: 0, fontWeight: 700 }}>Security Posture Trend</h3>
+              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Continuous 7-Day Velocity</span>
+            </div>
+            <span className="badge badge-success">Live Stream</span>
           </div>
           <div style={{ flex: 1, width: '100%', minHeight: 0 }}>
             <ResponsiveContainer width="100%" height="100%">
@@ -322,7 +336,7 @@ export default function Dashboard() {
                 <XAxis dataKey="name" stroke="var(--text-muted)" tick={{fill: 'var(--text-muted)'}} axisLine={false} tickLine={false} />
                 <YAxis stroke="var(--text-muted)" tick={{fill: 'var(--text-muted)'}} axisLine={false} tickLine={false} domain={[50, 100]} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: 'var(--panel-bg-solid)', border: '1px solid var(--border-color)', borderRadius: '10px', boxShadow: 'var(--glass-shadow)', color: 'var(--text-main)' }}
+                  contentStyle={{ backgroundColor: 'var(--panel-bg-solid)', border: '1px solid var(--border-color)', borderRadius: '12px', boxShadow: 'var(--glass-shadow)', color: 'var(--text-main)' }}
                   itemStyle={{ color: 'var(--text-main)' }}
                 />
                 <Area type="monotone" dataKey="score" stroke="var(--primary)" strokeWidth={3} fillOpacity={1} fill="url(#colorScore)" />
@@ -335,8 +349,10 @@ export default function Dashboard() {
         <div className="glass-panel" style={{ height: '400px', display: 'flex', flexDirection: 'column' }}>
           <div className="flex justify-between items-center" style={{ marginBottom: '16px' }}>
             <div className="flex items-center gap-2">
-              <Activity size={18} color="var(--primary)" />
-              <h3 style={{ fontSize: '1.15rem', margin: 0 }}>Risk Contribution Matrix</h3>
+              <div style={{ padding: '6px', borderRadius: '8px', background: 'var(--badge-primary-bg)' }}>
+                <Activity size={16} color="var(--primary)" />
+              </div>
+              <h3 style={{ fontSize: '1.15rem', margin: 0, fontWeight: 700 }}>Risk Contribution Matrix</h3>
             </div>
             <Link
               to="/subscription"
@@ -345,8 +361,8 @@ export default function Dashboard() {
                 color: isPro ? 'var(--success)' : 'var(--primary)',
                 textDecoration: 'none',
                 fontWeight: 700,
-                background: isPro ? 'rgba(16, 185, 129, 0.15)' : 'var(--badge-primary-bg)',
-                border: isPro ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid var(--badge-primary-border)',
+                background: isPro ? 'var(--success-bg)' : 'var(--badge-primary-bg)',
+                border: isPro ? '1px solid var(--success-border)' : '1px solid var(--badge-primary-border)',
                 padding: '3px 8px',
                 borderRadius: '8px',
               }}
@@ -359,7 +375,7 @@ export default function Dashboard() {
             Relative blast-radius and attack surface contribution by cloud vulnerability:
           </p>
 
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '12px', overflowY: 'auto' }}>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '10px', overflowY: 'auto' }}>
             {recommendations.map(rec => {
               const isResolved = rec.status === 'resolved';
               const weight = isResolved ? 0 : rec.risk_contribution || 20;
@@ -369,13 +385,13 @@ export default function Dashboard() {
                   key={rec.id}
                   style={{
                     padding: '10px 14px',
-                    borderRadius: '10px',
+                    borderRadius: '12px',
                     background: 'var(--panel-inner-bg)',
                     border: '1px solid var(--border-color)',
                     opacity: isResolved ? 0.5 : 1,
                   }}
                 >
-                  <div className="flex justify-between items-center" style={{ fontSize: '0.8rem', marginBottom: '4px' }}>
+                  <div className="flex justify-between items-center" style={{ fontSize: '0.8rem', marginBottom: '6px' }}>
                     <span style={{ fontWeight: 600, color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }}>
                       {rec.resource}
                     </span>
@@ -407,7 +423,7 @@ export default function Dashboard() {
       <div className="glass-panel" style={{ marginTop: '8px' }}>
         <div className="flex justify-between items-center" style={{ marginBottom: '24px' }}>
           <div>
-            <h3 className="gradient-text" style={{ fontSize: '1.4rem', margin: 0 }}>AI Security Recommendations</h3>
+            <h3 className="gradient-text" style={{ fontSize: '1.35rem', margin: 0, fontWeight: 700 }}>AI Security Recommendations</h3>
             <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: '4px 0 0' }}>
               Autonomous threat mitigation with Safe Production zero-downtime rollback protection.
             </p>
@@ -419,8 +435,8 @@ export default function Dashboard() {
                 fontSize: '0.78rem',
                 padding: '4px 10px',
                 borderRadius: '10px',
-                background: 'rgba(16, 185, 129, 0.12)',
-                border: '1px solid rgba(16, 185, 129, 0.3)',
+                background: 'var(--success-bg)',
+                border: '1px solid var(--success-border)',
                 color: 'var(--success)',
                 fontWeight: 600,
                 display: 'inline-flex',
@@ -443,12 +459,12 @@ export default function Dashboard() {
               <div
                 key={rec.id}
                 style={{
-                  background: isResolved ? 'rgba(16, 185, 129, 0.05)' : sev.bg,
-                  border: isResolved ? '1px solid rgba(16, 185, 129, 0.2)' : sev.border,
+                  background: isResolved ? 'var(--success-bg)' : sev.bg,
+                  border: isResolved ? '1px solid var(--success-border)' : sev.border,
                   padding: '24px',
                   borderRadius: '16px',
                   borderLeft: isResolved ? '4px solid var(--success)' : sev.leftBorder,
-                  transition: 'all 0.5s ease',
+                  transition: 'all 0.4s ease',
                   opacity: isResolved ? 0.75 : 1,
                 }}
               >
@@ -458,27 +474,28 @@ export default function Dashboard() {
                       ? <ShieldCheck color="var(--success)" size={24} />
                       : <Box color={sev.color} size={24} />
                     }
-                    <h4 style={{ fontSize: '1.1rem', margin: 0, color: 'var(--text-main)', textDecoration: isResolved ? 'line-through' : 'none' }}>
+                    <h4 style={{ fontSize: '1.08rem', margin: 0, color: 'var(--text-main)', textDecoration: isResolved ? 'line-through' : 'none' }}>
                       {rec.title}
                     </h4>
                     {isResolved && (
                       <span style={{
-                        background: 'rgba(16, 185, 129, 0.15)',
+                        background: 'var(--success-bg)',
                         color: 'var(--success)',
+                        border: '1px solid var(--success-border)',
                         padding: '3px 10px',
                         borderRadius: '20px',
-                        fontSize: '0.75rem',
-                        fontWeight: 600,
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
                       }}>
                         RESOLVED (ZERO DOWNTIME)
                       </span>
                     )}
                   </div>
                   <div className="flex items-center gap-3">
-                    <span style={{ background: 'var(--panel-inner-bg)', color: 'var(--text-muted)', border: '1px solid var(--border-color)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.78rem', fontWeight: 500 }}>
+                    <span style={{ background: 'var(--panel-inner-bg)', color: 'var(--text-muted)', border: '1px solid var(--border-color)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 600 }}>
                       {rec.cloud}
                     </span>
-                    <span style={{ background: isResolved ? 'rgba(16,185,129,0.1)' : sev.badgeBg, color: isResolved ? 'var(--success)' : sev.color, padding: '4px 12px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 600 }}>
+                    <span style={{ background: isResolved ? 'var(--success-bg)' : sev.badgeBg, color: isResolved ? 'var(--success)' : sev.color, border: `1px solid ${isResolved ? 'var(--success-border)' : sev.border}`, padding: '4px 12px', borderRadius: '20px', fontSize: '0.82rem', fontWeight: 700 }}>
                       {isResolved ? 'Fixed' : rec.severity.charAt(0).toUpperCase() + rec.severity.slice(1)}
                     </span>
                   </div>
@@ -487,20 +504,20 @@ export default function Dashboard() {
                 {!isResolved && (
                   <div className="grid grid-cols-2 gap-6">
                     <div>
-                      <p style={{ color: 'var(--text-muted)', marginBottom: '8px', fontSize: '0.9rem', fontWeight: 600 }}>Risk Analysis & Blast Radius</p>
-                      <p style={{ color: 'var(--text-main)', fontSize: '0.95rem', lineHeight: 1.6 }}>
+                      <p style={{ color: 'var(--text-muted)', marginBottom: '8px', fontSize: '0.88rem', fontWeight: 600 }}>Risk Analysis & Blast Radius</p>
+                      <p style={{ color: 'var(--text-main)', fontSize: '0.92rem', lineHeight: 1.6 }}>
                         {rec.risk_analysis}
                       </p>
-                      <ul style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '12px', paddingLeft: '20px', lineHeight: 1.6 }}>
+                      <ul style={{ color: 'var(--text-muted)', fontSize: '0.88rem', marginTop: '12px', paddingLeft: '20px', lineHeight: 1.6 }}>
                         {rec.impacts.map((impact, i) => (
                           <li key={i}>{impact}</li>
                         ))}
                       </ul>
                     </div>
 
-                    <div style={{ background: 'var(--panel-inner-bg)', border: '1px solid var(--border-color)', padding: '16px', borderRadius: '12px' }}>
+                    <div style={{ background: 'var(--panel-inner-bg)', border: '1px solid var(--border-color)', padding: '18px', borderRadius: '14px' }}>
                       <div className="flex justify-between items-center" style={{ marginBottom: '12px' }}>
-                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: 600, margin: 0 }}>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', fontWeight: 600, margin: 0 }}>
                           Safe Production Remediation
                         </p>
                         <span style={{ fontSize: '0.72rem', color: 'var(--success)', fontWeight: 600 }}>
@@ -510,7 +527,7 @@ export default function Dashboard() {
 
                       <div className="flex flex-col gap-3">
                         {rec.fixes.map((fix, i) => (
-                          <div key={i} className="flex items-center gap-3" style={{ fontSize: '0.9rem', color: 'var(--text-main)' }}>
+                          <div key={i} className="flex items-center gap-3" style={{ fontSize: '0.88rem', color: 'var(--text-main)' }}>
                             <CheckCircle size={16} color="var(--primary)" /> <span>{fix}</span>
                           </div>
                         ))}

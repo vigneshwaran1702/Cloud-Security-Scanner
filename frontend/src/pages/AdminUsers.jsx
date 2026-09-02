@@ -112,8 +112,8 @@ export default function AdminUsers() {
       {/* Action Notification Alert */}
       {actionMsg.text && (
         <div style={{
-          background: actionMsg.type === 'error' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)',
-          border: `1px solid ${actionMsg.type === 'error' ? 'var(--critical)' : 'var(--success)'}`,
+          background: actionMsg.type === 'error' ? 'var(--critical-bg)' : 'var(--success-bg)',
+          border: `1px solid ${actionMsg.type === 'error' ? 'var(--critical-border)' : 'var(--success-border)'}`,
           borderRadius: '12px',
           padding: '12px 16px',
           color: actionMsg.type === 'error' ? 'var(--critical)' : 'var(--success)',
@@ -245,8 +245,8 @@ export default function AdminUsers() {
                                 onClick={() => handleDeleteUser(u.id)}
                                 title="Delete user"
                                 style={{
-                                  background: 'rgba(239, 68, 68, 0.1)',
-                                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                                  background: 'var(--critical-bg)',
+                                  border: '1px solid var(--critical-border)',
                                   color: 'var(--critical)',
                                   padding: '6px',
                                   borderRadius: '8px',
