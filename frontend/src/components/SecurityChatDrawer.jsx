@@ -1,26 +1,29 @@
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { MessageSquare, X, Send, Sparkles, Key, CheckCircle, Bot, User, RefreshCw } from 'lucide-react';
+import { useSubscription } from '../context/SubscriptionContext';
+import { MessageSquare, X, Send, Sparkles, Key, CheckCircle, Bot, User, RefreshCw, Zap, ShieldCheck, Activity, Flame } from 'lucide-react';
 
 export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifier }) {
   const { user, elevateToAdmin, isAdmin } = useAuth();
+  const { isPro } = useSubscription();
   const [messages, setMessages] = useState([
     {
       id: 1,
       sender: 'bot',
-      text: `Hello ${user?.name || 'Security Specialist'}! I'm CloudGuard AI Security Assistant. How can I help you today?`,
+      text: `Hello ${user?.name || 'Security Specialist'}! I'm CloudGuard 24/7 AI SecOps Assistant. How can I provide instant help for your cloud infrastructure today?`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
     {
       id: 2,
       sender: 'bot',
       type: 'info',
-      text: user?.email?.toLowerCase() === 'vigneshcloud@gmail.com' 
-        ? '⚡ You are currently logged in with full Administrator privileges.'
-        : '🛡️ You are currently logged in with standard user access. Administrator privileges are reserved for vigneshcloud@gmail.com.',
+      text: isPro 
+        ? '⚡ PRO STATUS ACTIVE: 24/7 Instant Help Hotline Priority Enabled. Sub-minute incident runbooks & Safe Production remediation unlocked.'
+        : '🛡️ Standard SecOps AI active. Upgrade to $39 Pro for prioritized 24/7 Instant Help & Safe Production execution.',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     }
   ]);
+
 
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -188,14 +191,24 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
             alignItems: 'center',
             justifyContent: 'center',
           }}>
-            <Sparkles size={18} color="white" />
+            <Bot size={20} color="white" />
           </div>
           <div>
             <div style={{ fontWeight: 700, fontSize: '1rem', color: 'white' }} className="flex items-center gap-2">
-              Security Assistant
-              <span style={{ fontSize: '0.65rem', background: 'rgba(16, 185, 129, 0.2)', color: 'var(--success)', padding: '2px 6px', borderRadius: '10px', fontWeight: 600 }}>ONLINE</span>
+              <span>24/7 AI SecOps Hotline</span>
+              <span style={{
+                fontSize: '0.65rem',
+                background: isPro ? 'rgba(16, 185, 129, 0.2)' : 'rgba(59, 130, 246, 0.2)',
+                color: isPro ? '#34d399' : '#60a5fa',
+                border: isPro ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid rgba(59, 130, 246, 0.4)',
+                padding: '2px 7px',
+                borderRadius: '10px',
+                fontWeight: 700
+              }}>
+                {isPro ? 'PRO 24/7 INSTANT HELP' : 'ONLINE'}
+              </span>
             </div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>AI Cloud Security Advisor</div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Autonomous Cloud Incident Response</div>
           </div>
         </div>
 
@@ -264,7 +277,7 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
         {loading && (
           <div className="flex items-center gap-2" style={{ padding: '8px 12px', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
             <RefreshCw size={14} style={{ animation: 'spin 1s linear infinite' }} />
-            <span>Verifying & processing response...</span>
+            <span>24/7 SecOps AI triaging cloud incident...</span>
           </div>
         )}
 
@@ -273,6 +286,54 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
 
       {/* Quick Action Shortcuts */}
       <div style={{ padding: '8px 16px', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', gap: '6px', overflowX: 'auto' }}>
+        <button
+          type="button"
+          onClick={() => {
+            setInput('Help! Critical S3 bucket public access detected on production. What is the immediate safe remediation?');
+          }}
+          style={{
+            background: 'rgba(239, 68, 68, 0.15)',
+            border: '1px solid rgba(239, 68, 68, 0.3)',
+            color: '#f87171',
+            padding: '4px 10px',
+            borderRadius: '12px',
+            fontSize: '0.72rem',
+            whiteSpace: 'nowrap',
+            cursor: 'pointer',
+            fontWeight: 600,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '4px'
+          }}
+        >
+          <Flame size={12} />
+          Instant Incident SOS
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            setInput('What is my biggest risk contribution asset across AWS and Azure right now?');
+          }}
+          style={{
+            background: 'rgba(139, 92, 246, 0.15)',
+            border: '1px solid rgba(139, 92, 246, 0.3)',
+            color: '#c084fc',
+            padding: '4px 10px',
+            borderRadius: '12px',
+            fontSize: '0.72rem',
+            whiteSpace: 'nowrap',
+            cursor: 'pointer',
+            fontWeight: 600,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '4px'
+          }}
+        >
+          <Activity size={12} />
+          Risk Contribution Analysis
+        </button>
+
         <button
           type="button"
           onClick={() => {

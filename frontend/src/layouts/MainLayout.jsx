@@ -1,8 +1,9 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Shield, LayoutDashboard, Cloud, Settings, LogOut, Bell, Users, ShieldCheck, Sparkles } from 'lucide-react';
+import { Shield, LayoutDashboard, Cloud, Settings, LogOut, Bell, Users, ShieldCheck, Sparkles, Zap, Crown } from 'lucide-react';
 import { useState, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNotifications } from '../context/NotificationContext';
+import { useSubscription } from '../context/SubscriptionContext';
 import SecurityChatDrawer from '../components/SecurityChatDrawer';
 import CloudAccountVerifierModal from '../components/CloudAccountVerifierModal';
 import ScanModal from '../components/ScanModal';
@@ -11,6 +12,7 @@ import NotificationsPopover from '../components/NotificationsPopover';
 const pageTitles = {
   '/dashboard': 'Overview',
   '/resources': 'Cloud Resources',
+  '/subscription': 'Subscription & Upgrades',
   '/settings': 'Settings',
   '/admin/users': 'User Governance',
 };
@@ -18,6 +20,7 @@ const pageTitles = {
 export default function MainLayout() {
   const { user, logout, isAdmin } = useAuth();
   const { unreadCount } = useNotifications();
+  const { isPro, activeTier } = useSubscription();
   const location = useLocation();
   const currentPath = location.pathname;
   const pageTitle = pageTitles[currentPath] || 'Overview';
@@ -32,6 +35,13 @@ export default function MainLayout() {
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/resources', label: 'Resources', icon: Cloud },
+    {
+      path: '/subscription',
+      label: 'Subscription',
+      icon: Zap,
+      badge: isPro ? 'PRO ACTIVE' : '$39 PRO',
+      isProHighlight: !isPro
+    },
     { path: '/settings', label: 'Settings', icon: Settings },
     ...(isAdmin ? [{ path: '/admin/users', label: 'User Management', icon: Users }] : []),
   ];
@@ -42,14 +52,14 @@ export default function MainLayout() {
     <div className="flex" style={{ minHeight: '100vh', position: 'relative' }}>
       {/* Sidebar */}
       <aside className="glass-panel flex-col flex" style={{ width: '260px', margin: '16px', borderRadius: '24px', padding: '24px' }}>
-        <div className="flex items-center gap-4" style={{ marginBottom: '40px' }}>
+        <div className="flex items-center gap-4" style={{ marginBottom: '32px' }}>
           <div style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent))', padding: '10px', borderRadius: '12px' }}>
             <Shield size={24} color="white" />
           </div>
           <h2 className="gradient-text" style={{ fontSize: '1.2rem', margin: 0 }}>CloudGuard AI</h2>
         </div>
 
-        <nav className="flex flex-col gap-4" style={{ flex: 1 }}>
+        <nav className="flex flex-col gap-3" style={{ flex: 1 }}>
           {navItems.map(item => {
             const isActive = currentPath === item.path;
             const Icon = item.icon;
@@ -57,31 +67,120 @@ export default function MainLayout() {
               <Link
                 key={item.path}
                 to={item.path}
-                className="flex items-center gap-4"
+                className="flex items-center justify-between"
                 style={{
                   color: isActive ? 'var(--text-main)' : 'var(--text-muted)',
                   textDecoration: 'none',
-                  padding: '12px',
+                  padding: '12px 14px',
                   borderRadius: '12px',
-                  background: isActive ? 'rgba(255,255,255,0.05)' : 'transparent',
+                  background: isActive
+                    ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15))'
+                    : item.isProHighlight
+                    ? 'rgba(139, 92, 246, 0.06)'
+                    : 'transparent',
+                  border: isActive
+                    ? '1px solid rgba(139, 92, 246, 0.3)'
+                    : item.isProHighlight
+                    ? '1px solid rgba(139, 92, 246, 0.2)'
+                    : '1px solid transparent',
                   transition: 'var(--transition)',
-                  fontWeight: isActive ? 500 : 400,
+                  fontWeight: isActive ? 600 : 400,
                 }}
               >
-                <Icon size={20} />
-                <span>{item.label}</span>
+                <div className="flex items-center gap-3">
+                  <Icon size={19} color={isActive ? '#c084fc' : item.isProHighlight ? '#a78bfa' : 'currentColor'} />
+                  <span>{item.label}</span>
+                </div>
+                {item.badge && (
+                  <span
+                    style={{
+                      fontSize: '0.65rem',
+                      fontWeight: 800,
+                      padding: '2px 7px',
+                      borderRadius: '10px',
+                      background: isPro
+                        ? 'rgba(16, 185, 129, 0.2)'
+                        : 'linear-gradient(135deg, rgba(139, 92, 246, 0.8), rgba(59, 130, 246, 0.8))',
+                      color: isPro ? '#34d399' : '#fff',
+                      border: isPro ? '1px solid rgba(16, 185, 129, 0.4)' : 'none',
+                      letterSpacing: '0.04em',
+                      boxShadow: !isPro ? '0 2px 8px rgba(139, 92, 246, 0.4)' : 'none',
+                    }}
+                  >
+                    {item.badge}
+                  </span>
+                )}
               </Link>
             );
           })}
         </nav>
+
+        {/* Sidebar Pro Upgrade Box (if free) */}
+        {!isPro && (
+          <div
+            style={{
+              marginTop: 'auto',
+              padding: '16px',
+              borderRadius: '16px',
+              background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(59, 130, 246, 0.15))',
+              border: '1px solid rgba(139, 92, 246, 0.35)',
+              textAlign: 'center',
+            }}
+          >
+            <div className="flex items-center justify-center gap-1.5" style={{ color: '#c084fc', fontWeight: 700, fontSize: '0.85rem', marginBottom: '4px' }}>
+              <Sparkles size={16} /> Unlock Pro $39/mo
+            </div>
+            <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: '12px', lineHeight: 1.3 }}>
+              Safe production auto-fixes & 24/7 instant SecOps help.
+            </p>
+            <Link
+              to="/subscription"
+              className="btn btn-primary"
+              style={{
+                display: 'block',
+                textDecoration: 'none',
+                padding: '8px 12px',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                borderRadius: '10px',
+                width: '100%',
+              }}
+            >
+              Upgrade for $39
+            </Link>
+          </div>
+        )}
       </aside>
 
       {/* Main Content */}
       <main className="flex-col flex" style={{ flex: 1, padding: '16px 16px 16px 0', overflow: 'hidden' }}>
         {/* Top Header */}
         <header className="glass-panel flex justify-between items-center" style={{ position: 'relative', zIndex: 100, marginBottom: '24px', padding: '16px 24px', borderRadius: '24px' }}>
-          <h1 style={{ fontSize: '1.5rem', margin: 0 }}>{pageTitle}</h1>
+          <div className="flex items-center gap-3">
+            <h1 style={{ fontSize: '1.5rem', margin: 0 }}>{pageTitle}</h1>
+            <Link
+              to="/subscription"
+              style={{
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                padding: '4px 10px',
+                borderRadius: '12px',
+                background: isPro ? 'rgba(16, 185, 129, 0.15)' : 'rgba(139, 92, 246, 0.15)',
+                border: isPro ? '1px solid rgba(16, 185, 129, 0.35)' : '1px solid rgba(139, 92, 246, 0.35)',
+                color: isPro ? '#34d399' : '#c084fc',
+                transition: 'all 0.2s',
+              }}
+            >
+              {isPro ? <Crown size={13} color="#34d399" /> : <Zap size={13} color="#c084fc" />}
+              {isPro ? 'PRO DEFENDER' : 'UPGRADE ($39)'}
+            </Link>
+          </div>
           <div className="flex items-center gap-4">
+
             {/* Verify Cloud Status Dropdown Popover */}
             <div style={{ position: 'relative' }}>
               <button
