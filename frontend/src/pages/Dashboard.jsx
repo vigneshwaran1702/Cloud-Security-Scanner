@@ -1,6 +1,9 @@
 import { useState } from 'react';
-import { ShieldAlert, Server, AlertTriangle, CheckCircle, Activity, Box, Loader2, ShieldCheck } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ShieldAlert, Server, AlertTriangle, CheckCircle, Activity, Box, Loader2, ShieldCheck, Zap, Sparkles, Bot, ArrowRight, Lock, TrendingUp, HelpCircle } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useSubscription } from '../context/SubscriptionContext';
+import SubscriptionCheckoutModal from '../components/SubscriptionCheckoutModal';
 
 const initialChartData = [
   { name: 'Mon', score: 72 },
@@ -19,6 +22,8 @@ const initialRecommendations = [
     severity: 'critical',
     resource: 'customer-data-prod',
     cloud: 'AWS',
+    risk_contribution: 38,
+    blast_radius: 'Account-Wide Data Exposure',
     risk_analysis: 'The S3 Bucket `customer-data-prod` is publicly accessible. Anyone on the internet can read confidential files.',
     impacts: ['Customer data leakage', 'Financial penalties & Compliance violations'],
     fixes: [
@@ -34,6 +39,8 @@ const initialRecommendations = [
     severity: 'high',
     resource: 'app-service-identity-prod',
     cloud: 'Azure',
+    risk_contribution: 29,
+    blast_radius: 'Subscription-Level Privilege Escalation',
     risk_analysis: 'Managed Identity has Subscription Owner permissions which allows arbitrary resource modifications.',
     impacts: ['Privilege escalation', 'Unintended deletion of cloud infrastructure'],
     fixes: [
@@ -48,6 +55,8 @@ const initialRecommendations = [
     severity: 'critical',
     resource: 'user-db-instance-gcp',
     cloud: 'GCP',
+    risk_contribution: 21,
+    blast_radius: 'Data at Rest Non-Compliance',
     risk_analysis: 'Cloud SQL database instance lacks Customer-Managed Encryption Key (CMEK) protection.',
     impacts: ['Regulatory non-compliance', 'Data compromise if storage disks are exposed'],
     fixes: [
@@ -62,6 +71,8 @@ const initialRecommendations = [
     severity: 'high',
     resource: 'i-09f8231a44c9d',
     cloud: 'AWS',
+    risk_contribution: 12,
+    blast_radius: 'Direct Remote Ingress',
     risk_analysis: 'Security group sg-0198a allows inbound traffic on TCP port 22 from any IPv4 address.',
     impacts: ['Brute-force SSH attacks', 'Unauthorized remote command execution'],
     fixes: [
@@ -90,6 +101,7 @@ const severityStyles = {
 };
 
 export default function Dashboard() {
+  const { isPro } = useSubscription();
   const [stats, setStats] = useState({
     securityScore: 84,
     totalResources: 356,
@@ -99,11 +111,13 @@ export default function Dashboard() {
   const [recommendations, setRecommendations] = useState(initialRecommendations);
   const [fixingId, setFixingId] = useState(null);
   const [chartData, setChartData] = useState(initialChartData);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [safeRemediationToast, setSafeRemediationToast] = useState(null);
 
   const handleApplyFix = async (rec) => {
     setFixingId(rec.id);
 
-    // Simulate remediation delay
+    // Simulate safe production auto-remediation delay
     await new Promise(resolve => setTimeout(resolve, 1800));
 
     // Update recommendation status
@@ -136,10 +150,110 @@ export default function Dashboard() {
     });
 
     setFixingId(null);
+    setSafeRemediationToast(`✓ Safe Production fix successfully applied to ${rec.resource} with zero downtime!`);
+    setTimeout(() => setSafeRemediationToast(null), 4500);
   };
 
   return (
     <div className="flex flex-col gap-6 animate-fade-in">
+      {/* Toast Notification */}
+      {safeRemediationToast && (
+        <div
+          style={{
+            background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.95), rgba(5, 150, 105, 0.95))',
+            color: '#fff',
+            padding: '12px 20px',
+            borderRadius: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            boxShadow: '0 8px 24px rgba(16, 185, 129, 0.4)',
+            fontSize: '0.9rem',
+            fontWeight: 600,
+          }}
+        >
+          <div className="flex items-center gap-2">
+            <ShieldCheck size={20} />
+            <span>{safeRemediationToast}</span>
+          </div>
+          <button
+            onClick={() => setSafeRemediationToast(null)}
+            style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '1.1rem' }}
+          >
+            ×
+          </button>
+        </div>
+      )}
+
+      {/* Pro Callout Banner if not subscribed */}
+      {!isPro && (
+        <div
+          className="glass-panel flex justify-between items-center"
+          style={{
+            background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.18), rgba(59, 130, 246, 0.18))',
+            border: '1px solid rgba(139, 92, 246, 0.4)',
+            padding: '16px 24px',
+            borderRadius: '20px',
+          }}
+        >
+          <div className="flex items-center gap-4">
+            <div
+              style={{
+                background: 'linear-gradient(135deg, var(--primary), var(--accent))',
+                padding: '10px',
+                borderRadius: '12px',
+                boxShadow: '0 4px 14px rgba(139, 92, 246, 0.4)',
+              }}
+            >
+              <Sparkles size={22} color="white" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h4 style={{ fontSize: '1.05rem', margin: 0, color: '#fff' }}>
+                  Upgrade to Pro Cloud Defender for <span style={{ color: '#60a5fa', fontWeight: 800 }}>$39 / mo</span>
+                </h4>
+                <span style={{ fontSize: '0.7rem', background: 'rgba(139, 92, 246, 0.3)', color: '#c084fc', padding: '2px 8px', borderRadius: '10px', fontWeight: 700 }}>
+                  PRO FEATURES
+                </span>
+              </div>
+              <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: '2px 0 0' }}>
+                Unlock Safe Production Auto-Fixes, 24/7 Instant AI SecOps Help, and Risk Contribution matrix.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsCheckoutOpen(true)}
+              className="btn btn-primary"
+              style={{
+                padding: '9px 18px',
+                borderRadius: '10px',
+                fontSize: '0.85rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+            >
+              <Zap size={16} /> Upgrade for $39
+            </button>
+            <Link
+              to="/subscription"
+              style={{
+                color: '#c084fc',
+                textDecoration: 'none',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+              }}
+            >
+              View Plan <ArrowRight size={14} />
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Top Stats Cards */}
       <div className="grid grid-cols-4 gap-6">
         <div className="glass-panel flex flex-col justify-between" style={{ padding: '24px' }}>
@@ -147,7 +261,9 @@ export default function Dashboard() {
             <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: 500 }}>Security Score</span>
             <Activity size={20} color="var(--success)" />
           </div>
-          <div style={{ fontSize: '2.5rem', fontWeight: 700, color: 'var(--success)', transition: 'all 0.5s ease' }}>{stats.securityScore}<span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 400 }}>/100</span></div>
+          <div style={{ fontSize: '2.5rem', fontWeight: 700, color: 'var(--success)', transition: 'all 0.5s ease' }}>
+            {stats.securityScore}<span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 400 }}>/100</span>
+          </div>
           <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '8px' }}>+4% since last scan</div>
         </div>
 
@@ -165,7 +281,9 @@ export default function Dashboard() {
             <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: 500 }}>Critical Issues</span>
             <ShieldAlert size={20} color="var(--critical)" />
           </div>
-          <div style={{ fontSize: '2.5rem', fontWeight: 700, color: 'var(--critical)', transition: 'all 0.5s ease' }}>{stats.criticalIssues}</div>
+          <div style={{ fontSize: '2.5rem', fontWeight: 700, color: 'var(--critical)', transition: 'all 0.5s ease' }}>
+            {stats.criticalIssues}
+          </div>
           <div style={{ fontSize: '0.85rem', color: 'var(--critical)', marginTop: '8px' }}>
             {stats.criticalIssues > 0 ? 'Requires immediate action' : 'All clear!'}
           </div>
@@ -176,16 +294,21 @@ export default function Dashboard() {
             <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: 500 }}>High Issues</span>
             <AlertTriangle size={20} color="var(--high)" />
           </div>
-          <div style={{ fontSize: '2.5rem', fontWeight: 700, color: 'var(--high)', transition: 'all 0.5s ease' }}>{stats.highIssues}</div>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '8px' }}>Schedule for next sprint</div>
+          <div style={{ fontSize: '2.5rem', fontWeight: 700, color: 'var(--high)', transition: 'all 0.5s ease' }}>
+            {stats.highIssues}
+          </div>
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '8px' }}>Schedule for safe auto-fix</div>
         </div>
       </div>
 
-      <div className="grid gap-6" style={{ gridTemplateColumns: '2fr 1fr' }}>
-
+      {/* Middle Grid: Trend Chart & Risk Contribution Matrix */}
+      <div className="grid gap-6" style={{ gridTemplateColumns: '1.8fr 1.2fr' }}>
         {/* Chart Area */}
         <div className="glass-panel" style={{ height: '400px', display: 'flex', flexDirection: 'column' }}>
-          <h3 style={{ marginBottom: '24px', fontSize: '1.2rem' }}>Security Posture Trend</h3>
+          <div className="flex justify-between items-center" style={{ marginBottom: '20px' }}>
+            <h3 style={{ fontSize: '1.2rem', margin: 0 }}>Security Posture Trend</h3>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Continuous 7-Day Velocity</span>
+          </div>
           <div style={{ flex: 1, width: '100%', minHeight: 0 }}>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -208,34 +331,106 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Compliance Area */}
-        <div className="glass-panel">
-          <h3 style={{ marginBottom: '24px', fontSize: '1.2rem' }}>Compliance Check</h3>
+        {/* Risk Contribution Matrix Widget */}
+        <div className="glass-panel" style={{ height: '400px', display: 'flex', flexDirection: 'column' }}>
+          <div className="flex justify-between items-center" style={{ marginBottom: '16px' }}>
+            <div className="flex items-center gap-2">
+              <Activity size={18} color="#60a5fa" />
+              <h3 style={{ fontSize: '1.15rem', margin: 0 }}>Risk Contribution Matrix</h3>
+            </div>
+            <Link
+              to="/subscription"
+              style={{
+                fontSize: '0.72rem',
+                color: isPro ? '#34d399' : '#c084fc',
+                textDecoration: 'none',
+                fontWeight: 700,
+                background: isPro ? 'rgba(16, 185, 129, 0.15)' : 'rgba(139, 92, 246, 0.15)',
+                padding: '3px 8px',
+                borderRadius: '8px',
+              }}
+            >
+              {isPro ? 'PRO UNLOCKED' : 'PRO $39'}
+            </Link>
+          </div>
 
-          <div className="flex flex-col gap-4">
-            {[
-              { name: 'CIS', score: 85, color: 'var(--medium)' },
-              { name: 'PCI DSS', score: 91, color: 'var(--success)' },
-              { name: 'NIST', score: 88, color: 'var(--success)' },
-              { name: 'HIPAA', score: 94, color: 'var(--success)' },
-            ].map(item => (
-              <div key={item.name} style={{ padding: '16px', borderRadius: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}>
-                <div className="flex justify-between items-center" style={{ marginBottom: '12px' }}>
-                  <span style={{ fontWeight: 600 }}>{item.name}</span>
-                  <span style={{ color: item.color, fontWeight: 600 }}>{item.score}%</span>
+          <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '14px' }}>
+            Relative blast-radius and attack surface contribution by cloud vulnerability:
+          </p>
+
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '12px', overflowY: 'auto' }}>
+            {recommendations.map(rec => {
+              const isResolved = rec.status === 'resolved';
+              const weight = isResolved ? 0 : rec.risk_contribution || 20;
+
+              return (
+                <div
+                  key={rec.id}
+                  style={{
+                    padding: '10px 14px',
+                    borderRadius: '10px',
+                    background: 'rgba(255, 255, 255, 0.03)',
+                    border: '1px solid rgba(255, 255, 255, 0.06)',
+                    opacity: isResolved ? 0.5 : 1,
+                  }}
+                >
+                  <div className="flex justify-between items-center" style={{ fontSize: '0.8rem', marginBottom: '4px' }}>
+                    <span style={{ fontWeight: 600, color: '#f8fafc', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }}>
+                      {rec.resource}
+                    </span>
+                    <span style={{ fontWeight: 700, color: isResolved ? 'var(--success)' : (weight > 30 ? 'var(--critical)' : 'var(--high)') }}>
+                      {isResolved ? '0% (Neutralized)' : `${weight}% contribution`}
+                    </span>
+                  </div>
+                  <div style={{ width: '100%', height: '5px', background: 'rgba(255, 255, 255, 0.08)', borderRadius: '3px', overflow: 'hidden' }}>
+                    <div
+                      style={{
+                        width: `${weight}%`,
+                        height: '100%',
+                        background: isResolved ? 'var(--success)' : (weight > 30 ? 'var(--critical)' : 'var(--high)'),
+                        transition: 'width 0.4s ease',
+                      }}
+                    />
+                  </div>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                    {rec.blast_radius || rec.title} ({rec.cloud})
+                  </div>
                 </div>
-                <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px', overflow: 'hidden' }}>
-                  <div style={{ width: `${item.score}%`, height: '100%', background: item.color, transition: 'width 0.5s ease' }}></div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
 
-      {/* AI Recommendations */}
+      {/* AI Security Recommendations */}
       <div className="glass-panel" style={{ marginTop: '8px' }}>
-        <h3 className="gradient-text" style={{ marginBottom: '24px', fontSize: '1.4rem' }}>AI Security Recommendations</h3>
+        <div className="flex justify-between items-center" style={{ marginBottom: '24px' }}>
+          <div>
+            <h3 className="gradient-text" style={{ fontSize: '1.4rem', margin: 0 }}>AI Security Recommendations</h3>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: '4px 0 0' }}>
+              Autonomous threat mitigation with Safe Production zero-downtime rollback protection.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span
+              style={{
+                fontSize: '0.78rem',
+                padding: '4px 10px',
+                borderRadius: '10px',
+                background: 'rgba(16, 185, 129, 0.12)',
+                border: '1px solid rgba(16, 185, 129, 0.3)',
+                color: '#34d399',
+                fontWeight: 600,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+              }}
+            >
+              <ShieldCheck size={14} /> Safe Production Guardrails Active
+            </span>
+          </div>
+        </div>
 
         <div className="flex flex-col gap-4">
           {recommendations.map(rec => {
@@ -274,7 +469,7 @@ export default function Dashboard() {
                         fontSize: '0.75rem',
                         fontWeight: 600,
                       }}>
-                        RESOLVED
+                        RESOLVED (ZERO DOWNTIME)
                       </span>
                     )}
                   </div>
@@ -291,7 +486,7 @@ export default function Dashboard() {
                 {!isResolved && (
                   <div className="grid grid-cols-2 gap-6">
                     <div>
-                      <p style={{ color: 'var(--text-muted)', marginBottom: '8px', fontSize: '0.9rem', fontWeight: 600 }}>Risk Analysis</p>
+                      <p style={{ color: 'var(--text-muted)', marginBottom: '8px', fontSize: '0.9rem', fontWeight: 600 }}>Risk Analysis & Blast Radius</p>
                       <p style={{ color: 'var(--text-main)', fontSize: '0.95rem', lineHeight: 1.6 }}>
                         {rec.risk_analysis}
                       </p>
@@ -303,7 +498,15 @@ export default function Dashboard() {
                     </div>
 
                     <div style={{ background: 'rgba(0,0,0,0.2)', padding: '16px', borderRadius: '12px' }}>
-                      <p style={{ color: 'var(--text-muted)', marginBottom: '12px', fontSize: '0.9rem', fontWeight: 600 }}>Recommended Fix</p>
+                      <div className="flex justify-between items-center" style={{ marginBottom: '12px' }}>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: 600, margin: 0 }}>
+                          Safe Production Remediation
+                        </p>
+                        <span style={{ fontSize: '0.72rem', color: '#34d399', fontWeight: 600 }}>
+                          🛡️ Rollback Protected
+                        </span>
+                      </div>
+
                       <div className="flex flex-col gap-3">
                         {rec.fixes.map((fix, i) => (
                           <div key={i} className="flex items-center gap-3" style={{ fontSize: '0.9rem' }}>
@@ -311,6 +514,7 @@ export default function Dashboard() {
                           </div>
                         ))}
                       </div>
+
                       <button
                         className="btn btn-primary"
                         disabled={isFixing}
@@ -320,15 +524,16 @@ export default function Dashboard() {
                           width: '100%',
                           opacity: isFixing ? 0.7 : 1,
                           cursor: isFixing ? 'wait' : 'pointer',
+                          fontWeight: 700,
                         }}
                       >
                         {isFixing ? (
                           <>
                             <Loader2 size={18} style={{ animation: 'spin 1s linear infinite' }} />
-                            Applying Fix...
+                            Applying Safe Production Fix (Dry-run & Verify)...
                           </>
                         ) : (
-                          'Apply Fix Automatically'
+                          'Safe Production Auto-Remediate'
                         )}
                       </button>
                     </div>
@@ -339,6 +544,15 @@ export default function Dashboard() {
           })}
         </div>
       </div>
+
+      {/* Subscription Checkout Modal */}
+      <SubscriptionCheckoutModal
+        isOpen={isCheckoutOpen}
+        onClose={() => setIsCheckoutOpen(false)}
+        selectedTierId="pro"
+        billingCycle="monthly"
+      />
     </div>
   );
 }
+

@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Cloud, Shield, Key, Bell, Clock, AlertTriangle, Save, ToggleLeft, ToggleRight, Mail, MessageSquare } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Cloud, Shield, Key, Bell, Clock, AlertTriangle, Save, ToggleLeft, ToggleRight, Mail, MessageSquare, Zap, CreditCard, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
+import { useSubscription } from '../context/SubscriptionContext';
 
 const initialSettings = {
   aws: {
@@ -42,7 +44,7 @@ function Toggle({ value, onChange, label }) {
       {value
         ? <ToggleRight size={28} color="var(--success)" />
         : <ToggleLeft size={28} color="var(--text-muted)" />}
-      <span style={{ fontSize: '0.9rem', fontWeight: 500, color: value ? 'var(--text-main)' : 'var(--text-muted)' }}>{label}</span>
+      {label && <span style={{ fontSize: '0.9rem', fontWeight: 500, color: value ? 'var(--text-main)' : 'var(--text-muted)' }}>{label}</span>}
     </div>
   );
 }
@@ -103,6 +105,7 @@ function SettingsSelect({ label, value, onChange, options }) {
 }
 
 export default function Settings() {
+  const { currentPlan, activeTier, isPro, invoices } = useSubscription();
   const [settings, setSettings] = useState(initialSettings);
   const [saved, setSaved] = useState(false);
 
@@ -167,64 +170,143 @@ export default function Settings() {
   ];
 
   return (
-    <div className="flex flex-col gap-6 animate-fade-in">
-
-      {/* Cloud Provider Cards */}
-      {cloudProviders.map(provider => (
-        <div key={provider.key} className="glass-panel" style={{ padding: '28px' }}>
-          <div className="flex justify-between items-center" style={{ marginBottom: provider.fields ? '0' : '0' }}>
-            <div className="flex items-center gap-4">
-              <div style={{
-                padding: '10px',
-                borderRadius: '12px',
-                background: `${provider.color}15`,
-                border: `1px solid ${provider.color}30`,
-              }}>
-                {provider.icon}
-              </div>
-              <div>
-                <h3 style={{ fontSize: '1.1rem', margin: 0 }}>{provider.name}</h3>
-                <span style={{ fontSize: '0.8rem', color: settings[provider.key].enabled ? 'var(--success)' : 'var(--text-muted)' }}>
-                  {settings[provider.key].enabled ? '● Connected' : '○ Disconnected'}
-                </span>
-              </div>
+    <div className="flex flex-col gap-6 animate-fade-in" style={{ maxWidth: '1000px', margin: '0 auto', paddingBottom: '32px' }}>
+      {/* Subscription & Billing Management */}
+      <div className="glass-panel" style={{ padding: '28px', border: isPro ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid rgba(139, 92, 246, 0.4)' }}>
+        <div className="flex justify-between items-center" style={{ marginBottom: '20px' }}>
+          <div className="flex items-center gap-3">
+            <div style={{ padding: '10px', borderRadius: '12px', background: isPro ? 'rgba(16, 185, 129, 0.15)' : 'rgba(139, 92, 246, 0.15)' }}>
+              <Zap size={22} color={isPro ? '#34d399' : '#c084fc'} />
             </div>
-            <Toggle
-              value={settings[provider.key].enabled}
-              onChange={v => updateCloud(provider.key, 'enabled', v)}
-              label={settings[provider.key].enabled ? 'Enabled' : 'Disabled'}
-            />
+            <div>
+              <h3 style={{ fontSize: '1.2rem', margin: 0 }}>Subscription & Plan Management</h3>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: '2px 0 0' }}>
+                Manage your cloud protection tier, active safeguards, and billing
+              </p>
+            </div>
+          </div>
+          <Link
+            to="/subscription"
+            className="btn btn-primary"
+            style={{
+              padding: '8px 16px',
+              fontSize: '0.85rem',
+              fontWeight: 700,
+              textDecoration: 'none',
+              borderRadius: '10px',
+            }}
+          >
+            {isPro ? 'Manage Subscription' : 'Upgrade to Pro ($39)'}
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-3 gap-4" style={{ marginBottom: '16px' }}>
+          <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '14px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Active Plan</div>
+            <div style={{ fontSize: '1rem', fontWeight: 700, color: '#fff' }} className="flex items-center gap-2">
+              {activeTier.name}
+              <span style={{ fontSize: '0.7rem', padding: '2px 6px', borderRadius: '8px', background: isPro ? 'rgba(16,185,129,0.2)' : 'rgba(255,255,255,0.1)', color: isPro ? '#34d399' : '#cbd5e1' }}>
+                {activeTier.badge}
+              </span>
+            </div>
           </div>
 
-          {settings[provider.key].enabled && provider.fields}
-        </div>
-      ))}
+          <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '14px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Safe Production Status</div>
+            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: isPro ? '#34d399' : 'var(--text-muted)' }} className="flex items-center gap-1.5">
+              <ShieldCheck size={16} color={isPro ? '#34d399' : 'var(--text-muted)'} />
+              {isPro ? 'Unlocked & Active' : 'Upgrade to Unlock ($39)'}
+            </div>
+          </div>
 
-      {/* General Settings */}
+          <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '14px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>24/7 Instant Help Hotline</div>
+            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: isPro ? '#c084fc' : 'var(--text-muted)' }} className="flex items-center gap-1.5">
+              <Sparkles size={16} color={isPro ? '#c084fc' : 'var(--text-muted)'} />
+              {isPro ? 'Priority AI SecOps' : 'Community Mode'}
+            </div>
+          </div>
+        </div>
+
+        {invoices.length > 0 && (
+          <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '12px' }}>
+            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600, marginBottom: '8px' }}>Recent Billing Invoices</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              {invoices.map(inv => (
+                <div key={inv.id} className="flex justify-between items-center" style={{ fontSize: '0.8rem', background: 'rgba(0,0,0,0.2)', padding: '8px 12px', borderRadius: '8px' }}>
+                  <span>{inv.id} • {inv.date} ({inv.planName})</span>
+                  <span style={{ color: 'var(--success)', fontWeight: 700 }}>${inv.amount} Paid ✓</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Cloud Accounts Config */}
+      <div className="flex flex-col gap-4">
+        <h3 style={{ fontSize: '1.2rem', margin: '8px 0 0' }}>Connected Cloud Accounts</h3>
+        {cloudProviders.map(provider => (
+          <div key={provider.key} className="glass-panel" style={{ padding: '24px' }}>
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-3">
+                <div style={{ padding: '8px', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center' }}>
+                  {provider.icon}
+                </div>
+                <div>
+                  <h4 style={{ fontSize: '1.05rem', margin: 0 }}>{provider.name}</h4>
+                  <span style={{ fontSize: '0.8rem', color: settings[provider.key].enabled ? 'var(--success)' : 'var(--text-muted)' }}>
+                    {settings[provider.key].enabled ? 'Connected & Monitored' : 'Disabled'}
+                  </span>
+                </div>
+              </div>
+              <Toggle
+                value={settings[provider.key].enabled}
+                onChange={v => updateCloud(provider.key, 'enabled', v)}
+                label=""
+              />
+            </div>
+            {settings[provider.key].enabled && provider.fields}
+          </div>
+        ))}
+      </div>
+
+      {/* General Scanner Configuration */}
       <div className="glass-panel" style={{ padding: '28px' }}>
         <div className="flex items-center gap-4" style={{ marginBottom: '24px' }}>
-          <div style={{ padding: '10px', borderRadius: '12px', background: 'rgba(139, 92, 246, 0.1)', border: '1px solid rgba(139, 92, 246, 0.3)' }}>
-            <Shield size={22} color="var(--accent)" />
+          <div style={{ padding: '10px', borderRadius: '12px', background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.3)' }}>
+            <Shield size={22} color="var(--primary)" />
           </div>
-          <h3 style={{ fontSize: '1.1rem', margin: 0 }}>Scan & Security Settings</h3>
+          <div>
+            <h3 style={{ fontSize: '1.1rem', margin: 0 }}>General Scanner Configuration</h3>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0 }}>Configure scanning frequency and automated action policies</p>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-6">
-          <SettingsSelect label="Scan Frequency" value={settings.general.scan_frequency} onChange={v => updateGeneral('scan_frequency', v)} options={scanFrequencies} />
-          <SettingsSelect label="Minimum Severity" value={settings.general.min_severity} onChange={v => updateGeneral('min_severity', v)} options={severityLevels} />
-        </div>
+          <SettingsSelect
+            label="Scan Frequency"
+            value={settings.general.scan_frequency}
+            onChange={v => updateGeneral('scan_frequency', v)}
+            options={scanFrequencies}
+          />
+          <SettingsSelect
+            label="Minimum Severity to Report"
+            value={settings.general.min_severity}
+            onChange={v => updateGeneral('min_severity', v)}
+            options={severityLevels}
+          />
 
-        <div style={{ marginTop: '24px', padding: '20px', borderRadius: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2" style={{ gridColumn: 'span 2' }}>
             <Toggle
               value={settings.general.auto_remediation}
               onChange={v => updateGeneral('auto_remediation', v)}
-              label="Auto-Remediation"
+              label="Safe Production Auto-Remediation"
             />
             {settings.general.auto_remediation && (
               <div style={{ padding: '12px 16px', background: 'rgba(234, 179, 8, 0.08)', border: '1px solid rgba(234, 179, 8, 0.2)', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--medium)' }} className="flex items-center gap-3">
                 <AlertTriangle size={16} />
-                <span>Auto-remediation will automatically apply security fixes. Use with caution in production environments.</span>
+                <span>Auto-remediation will automatically apply security fixes with pre-flight dry-run and rollback snapshots.</span>
               </div>
             )}
           </div>
