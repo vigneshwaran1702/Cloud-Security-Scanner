@@ -342,6 +342,71 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--primary);
 }
 
+/* ================= Header Actions & Utilities ================= */
+.header-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--panel-inner-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  transition: var(--transition);
+  text-decoration: none;
+  user-select: none;
+}
+
+.header-action-btn:hover {
+  background: var(--table-hover);
+  border-color: var(--border-color-hover);
+  transform: translateY(-1px);
+}
+
+.header-action-btn.active {
+  background: var(--badge-primary-bg);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.header-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--panel-inner-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+}
+
+.header-icon-btn:hover {
+  background: var(--table-hover);
+  border-color: var(--border-color-hover);
+  color: var(--text-main);
+  transform: translateY(-1px);
+}
+
+.header-icon-btn.active {
+  background: var(--badge-primary-bg);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.header-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border-color);
+  margin: 0 4px;
+}
+
 /* ================= Form Controls ================= */
 input[type="text"],
 input[type="email"],
