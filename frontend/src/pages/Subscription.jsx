@@ -116,9 +116,9 @@ export default function Subscription() {
             gap: '8px',
             padding: '6px 16px',
             borderRadius: '24px',
-            background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(59, 130, 246, 0.2))',
-            border: '1px solid rgba(139, 92, 246, 0.4)',
-            color: '#c084fc',
+            background: 'var(--badge-primary-bg)',
+            border: '1px solid var(--badge-primary-border)',
+            color: 'var(--primary)',
             fontSize: '0.85rem',
             fontWeight: 700,
             marginBottom: '16px',
@@ -126,12 +126,12 @@ export default function Subscription() {
             letterSpacing: '0.05em',
           }}
         >
-          <Sparkles size={16} color="#c084fc" />
+          <Sparkles size={16} color="var(--primary)" />
           Autonomous Cloud Security & Upgrades
         </div>
 
-        <h1 style={{ fontSize: '2.8rem', fontWeight: 800, lineHeight: 1.15, marginBottom: '16px', color: '#fff' }}>
-          Upgrade to <span className="gradient-text">Pro Cloud Defender</span> for <span style={{ color: '#60a5fa' }}>$39</span>
+        <h1 style={{ fontSize: '2.8rem', fontWeight: 800, lineHeight: 1.15, marginBottom: '16px', color: 'var(--text-main)' }}>
+          Upgrade to <span className="gradient-text">Pro Cloud Defender</span> for <span style={{ color: 'var(--primary)' }}>$39</span>
         </h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', maxWidth: '780px', margin: '0 auto 28px' }}>
           Protect production infrastructure automatically, get instant 24/7 AI SecOps help, deep risk contribution analytics, and continuous multi-cloud automated remediation.
@@ -143,8 +143,8 @@ export default function Subscription() {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '12px',
-            background: isPro ? 'rgba(16, 185, 129, 0.12)' : 'rgba(59, 130, 246, 0.12)',
-            border: isPro ? '1px solid rgba(16, 185, 129, 0.35)' : '1px solid rgba(59, 130, 246, 0.35)',
+            background: isPro ? 'rgba(16, 185, 129, 0.12)' : 'var(--badge-primary-bg)',
+            border: isPro ? '1px solid rgba(16, 185, 129, 0.35)' : '1px solid var(--badge-primary-border)',
             padding: '10px 20px',
             borderRadius: '16px',
             marginBottom: '28px',
@@ -159,8 +159,8 @@ export default function Subscription() {
               boxShadow: isPro ? '0 0 10px var(--success)' : '0 0 10px var(--primary)',
             }}
           />
-          <span style={{ fontSize: '0.9rem', color: '#e2e8f0' }}>
-            Current Plan: <strong style={{ color: isPro ? '#34d399' : '#60a5fa' }}>{activeTier.name}</strong>
+          <span style={{ fontSize: '0.9rem', color: 'var(--text-main)' }}>
+            Current Plan: <strong style={{ color: isPro ? 'var(--success)' : 'var(--primary)' }}>{activeTier.name}</strong>
             {currentPlan.expiresAt && ` (Renews ${new Date(currentPlan.expiresAt).toLocaleDateString()})`}
           </span>
           {isPro && (
@@ -186,7 +186,7 @@ export default function Subscription() {
           style={{
             display: 'inline-flex',
             alignItems: 'center',
-            background: 'rgba(255, 255, 255, 0.05)',
+            background: 'var(--panel-inner-bg)',
             padding: '4px',
             borderRadius: '14px',
             border: '1px solid var(--border-color)',
@@ -260,8 +260,8 @@ export default function Subscription() {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            border: currentPlan.tierId === 'free' ? '1px solid rgba(59, 130, 246, 0.4)' : '1px solid var(--border-color)',
-            background: 'rgba(30, 41, 59, 0.5)',
+            border: currentPlan.tierId === 'free' ? '1px solid var(--primary)' : '1px solid var(--border-color)',
+            background: 'var(--panel-bg-solid)',
           }}
         >
           <div>
@@ -270,7 +270,7 @@ export default function Subscription() {
                 Starter
               </span>
               {currentPlan.tierId === 'free' && (
-                <span style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.1)', padding: '3px 10px', borderRadius: '12px', color: '#cbd5e1' }}>
+                <span style={{ fontSize: '0.75rem', background: 'var(--badge-primary-bg)', padding: '3px 10px', borderRadius: '12px', color: 'var(--primary)', fontWeight: 700 }}>
                   Active
                 </span>
               )}
@@ -282,12 +282,12 @@ export default function Subscription() {
             </p>
 
             <div style={{ marginBottom: '24px' }}>
-              <span style={{ fontSize: '2.8rem', fontWeight: 800, color: '#fff' }}>$0</span>
+              <span style={{ fontSize: '2.8rem', fontWeight: 800, color: 'var(--text-main)' }}>$0</span>
               <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}> / forever</span>
             </div>
 
-            <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '20px', marginBottom: '24px' }}>
-              <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#94a3b8', marginBottom: '12px' }}>
+            <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '20px', marginBottom: '24px' }}>
+              <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '12px' }}>
                 Included in Free:
               </div>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.85rem' }}>
@@ -327,7 +327,7 @@ export default function Subscription() {
               width: '100%',
               padding: '12px',
               borderRadius: '12px',
-              background: 'rgba(255, 255, 255, 0.06)',
+              background: 'var(--panel-inner-bg)',
               border: '1px solid var(--border-color)',
               color: 'var(--text-main)',
               cursor: currentPlan.tierId === 'free' ? 'default' : 'pointer',
@@ -346,10 +346,10 @@ export default function Subscription() {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            border: '2px solid rgba(139, 92, 246, 0.8)',
-            boxShadow: '0 16px 50px rgba(139, 92, 246, 0.25), 0 0 30px rgba(59, 130, 246, 0.2)',
+            border: '2px solid var(--primary)',
+            boxShadow: 'var(--glass-shadow-hover)',
             position: 'relative',
-            background: 'linear-gradient(180deg, rgba(30, 41, 59, 0.95) 0%, rgba(20, 28, 48, 0.95) 100%)',
+            background: 'var(--panel-bg-solid)',
             transform: 'scale(1.02)',
           }}
         >
@@ -360,7 +360,7 @@ export default function Subscription() {
               top: '-14px',
               left: '50%',
               transform: 'translateX(-50%)',
-              background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)',
+              background: 'linear-gradient(135deg, var(--primary), var(--accent))',
               color: 'white',
               fontSize: '0.78rem',
               fontWeight: 800,
@@ -368,7 +368,7 @@ export default function Subscription() {
               borderRadius: '20px',
               letterSpacing: '0.06em',
               textTransform: 'uppercase',
-              boxShadow: '0 4px 14px rgba(139, 92, 246, 0.5)',
+              boxShadow: '0 4px 14px rgba(220, 38, 38, 0.4)',
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
@@ -379,35 +379,35 @@ export default function Subscription() {
 
           <div>
             <div className="flex justify-between items-center" style={{ marginBottom: '16px' }}>
-              <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#c084fc', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 Pro Tier
               </span>
               {currentPlan.tierId === 'pro' && (
-                <span style={{ fontSize: '0.75rem', background: 'rgba(16, 185, 129, 0.2)', border: '1px solid var(--success)', padding: '3px 10px', borderRadius: '12px', color: '#34d399', fontWeight: 700 }}>
+                <span style={{ fontSize: '0.75rem', background: 'rgba(16, 185, 129, 0.2)', border: '1px solid var(--success)', padding: '3px 10px', borderRadius: '12px', color: 'var(--success)', fontWeight: 700 }}>
                   Active Plan ✓
                 </span>
               )}
             </div>
 
             <h3 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '8px' }}>Pro Cloud Defender</h3>
-            <p style={{ fontSize: '0.88rem', color: '#cbd5e1', marginBottom: '24px', minHeight: '40px' }}>
+            <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginBottom: '24px', minHeight: '40px' }}>
               Autonomous multi-cloud security with automated safe production fixes, 24/7 instant AI SecOps help, and deep risk contribution analytics.
             </p>
 
             <div style={{ marginBottom: '24px' }}>
               <div className="flex items-baseline gap-1">
-                <span style={{ fontSize: '3.4rem', fontWeight: 900, color: '#fff', letterSpacing: '-0.03em' }}>$39</span>
+                <span style={{ fontSize: '3.4rem', fontWeight: 900, color: 'var(--text-main)', letterSpacing: '-0.03em' }}>$39</span>
                 <span style={{ color: 'var(--text-muted)', fontSize: '1rem' }}>
                   /{billingCycle === 'yearly' ? 'mo (billed $390/yr)' : 'month'}
                 </span>
               </div>
-              <div style={{ fontSize: '0.78rem', color: '#34d399', fontWeight: 600, marginTop: '2px' }}>
+              <div style={{ fontSize: '0.78rem', color: 'var(--success)', fontWeight: 600, marginTop: '2px' }}>
                 Instant Activation • 30-Day Money-Back Guarantee
               </div>
             </div>
 
-            <div style={{ borderTop: '1px solid rgba(139, 92, 246, 0.3)', paddingTop: '20px', marginBottom: '28px' }}>
-              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#c084fc', marginBottom: '12px' }}>
+            <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '20px', marginBottom: '28px' }}>
+              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--primary)', marginBottom: '12px' }}>
                 Everything in Free, plus:
               </div>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.88rem' }}>
@@ -416,27 +416,27 @@ export default function Subscription() {
                     <Check size={14} color="var(--success)" />
                   </div>
                   <div>
-                    <strong style={{ color: '#fff' }}>Safe Production Automatically</strong>
+                    <strong style={{ color: 'var(--text-main)' }}>Safe Production Automatically</strong>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Zero-downtime automated fixes with pre-flight dry-run guardrails</div>
                   </div>
                 </li>
 
                 <li className="flex items-start gap-2.5">
-                  <div style={{ background: 'rgba(139, 92, 246, 0.2)', padding: '2px', borderRadius: '50%', marginTop: '2px' }}>
-                    <Check size={14} color="#c084fc" />
+                  <div style={{ background: 'var(--badge-primary-bg)', padding: '2px', borderRadius: '50%', marginTop: '2px' }}>
+                    <Check size={14} color="var(--primary)" />
                   </div>
                   <div>
-                    <strong style={{ color: '#fff' }}>24/7 Instant Help AI SecOps Hotline</strong>
+                    <strong style={{ color: 'var(--text-main)' }}>24/7 Instant Help AI SecOps Hotline</strong>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Sub-minute incident triage & live AI cloud architect hotline</div>
                   </div>
                 </li>
 
                 <li className="flex items-start gap-2.5">
-                  <div style={{ background: 'rgba(59, 130, 246, 0.2)', padding: '2px', borderRadius: '50%', marginTop: '2px' }}>
-                    <Check size={14} color="#60a5fa" />
+                  <div style={{ background: 'var(--badge-primary-bg)', padding: '2px', borderRadius: '50%', marginTop: '2px' }}>
+                    <Check size={14} color="var(--primary)" />
                   </div>
                   <div>
-                    <strong style={{ color: '#fff' }}>Advanced Risk Contribution Matrix</strong>
+                    <strong style={{ color: 'var(--text-main)' }}>Advanced Risk Contribution Matrix</strong>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Deep blast-radius mapping & asset vulnerability impact simulator</div>
                   </div>
                 </li>
@@ -448,12 +448,7 @@ export default function Subscription() {
 
                 <li className="flex items-center gap-2">
                   <Check size={16} color="var(--success)" />
-                  <span>Real-time Continuous Drift Detection</span>
-                </li>
-
-                <li className="flex items-center gap-2">
-                  <Check size={16} color="var(--success)" />
-                  <span>Automated SOC2, ISO27001 & CIS PDF Reports</span>
+                  <span>1-Click Compliance Reporting (SOC2, CIS, HIPAA)</span>
                 </li>
               </ul>
             </div>
@@ -464,24 +459,18 @@ export default function Subscription() {
             onClick={() => handleOpenCheckout('pro')}
             style={{
               width: '100%',
-              padding: '15px',
-              borderRadius: '14px',
-              fontSize: '1.05rem',
-              fontWeight: 800,
-              boxShadow: '0 8px 30px rgba(59, 130, 246, 0.6)',
+              padding: '14px',
+              borderRadius: '12px',
+              fontWeight: 700,
+              fontSize: '1rem',
               cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
             }}
           >
-            {currentPlan.tierId === 'pro' ? 'Current Active Subscription' : 'Buy Pro Subscription for $39'}
-            <ArrowRight size={18} />
+            {currentPlan.tierId === 'pro' ? 'Current Plan (Active ✓)' : 'Upgrade to Pro for $39'}
           </button>
         </div>
 
-        {/* Tier 3: Enterprise Cloud Fortress */}
+        {/* Tier 3: Enterprise Fortress */}
         <div
           className="glass-panel"
           style={{
@@ -489,8 +478,8 @@ export default function Subscription() {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            border: currentPlan.tierId === 'enterprise' ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid var(--border-color)',
-            background: 'rgba(30, 41, 59, 0.5)',
+            border: currentPlan.tierId === 'enterprise' ? '1px solid var(--primary)' : '1px solid var(--border-color)',
+            background: 'var(--panel-bg-solid)',
           }}
         >
           <div>
@@ -499,7 +488,7 @@ export default function Subscription() {
                 Enterprise
               </span>
               {currentPlan.tierId === 'enterprise' && (
-                <span style={{ fontSize: '0.75rem', background: 'rgba(16, 185, 129, 0.2)', border: '1px solid var(--success)', padding: '3px 10px', borderRadius: '12px', color: '#34d399', fontWeight: 700 }}>
+                <span style={{ fontSize: '0.75rem', background: 'rgba(16, 185, 129, 0.2)', border: '1px solid var(--success)', padding: '3px 10px', borderRadius: '12px', color: 'var(--success)', fontWeight: 700 }}>
                   Active
                 </span>
               )}
@@ -511,12 +500,12 @@ export default function Subscription() {
             </p>
 
             <div style={{ marginBottom: '24px' }}>
-              <span style={{ fontSize: '2.8rem', fontWeight: 800, color: '#fff' }}>$99</span>
+              <span style={{ fontSize: '2.8rem', fontWeight: 800, color: 'var(--text-main)' }}>$99</span>
               <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}> / month</span>
             </div>
 
-            <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '20px', marginBottom: '24px' }}>
-              <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#94a3b8', marginBottom: '12px' }}>
+            <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '20px', marginBottom: '24px' }}>
+              <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '12px' }}>
                 Everything in Pro, plus:
               </div>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.85rem' }}>
@@ -551,9 +540,9 @@ export default function Subscription() {
               width: '100%',
               padding: '12px',
               borderRadius: '12px',
-              background: 'rgba(255, 255, 255, 0.08)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              color: '#fff',
+              background: 'var(--panel-inner-bg)',
+              border: '1px solid var(--border-color)',
+              color: 'var(--text-main)',
               cursor: 'pointer',
               fontWeight: 600,
             }}
@@ -566,7 +555,7 @@ export default function Subscription() {
       {/* 4 CORE FEATURE SHOWCASES SECTION */}
       <div style={{ marginBottom: '56px' }}>
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '8px' }}>
+          <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '8px', color: 'var(--text-main)' }}>
             4 Breakthrough Capabilities Unlocked With <span className="gradient-text">$39 Pro</span>
           </h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>
@@ -576,18 +565,18 @@ export default function Subscription() {
 
         <div className="grid grid-cols-2 gap-6">
           {/* 1. Safe Production Automatically */}
-          <div className="glass-panel" style={{ padding: '28px', borderRadius: '20px', border: '1px solid rgba(59, 130, 246, 0.3)' }}>
+          <div className="glass-panel" style={{ padding: '28px', borderRadius: '20px' }}>
             <div className="flex items-center justify-between" style={{ marginBottom: '16px' }}>
               <div className="flex items-center gap-3">
-                <div style={{ background: 'rgba(59, 130, 246, 0.15)', padding: '10px', borderRadius: '12px', border: '1px solid rgba(59, 130, 246, 0.3)' }}>
-                  <ShieldCheck size={24} color="#60a5fa" />
+                <div style={{ background: 'rgba(16, 185, 129, 0.15)', padding: '10px', borderRadius: '12px', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
+                  <ShieldCheck size={24} color="var(--success)" />
                 </div>
                 <div>
                   <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>Safe Production Automatically</h3>
-                  <span style={{ fontSize: '0.75rem', color: '#60a5fa', fontWeight: 600 }}>Zero-Downtime Auto-Remediation Engine</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--success)', fontWeight: 600 }}>Zero-Downtime Auto-Remediation Engine</span>
                 </div>
               </div>
-              <span style={{ fontSize: '0.75rem', background: 'rgba(59, 130, 246, 0.15)', color: '#60a5fa', padding: '3px 8px', borderRadius: '8px', fontWeight: 700 }}>
+              <span style={{ fontSize: '0.75rem', background: 'var(--badge-primary-bg)', color: 'var(--badge-primary-color)', border: '1px solid var(--badge-primary-border)', padding: '3px 8px', borderRadius: '8px', fontWeight: 700 }}>
                 $39 PRO
               </span>
             </div>
@@ -597,7 +586,7 @@ export default function Subscription() {
             </p>
 
             {/* Interactive Live Demo */}
-            <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
+            <div style={{ background: 'var(--panel-inner-bg)', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
               <div className="flex justify-between items-center" style={{ marginBottom: '10px' }}>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>
                   Live Safety Guardrail Simulator
@@ -607,9 +596,9 @@ export default function Subscription() {
                   disabled={safeFixStep === 1 || safeFixStep === 2}
                   className="btn"
                   style={{
-                    background: 'rgba(59, 130, 246, 0.25)',
-                    border: '1px solid var(--primary)',
-                    color: '#fff',
+                    background: 'var(--badge-primary-bg)',
+                    border: '1px solid var(--badge-primary-border)',
+                    color: 'var(--badge-primary-color)',
                     padding: '6px 12px',
                     borderRadius: '8px',
                     fontSize: '0.75rem',
@@ -632,12 +621,12 @@ export default function Subscription() {
                       style={{
                         flex: 1,
                         padding: '6px',
-                        background: isDone ? 'rgba(16, 185, 129, 0.2)' : isCurrent ? 'rgba(59, 130, 246, 0.3)' : 'rgba(255, 255, 255, 0.04)',
-                        border: isDone ? '1px solid var(--success)' : isCurrent ? '1px solid var(--primary)' : '1px solid transparent',
+                        background: isDone ? 'rgba(16, 185, 129, 0.15)' : isCurrent ? 'var(--badge-primary-bg)' : 'var(--panel-inner-bg)',
+                        border: isDone ? '1px solid var(--success)' : isCurrent ? '1px solid var(--primary)' : '1px solid var(--border-color)',
                         borderRadius: '6px',
                         fontSize: '0.7rem',
                         textAlign: 'center',
-                        color: isDone ? '#34d399' : isCurrent ? '#60a5fa' : 'var(--text-muted)',
+                        color: isDone ? 'var(--success)' : isCurrent ? 'var(--primary)' : 'var(--text-muted)',
                         fontWeight: 600,
                       }}
                     >
@@ -648,7 +637,7 @@ export default function Subscription() {
               </div>
 
               {/* Console log */}
-              <div style={{ background: '#090d16', padding: '10px', borderRadius: '8px', fontFamily: 'monospace', fontSize: '0.72rem', color: '#a7f3d0', minHeight: '60px' }}>
+              <div style={{ background: 'var(--code-bg)', border: '1px solid var(--border-color)', padding: '10px', borderRadius: '8px', fontFamily: 'monospace', fontSize: '0.72rem', color: 'var(--code-text)', minHeight: '60px' }}>
                 {safeFixLog.map((line, i) => (
                   <div key={i} style={{ marginBottom: '3px' }}>{line}</div>
                 ))}
@@ -657,18 +646,18 @@ export default function Subscription() {
           </div>
 
           {/* 2. Instant Help (24/7 AI SecOps Hotline) */}
-          <div className="glass-panel" style={{ padding: '28px', borderRadius: '20px', border: '1px solid rgba(139, 92, 246, 0.3)' }}>
+          <div className="glass-panel" style={{ padding: '28px', borderRadius: '20px' }}>
             <div className="flex items-center justify-between" style={{ marginBottom: '16px' }}>
               <div className="flex items-center gap-3">
-                <div style={{ background: 'rgba(139, 92, 246, 0.15)', padding: '10px', borderRadius: '12px', border: '1px solid rgba(139, 92, 246, 0.3)' }}>
-                  <Bot size={24} color="#c084fc" />
+                <div style={{ background: 'var(--badge-primary-bg)', padding: '10px', borderRadius: '12px', border: '1px solid var(--badge-primary-border)' }}>
+                  <Bot size={24} color="var(--primary)" />
                 </div>
                 <div>
                   <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>Instant Help 24/7</h3>
-                  <span style={{ fontSize: '0.75rem', color: '#c084fc', fontWeight: 600 }}>Priority AI SecOps Hotline & Triage</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: 600 }}>Priority AI SecOps Hotline & Triage</span>
                 </div>
               </div>
-              <span style={{ fontSize: '0.75rem', background: 'rgba(139, 92, 246, 0.15)', color: '#c084fc', padding: '3px 8px', borderRadius: '8px', fontWeight: 700 }}>
+              <span style={{ fontSize: '0.75rem', background: 'var(--badge-primary-bg)', color: 'var(--badge-primary-color)', border: '1px solid var(--badge-primary-border)', padding: '3px 8px', borderRadius: '8px', fontWeight: 700 }}>
                 $39 PRO
               </span>
             </div>
@@ -678,7 +667,7 @@ export default function Subscription() {
             </p>
 
             {/* Interactive Live Triage Demo */}
-            <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
+            <div style={{ background: 'var(--panel-inner-bg)', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
               <div className="flex gap-2" style={{ marginBottom: '10px' }}>
                 <input
                   type="text"
@@ -686,11 +675,11 @@ export default function Subscription() {
                   onChange={(e) => setInstantHelpPrompt(e.target.value)}
                   style={{
                     flex: 1,
-                    background: 'rgba(255, 255, 255, 0.05)',
+                    background: 'var(--input-bg)',
                     border: '1px solid var(--border-color)',
                     padding: '8px 12px',
                     borderRadius: '8px',
-                    color: '#fff',
+                    color: 'var(--text-main)',
                     fontSize: '0.8rem',
                     outline: 'none',
                   }}
@@ -698,10 +687,8 @@ export default function Subscription() {
                 <button
                   onClick={runInstantHelpDemo}
                   disabled={isHelpGenerating}
-                  className="btn"
+                  className="btn btn-primary"
                   style={{
-                    background: 'linear-gradient(135deg, var(--accent), #7c3aed)',
-                    color: '#fff',
                     padding: '8px 14px',
                     borderRadius: '8px',
                     fontSize: '0.78rem',
@@ -714,13 +701,13 @@ export default function Subscription() {
               </div>
 
               {instantHelpResponse ? (
-                <div style={{ background: '#090d16', padding: '12px', borderRadius: '8px', fontSize: '0.78rem' }}>
+                <div style={{ background: 'var(--code-bg)', border: '1px solid var(--border-color)', padding: '12px', borderRadius: '8px', fontSize: '0.78rem' }}>
                   <div className="flex justify-between items-center" style={{ marginBottom: '6px' }}>
-                    <span style={{ color: '#ef4444', fontWeight: 700 }}>● {instantHelpResponse.incidentSeverity}</span>
+                    <span style={{ color: 'var(--critical)', fontWeight: 700 }}>● {instantHelpResponse.incidentSeverity}</span>
                     <span style={{ color: 'var(--text-muted)', fontSize: '0.7rem' }}>⚡ {instantHelpResponse.timeTaken}</span>
                   </div>
-                  <p style={{ color: '#e2e8f0', marginBottom: '8px', fontSize: '0.75rem' }}>{instantHelpResponse.summary}</p>
-                  <div style={{ color: '#a7f3d0', fontSize: '0.72rem', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <p style={{ color: 'var(--text-main)', marginBottom: '8px', fontSize: '0.75rem' }}>{instantHelpResponse.summary}</p>
+                  <div style={{ color: 'var(--code-text)', fontSize: '0.72rem', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     {instantHelpResponse.actionPlan.map((step, idx) => (
                       <div key={idx}>▸ {step}</div>
                     ))}
@@ -735,18 +722,18 @@ export default function Subscription() {
           </div>
 
           {/* 3. More Risk Contribution & Blast Radius Breakdown */}
-          <div className="glass-panel" style={{ padding: '28px', borderRadius: '20px', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
+          <div className="glass-panel" style={{ padding: '28px', borderRadius: '20px' }}>
             <div className="flex items-center justify-between" style={{ marginBottom: '16px' }}>
               <div className="flex items-center gap-3">
                 <div style={{ background: 'rgba(16, 185, 129, 0.15)', padding: '10px', borderRadius: '12px', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
-                  <Activity size={24} color="#34d399" />
+                  <Activity size={24} color="var(--success)" />
                 </div>
                 <div>
                   <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>Risk Contribution Matrix</h3>
-                  <span style={{ fontSize: '0.75rem', color: '#34d399', fontWeight: 600 }}>Multi-Cloud Attack Surface & Blast Radius</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--success)', fontWeight: 600 }}>Multi-Cloud Attack Surface & Blast Radius</span>
                 </div>
               </div>
-              <span style={{ fontSize: '0.75rem', background: 'rgba(16, 185, 129, 0.15)', color: '#34d399', padding: '3px 8px', borderRadius: '8px', fontWeight: 700 }}>
+              <span style={{ fontSize: '0.75rem', background: 'var(--badge-primary-bg)', color: 'var(--badge-primary-color)', border: '1px solid var(--badge-primary-border)', padding: '3px 8px', borderRadius: '8px', fontWeight: 700 }}>
                 $39 PRO
               </span>
             </div>
@@ -756,7 +743,7 @@ export default function Subscription() {
             </p>
 
             {/* Interactive Risk Weight Breakdown */}
-            <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', padding: '16px' }}>
+            <div style={{ background: 'var(--panel-inner-bg)', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '16px' }}>
               <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '10px' }}>
                 Vulnerability Risk Contribution (%)
               </div>
@@ -765,17 +752,17 @@ export default function Subscription() {
                 {riskItems.map((item) => (
                   <div key={item.id}>
                     <div className="flex justify-between items-center" style={{ fontSize: '0.75rem', marginBottom: '4px' }}>
-                      <span style={{ color: '#e2e8f0', fontWeight: 500 }}>{item.name}</span>
+                      <span style={{ color: 'var(--text-main)', fontWeight: 500 }}>{item.name}</span>
                       <span style={{ color: item.weight > 30 ? 'var(--critical)' : item.weight > 20 ? 'var(--high)' : 'var(--primary)', fontWeight: 700 }}>
                         {item.weight}% Risk Impact
                       </span>
                     </div>
-                    <div style={{ width: '100%', height: '6px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '4px', overflow: 'hidden' }}>
+                    <div style={{ width: '100%', height: '6px', background: 'var(--border-color)', borderRadius: '4px', overflow: 'hidden' }}>
                       <div
                         style={{
                           width: `${item.weight}%`,
                           height: '100%',
-                          background: item.weight > 30 ? 'linear-gradient(90deg, #ef4444, #f87171)' : item.weight > 20 ? 'linear-gradient(90deg, #f97316, #fb923c)' : 'linear-gradient(90deg, #3b82f6, #60a5fa)',
+                          background: item.weight > 30 ? 'linear-gradient(90deg, #ef4444, #f87171)' : item.weight > 20 ? 'linear-gradient(90deg, #f97316, #fb923c)' : 'linear-gradient(90deg, var(--primary), var(--accent))',
                           borderRadius: '4px',
                         }}
                       />
@@ -787,18 +774,18 @@ export default function Subscription() {
           </div>
 
           {/* 4. Many Upgrades & Power Capabilities Grid */}
-          <div className="glass-panel" style={{ padding: '28px', borderRadius: '20px', border: '1px solid rgba(234, 179, 8, 0.3)' }}>
+          <div className="glass-panel" style={{ padding: '28px', borderRadius: '20px' }}>
             <div className="flex items-center justify-between" style={{ marginBottom: '16px' }}>
               <div className="flex items-center gap-3">
                 <div style={{ background: 'rgba(234, 179, 8, 0.15)', padding: '10px', borderRadius: '12px', border: '1px solid rgba(234, 179, 8, 0.3)' }}>
-                  <Layers size={24} color="#facc15" />
+                  <Layers size={24} color="var(--medium)" />
                 </div>
                 <div>
                   <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>Many Upgrades Included</h3>
-                  <span style={{ fontSize: '0.75rem', color: '#facc15', fontWeight: 600 }}>Enterprise-Grade Tooling Suite</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--medium)', fontWeight: 600 }}>Enterprise-Grade Tooling Suite</span>
                 </div>
               </div>
-              <span style={{ fontSize: '0.75rem', background: 'rgba(234, 179, 8, 0.15)', color: '#facc15', padding: '3px 8px', borderRadius: '8px', fontWeight: 700 }}>
+              <span style={{ fontSize: '0.75rem', background: 'var(--badge-primary-bg)', color: 'var(--badge-primary-color)', border: '1px solid var(--badge-primary-border)', padding: '3px 8px', borderRadius: '8px', fontWeight: 700 }}>
                 $39 PRO
               </span>
             </div>
@@ -808,30 +795,30 @@ export default function Subscription() {
             </p>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-              <div style={{ background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.06)', padding: '10px', borderRadius: '10px' }}>
-                <div className="flex items-center gap-1.5" style={{ fontSize: '0.8rem', fontWeight: 600, color: '#e2e8f0', marginBottom: '2px' }}>
-                  <Bell size={14} color="#60a5fa" /> Real-time Drift Alerts
+              <div style={{ background: 'var(--panel-inner-bg)', border: '1px solid var(--border-color)', padding: '10px', borderRadius: '10px' }}>
+                <div className="flex items-center gap-1.5" style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-main)', marginBottom: '2px' }}>
+                  <Bell size={14} color="var(--primary)" /> Real-time Drift Alerts
                 </div>
                 <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Slack, Discord & Webhook pushes</div>
               </div>
 
-              <div style={{ background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.06)', padding: '10px', borderRadius: '10px' }}>
-                <div className="flex items-center gap-1.5" style={{ fontSize: '0.8rem', fontWeight: 600, color: '#e2e8f0', marginBottom: '2px' }}>
-                  <Cloud size={14} color="#c084fc" /> Unlimited Accounts
+              <div style={{ background: 'var(--panel-inner-bg)', border: '1px solid var(--border-color)', padding: '10px', borderRadius: '10px' }}>
+                <div className="flex items-center gap-1.5" style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-main)', marginBottom: '2px' }}>
+                  <Cloud size={14} color="var(--primary)" /> Unlimited Accounts
                 </div>
                 <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>AWS, Azure, GCP & K8s</div>
               </div>
 
-              <div style={{ background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.06)', padding: '10px', borderRadius: '10px' }}>
-                <div className="flex items-center gap-1.5" style={{ fontSize: '0.8rem', fontWeight: 600, color: '#e2e8f0', marginBottom: '2px' }}>
-                  <FileText size={14} color="#34d399" /> 1-Click SOC2 Reports
+              <div style={{ background: 'var(--panel-inner-bg)', border: '1px solid var(--border-color)', padding: '10px', borderRadius: '10px' }}>
+                <div className="flex items-center gap-1.5" style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-main)', marginBottom: '2px' }}>
+                  <FileText size={14} color="var(--success)" /> 1-Click SOC2 Reports
                 </div>
                 <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Audit-ready PDF/JSON exports</div>
               </div>
 
-              <div style={{ background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.06)', padding: '10px', borderRadius: '10px' }}>
-                <div className="flex items-center gap-1.5" style={{ fontSize: '0.8rem', fontWeight: 600, color: '#e2e8f0', marginBottom: '2px' }}>
-                  <Lock size={14} color="#facc15" /> Least-Privilege IAM
+              <div style={{ background: 'var(--panel-inner-bg)', border: '1px solid var(--border-color)', padding: '10px', borderRadius: '10px' }}>
+                <div className="flex items-center gap-1.5" style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-main)', marginBottom: '2px' }}>
+                  <Lock size={14} color="var(--medium)" /> Least-Privilege IAM
                 </div>
                 <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Automatic policy synthesizer</div>
               </div>
@@ -842,18 +829,18 @@ export default function Subscription() {
 
       {/* FULL FEATURE COMPARISON TABLE */}
       <div className="glass-panel" style={{ padding: '36px', borderRadius: '24px', marginBottom: '56px' }}>
-        <h3 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '24px', textAlign: 'center' }}>
+        <h3 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '24px', textAlign: 'center', color: 'var(--text-main)' }}>
           Detailed Plan Feature Comparison
         </h3>
 
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.15)', textAlign: 'left' }}>
+              <tr style={{ borderBottom: '1px solid var(--border-color)', textAlign: 'left', background: 'var(--panel-inner-bg)' }}>
                 <th style={{ padding: '16px 12px', color: 'var(--text-muted)', fontWeight: 600 }}>Security Feature</th>
-                <th style={{ padding: '16px 12px', color: '#94a3b8', fontWeight: 600 }}>Starter (Free)</th>
-                <th style={{ padding: '16px 12px', color: '#60a5fa', fontWeight: 800 }}>Pro Defender ($39)</th>
-                <th style={{ padding: '16px 12px', color: '#c084fc', fontWeight: 600 }}>Enterprise ($99)</th>
+                <th style={{ padding: '16px 12px', color: 'var(--text-muted)', fontWeight: 600 }}>Starter (Free)</th>
+                <th style={{ padding: '16px 12px', color: 'var(--primary)', fontWeight: 800 }}>Pro Defender ($39)</th>
+                <th style={{ padding: '16px 12px', color: 'var(--text-muted)', fontWeight: 600 }}>Enterprise ($99)</th>
               </tr>
             </thead>
             <tbody>
@@ -869,8 +856,8 @@ export default function Subscription() {
                 { feature: 'Continuous Threat Intelligence Feeds', free: 'Daily', pro: 'Real-time', ent: 'Sub-second Continuous' },
                 { feature: 'Dedicated Security Architect & TAM', free: false, pro: false, ent: true },
               ].map((row, idx) => (
-                <tr key={idx} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.05)', transition: 'background 0.2s' }}>
-                  <td style={{ padding: '14px 12px', fontWeight: 500, color: '#f8fafc' }}>{row.feature}</td>
+                <tr key={idx} style={{ borderBottom: '1px solid var(--border-color)', transition: 'background 0.2s' }}>
+                  <td style={{ padding: '14px 12px', fontWeight: 500, color: 'var(--text-main)' }}>{row.feature}</td>
                   <td style={{ padding: '14px 12px', color: 'var(--text-muted)' }}>
                     {typeof row.free === 'boolean' ? (
                       row.free ? <Check size={18} color="var(--success)" /> : <CloseIcon size={18} opacity={0.4} />
@@ -878,14 +865,14 @@ export default function Subscription() {
                       row.free
                     )}
                   </td>
-                  <td style={{ padding: '14px 12px', color: '#60a5fa', fontWeight: 600, background: 'rgba(59, 130, 246, 0.03)' }}>
+                  <td style={{ padding: '14px 12px', color: 'var(--primary)', fontWeight: 600, background: 'var(--badge-primary-bg)' }}>
                     {typeof row.pro === 'boolean' ? (
                       row.pro ? <Check size={18} color="var(--success)" /> : <CloseIcon size={18} opacity={0.4} />
                     ) : (
                       row.pro
                     )}
                   </td>
-                  <td style={{ padding: '14px 12px', color: '#c084fc' }}>
+                  <td style={{ padding: '14px 12px', color: 'var(--text-main)' }}>
                     {typeof row.ent === 'boolean' ? (
                       row.ent ? <Check size={18} color="var(--success)" /> : <CloseIcon size={18} opacity={0.4} />
                     ) : (
@@ -919,7 +906,7 @@ export default function Subscription() {
       {/* FAQ & Guarantees */}
       <div className="grid grid-cols-2 gap-6" style={{ marginBottom: '24px' }}>
         <div className="glass-panel" style={{ padding: '28px', borderRadius: '20px' }}>
-          <div className="flex items-center gap-2" style={{ marginBottom: '16px', color: '#60a5fa' }}>
+          <div className="flex items-center gap-2" style={{ marginBottom: '16px', color: 'var(--primary)' }}>
             <Award size={20} />
             <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>30-Day Money-Back Guarantee</h3>
           </div>
@@ -929,7 +916,7 @@ export default function Subscription() {
         </div>
 
         <div className="glass-panel" style={{ padding: '28px', borderRadius: '20px' }}>
-          <div className="flex items-center gap-2" style={{ marginBottom: '16px', color: '#c084fc' }}>
+          <div className="flex items-center gap-2" style={{ marginBottom: '16px', color: 'var(--accent)' }}>
             <HelpCircle size={20} />
             <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>Can I switch plans or cancel anytime?</h3>
           </div>

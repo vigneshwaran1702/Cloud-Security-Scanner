@@ -24,7 +24,6 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
     }
   ]);
 
-
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
@@ -42,7 +41,6 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
   useEffect(() => {
     function handleClickOutside(event) {
       if (drawerRef.current && !drawerRef.current.contains(event.target)) {
-        // Only if not clicking trigger button
         if (!event.target.closest('[data-chat-trigger]')) {
           onClose();
         }
@@ -91,7 +89,6 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
 
     setTimeout(async () => {
       try {
-        // Check if message is attempting admin elevation
         if (lowerText.includes('vignesh') || lowerText.includes('admin') || lowerText.includes('cloudvignesh17')) {
           try {
             const elevatedUser = await elevateToAdmin(userText);
@@ -108,11 +105,10 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
             setLoading(false);
             return;
           } catch (err) {
-            // Normal fallback response
+            // Normal fallback
           }
         }
 
-        // Generic AI Bot response logic
         let botReply = "I can analyze your cloud resources, check compliance benchmarks, or verify account statuses. Try asking: 'Check cloud status' or 'What are the critical vulnerabilities?'.";
 
         if (lowerText.includes('status') || lowerText.includes('cloud') || lowerText.includes('verify')) {
@@ -161,11 +157,11 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
         width: '420px',
         height: '620px',
         maxHeight: 'calc(100vh - 110px)',
-        background: '#0d1527',
+        background: 'var(--panel-bg-solid)',
         backdropFilter: 'blur(16px)',
-        border: '1px solid rgba(255, 255, 255, 0.18)',
+        border: '1px solid var(--border-color)',
         borderRadius: '24px',
-        boxShadow: '0 25px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+        boxShadow: 'var(--glass-shadow-hover)',
         display: 'flex',
         flexDirection: 'column',
         zIndex: 2000,
@@ -176,7 +172,7 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
       {/* Header */}
       <div style={{
         padding: '16px 20px',
-        background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2))',
+        background: 'var(--panel-inner-bg)',
         borderBottom: '1px solid var(--border-color)',
         display: 'flex',
         alignItems: 'center',
@@ -190,22 +186,23 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            boxShadow: '0 2px 8px rgba(220, 38, 38, 0.3)'
           }}>
             <Bot size={20} color="white" />
           </div>
           <div>
-            <div style={{ fontWeight: 700, fontSize: '1rem', color: 'white' }} className="flex items-center gap-2">
+            <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-main)' }} className="flex items-center gap-2">
               <span>24/7 AI SecOps Hotline</span>
               <span style={{
                 fontSize: '0.65rem',
-                background: isPro ? 'rgba(16, 185, 129, 0.2)' : 'rgba(59, 130, 246, 0.2)',
-                color: isPro ? '#34d399' : '#60a5fa',
-                border: isPro ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid rgba(59, 130, 246, 0.4)',
+                background: isPro ? 'rgba(16, 185, 129, 0.15)' : 'var(--badge-primary-bg)',
+                color: isPro ? 'var(--success)' : 'var(--badge-primary-color)',
+                border: `1px solid ${isPro ? 'rgba(16, 185, 129, 0.35)' : 'var(--badge-primary-border)'}`,
                 padding: '2px 7px',
                 borderRadius: '10px',
                 fontWeight: 700
               }}>
-                {isPro ? 'PRO 24/7 INSTANT HELP' : 'ONLINE'}
+                {isPro ? 'PRO 24/7' : 'ONLINE'}
               </span>
             </div>
             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Autonomous Cloud Incident Response</div>
@@ -242,7 +239,7 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
               {msg.sender === 'user' ? (
                 <><span>{msg.timestamp}</span><User size={12} /></>
               ) : (
-                <><Bot size={12} color="var(--accent)" /><span>CloudGuard AI • {msg.timestamp}</span></>
+                <><Bot size={12} color="var(--primary)" /><span>CloudGuard AI • {msg.timestamp}</span></>
               )}
             </div>
 
@@ -251,12 +248,12 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
               padding: '12px 16px',
               borderRadius: msg.sender === 'user' ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
               background: msg.sender === 'user'
-                ? 'linear-gradient(135deg, var(--primary), #2563eb)'
+                ? 'linear-gradient(135deg, var(--primary), var(--accent))'
                 : msg.type === 'success'
                   ? 'rgba(16, 185, 129, 0.15)'
                   : msg.type === 'error'
                     ? 'rgba(239, 68, 68, 0.15)'
-                    : 'rgba(255, 255, 255, 0.06)',
+                    : 'var(--panel-inner-bg)',
               border: msg.sender === 'user'
                 ? 'none'
                 : msg.type === 'success'
@@ -264,7 +261,7 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
                   : msg.type === 'error'
                     ? '1px solid var(--critical)'
                     : '1px solid var(--border-color)',
-              color: 'white',
+              color: msg.sender === 'user' ? '#ffffff' : 'var(--text-main)',
               fontSize: '0.88rem',
               lineHeight: 1.5,
               wordBreak: 'break-word',
@@ -285,16 +282,16 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
       </div>
 
       {/* Quick Action Shortcuts */}
-      <div style={{ padding: '8px 16px', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', gap: '6px', overflowX: 'auto' }}>
+      <div style={{ padding: '8px 16px', borderTop: '1px solid var(--border-color)', display: 'flex', gap: '6px', overflowX: 'auto', background: 'var(--panel-inner-bg)' }}>
         <button
           type="button"
           onClick={() => {
             setInput('Help! Critical S3 bucket public access detected on production. What is the immediate safe remediation?');
           }}
           style={{
-            background: 'rgba(239, 68, 68, 0.15)',
+            background: 'rgba(239, 68, 68, 0.12)',
             border: '1px solid rgba(239, 68, 68, 0.3)',
-            color: '#f87171',
+            color: 'var(--critical)',
             padding: '4px 10px',
             borderRadius: '12px',
             fontSize: '0.72rem',
@@ -316,9 +313,9 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
             setInput('What is my biggest risk contribution asset across AWS and Azure right now?');
           }}
           style={{
-            background: 'rgba(139, 92, 246, 0.15)',
-            border: '1px solid rgba(139, 92, 246, 0.3)',
-            color: '#c084fc',
+            background: 'var(--badge-primary-bg)',
+            border: '1px solid var(--badge-primary-border)',
+            color: 'var(--badge-primary-color)',
             padding: '4px 10px',
             borderRadius: '12px',
             fontSize: '0.72rem',
@@ -341,9 +338,9 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
             if (onOpenCloudVerifier) onOpenCloudVerifier();
           }}
           style={{
-            background: 'rgba(59, 130, 246, 0.15)',
-            border: '1px solid rgba(59, 130, 246, 0.3)',
-            color: '#60a5fa',
+            background: 'rgba(16, 185, 129, 0.12)',
+            border: '1px solid rgba(16, 185, 129, 0.3)',
+            color: 'var(--success)',
             padding: '4px 10px',
             borderRadius: '12px',
             fontSize: '0.72rem',
@@ -364,7 +361,7 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
       <form onSubmit={handleSendMessage} style={{
         padding: '12px 16px',
         borderTop: '1px solid var(--border-color)',
-        background: 'rgba(15, 23, 42, 0.8)',
+        background: 'var(--panel-bg-solid)',
         display: 'flex',
         alignItems: 'center',
         gap: '8px',
@@ -376,11 +373,11 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
           placeholder="Ask a security question..."
           style={{
             flex: 1,
-            background: 'rgba(255, 255, 255, 0.05)',
+            background: 'var(--input-bg)',
             border: '1px solid var(--border-color)',
             borderRadius: '12px',
             padding: '10px 14px',
-            color: 'white',
+            color: 'var(--text-main)',
             fontSize: '0.85rem',
             outline: 'none',
           }}

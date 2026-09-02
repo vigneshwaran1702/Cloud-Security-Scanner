@@ -85,17 +85,17 @@ const initialRecommendations = [
 
 const severityStyles = {
   critical: {
-    bg: 'rgba(239, 68, 68, 0.05)',
-    border: '1px solid rgba(239, 68, 68, 0.2)',
+    bg: 'rgba(239, 68, 68, 0.06)',
+    border: '1px solid rgba(239, 68, 68, 0.25)',
     leftBorder: '4px solid var(--critical)',
-    badgeBg: 'rgba(239, 68, 68, 0.1)',
+    badgeBg: 'rgba(239, 68, 68, 0.12)',
     color: 'var(--critical)',
   },
   high: {
-    bg: 'rgba(249, 115, 22, 0.05)',
-    border: '1px solid rgba(249, 115, 22, 0.2)',
+    bg: 'rgba(249, 115, 22, 0.06)',
+    border: '1px solid rgba(249, 115, 22, 0.25)',
     leftBorder: '4px solid var(--high)',
-    badgeBg: 'rgba(249, 115, 22, 0.1)',
+    badgeBg: 'rgba(249, 115, 22, 0.12)',
     color: 'var(--high)',
   },
 };
@@ -190,8 +190,8 @@ export default function Dashboard() {
         <div
           className="glass-panel flex justify-between items-center"
           style={{
-            background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.18), rgba(59, 130, 246, 0.18))',
-            border: '1px solid rgba(139, 92, 246, 0.4)',
+            background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(225, 29, 72, 0.1))',
+            border: '1px solid rgba(239, 68, 68, 0.25)',
             padding: '16px 24px',
             borderRadius: '20px',
           }}
@@ -202,17 +202,17 @@ export default function Dashboard() {
                 background: 'linear-gradient(135deg, var(--primary), var(--accent))',
                 padding: '10px',
                 borderRadius: '12px',
-                boxShadow: '0 4px 14px rgba(139, 92, 246, 0.4)',
+                boxShadow: '0 4px 14px rgba(220, 38, 38, 0.35)',
               }}
             >
               <Sparkles size={22} color="white" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h4 style={{ fontSize: '1.05rem', margin: 0, color: '#fff' }}>
-                  Upgrade to Pro Cloud Defender for <span style={{ color: '#60a5fa', fontWeight: 800 }}>$39 / mo</span>
+                <h4 style={{ fontSize: '1.05rem', margin: 0, color: 'var(--text-main)' }}>
+                  Upgrade to Pro Cloud Defender for <span style={{ color: 'var(--primary)', fontWeight: 800 }}>$39 / mo</span>
                 </h4>
-                <span style={{ fontSize: '0.7rem', background: 'rgba(139, 92, 246, 0.3)', color: '#c084fc', padding: '2px 8px', borderRadius: '10px', fontWeight: 700 }}>
+                <span style={{ fontSize: '0.7rem', background: 'var(--badge-primary-bg)', color: 'var(--badge-primary-color)', border: '1px solid var(--badge-primary-border)', padding: '2px 8px', borderRadius: '10px', fontWeight: 700 }}>
                   PRO FEATURES
                 </span>
               </div>
@@ -239,7 +239,7 @@ export default function Dashboard() {
             <Link
               to="/subscription"
               style={{
-                color: '#c084fc',
+                color: 'var(--primary)',
                 textDecoration: 'none',
                 fontSize: '0.85rem',
                 fontWeight: 600,
@@ -272,7 +272,7 @@ export default function Dashboard() {
             <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: 500 }}>Total Resources</span>
             <Server size={20} color="var(--primary)" />
           </div>
-          <div style={{ fontSize: '2.5rem', fontWeight: 700 }}>{stats.totalResources}</div>
+          <div style={{ fontSize: '2.5rem', fontWeight: 700, color: 'var(--text-main)' }}>{stats.totalResources}</div>
           <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '8px' }}>Across 3 clouds</div>
         </div>
 
@@ -318,11 +318,11 @@ export default function Dashboard() {
                     <stop offset="95%" stopColor="var(--primary)" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
                 <XAxis dataKey="name" stroke="var(--text-muted)" tick={{fill: 'var(--text-muted)'}} axisLine={false} tickLine={false} />
                 <YAxis stroke="var(--text-muted)" tick={{fill: 'var(--text-muted)'}} axisLine={false} tickLine={false} domain={[50, 100]} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: 'var(--bg-color)', border: '1px solid var(--border-color)', borderRadius: '8px' }}
+                  contentStyle={{ backgroundColor: 'var(--panel-bg-solid)', border: '1px solid var(--border-color)', borderRadius: '10px', boxShadow: 'var(--glass-shadow)', color: 'var(--text-main)' }}
                   itemStyle={{ color: 'var(--text-main)' }}
                 />
                 <Area type="monotone" dataKey="score" stroke="var(--primary)" strokeWidth={3} fillOpacity={1} fill="url(#colorScore)" />
@@ -335,17 +335,18 @@ export default function Dashboard() {
         <div className="glass-panel" style={{ height: '400px', display: 'flex', flexDirection: 'column' }}>
           <div className="flex justify-between items-center" style={{ marginBottom: '16px' }}>
             <div className="flex items-center gap-2">
-              <Activity size={18} color="#60a5fa" />
+              <Activity size={18} color="var(--primary)" />
               <h3 style={{ fontSize: '1.15rem', margin: 0 }}>Risk Contribution Matrix</h3>
             </div>
             <Link
               to="/subscription"
               style={{
                 fontSize: '0.72rem',
-                color: isPro ? '#34d399' : '#c084fc',
+                color: isPro ? 'var(--success)' : 'var(--primary)',
                 textDecoration: 'none',
                 fontWeight: 700,
-                background: isPro ? 'rgba(16, 185, 129, 0.15)' : 'rgba(139, 92, 246, 0.15)',
+                background: isPro ? 'rgba(16, 185, 129, 0.15)' : 'var(--badge-primary-bg)',
+                border: isPro ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid var(--badge-primary-border)',
                 padding: '3px 8px',
                 borderRadius: '8px',
               }}
@@ -369,20 +370,20 @@ export default function Dashboard() {
                   style={{
                     padding: '10px 14px',
                     borderRadius: '10px',
-                    background: 'rgba(255, 255, 255, 0.03)',
-                    border: '1px solid rgba(255, 255, 255, 0.06)',
+                    background: 'var(--panel-inner-bg)',
+                    border: '1px solid var(--border-color)',
                     opacity: isResolved ? 0.5 : 1,
                   }}
                 >
                   <div className="flex justify-between items-center" style={{ fontSize: '0.8rem', marginBottom: '4px' }}>
-                    <span style={{ fontWeight: 600, color: '#f8fafc', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }}>
+                    <span style={{ fontWeight: 600, color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }}>
                       {rec.resource}
                     </span>
                     <span style={{ fontWeight: 700, color: isResolved ? 'var(--success)' : (weight > 30 ? 'var(--critical)' : 'var(--high)') }}>
                       {isResolved ? '0% (Neutralized)' : `${weight}% contribution`}
                     </span>
                   </div>
-                  <div style={{ width: '100%', height: '5px', background: 'rgba(255, 255, 255, 0.08)', borderRadius: '3px', overflow: 'hidden' }}>
+                  <div style={{ width: '100%', height: '5px', background: 'var(--border-color)', borderRadius: '3px', overflow: 'hidden' }}>
                     <div
                       style={{
                         width: `${weight}%`,
@@ -420,7 +421,7 @@ export default function Dashboard() {
                 borderRadius: '10px',
                 background: 'rgba(16, 185, 129, 0.12)',
                 border: '1px solid rgba(16, 185, 129, 0.3)',
-                color: '#34d399',
+                color: 'var(--success)',
                 fontWeight: 600,
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -474,7 +475,7 @@ export default function Dashboard() {
                     )}
                   </div>
                   <div className="flex items-center gap-3">
-                    <span style={{ background: 'rgba(255,255,255,0.06)', color: 'var(--text-muted)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.78rem', fontWeight: 500 }}>
+                    <span style={{ background: 'var(--panel-inner-bg)', color: 'var(--text-muted)', border: '1px solid var(--border-color)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.78rem', fontWeight: 500 }}>
                       {rec.cloud}
                     </span>
                     <span style={{ background: isResolved ? 'rgba(16,185,129,0.1)' : sev.badgeBg, color: isResolved ? 'var(--success)' : sev.color, padding: '4px 12px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 600 }}>
@@ -497,19 +498,19 @@ export default function Dashboard() {
                       </ul>
                     </div>
 
-                    <div style={{ background: 'rgba(0,0,0,0.2)', padding: '16px', borderRadius: '12px' }}>
+                    <div style={{ background: 'var(--panel-inner-bg)', border: '1px solid var(--border-color)', padding: '16px', borderRadius: '12px' }}>
                       <div className="flex justify-between items-center" style={{ marginBottom: '12px' }}>
                         <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: 600, margin: 0 }}>
                           Safe Production Remediation
                         </p>
-                        <span style={{ fontSize: '0.72rem', color: '#34d399', fontWeight: 600 }}>
+                        <span style={{ fontSize: '0.72rem', color: 'var(--success)', fontWeight: 600 }}>
                           🛡️ Rollback Protected
                         </span>
                       </div>
 
                       <div className="flex flex-col gap-3">
                         {rec.fixes.map((fix, i) => (
-                          <div key={i} className="flex items-center gap-3" style={{ fontSize: '0.9rem' }}>
+                          <div key={i} className="flex items-center gap-3" style={{ fontSize: '0.9rem', color: 'var(--text-main)' }}>
                             <CheckCircle size={16} color="var(--primary)" /> <span>{fix}</span>
                           </div>
                         ))}
@@ -555,4 +556,3 @@ export default function Dashboard() {
     </div>
   );
 }
-

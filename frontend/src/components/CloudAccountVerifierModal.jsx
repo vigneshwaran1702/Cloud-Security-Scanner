@@ -76,13 +76,13 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
           width: '500px',
           maxWidth: 'calc(100vw - 32px)',
           zIndex: 9999,
-          background: '#0d1527',
-          border: '1px solid rgba(255, 255, 255, 0.18)',
+          background: 'var(--panel-bg-solid)',
+          border: '1px solid var(--border-color)',
           borderRadius: '20px',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.1), 0 10px 25px rgba(0, 0, 0, 0.6)',
+          boxShadow: 'var(--glass-shadow-hover)',
           padding: '24px',
           animation: 'fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-          color: 'white',
+          color: 'var(--text-main)',
         }}
       >
         {/* Close Button */}
@@ -96,11 +96,11 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
 
         {/* Modal Title */}
         <div className="flex items-center gap-3" style={{ marginBottom: '18px' }}>
-          <div style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent))', padding: '10px', borderRadius: '12px' }}>
+          <div style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent))', padding: '10px', borderRadius: '12px', boxShadow: '0 2px 8px rgba(220, 38, 38, 0.3)' }}>
             <ShieldCheck size={22} color="white" />
           </div>
           <div>
-            <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700 }}>Cloud Status Verification</h3>
+            <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-main)' }}>Cloud Status Verification</h3>
             <p style={{ margin: '2px 0 0 0', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
               Verify cloud connection credentials & live score.
             </p>
@@ -129,11 +129,11 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
                     if (p.name === 'GCP') setAccountId('cloudguard-sec-prod');
                   }}
                   style={{
-                    background: provider === p.name ? `${p.color}25` : 'rgba(255, 255, 255, 0.05)',
+                    background: provider === p.name ? `${p.color}25` : 'var(--panel-inner-bg)',
                     border: `1px solid ${provider === p.name ? p.color : 'var(--border-color)'}`,
                     borderRadius: '10px',
                     padding: '8px',
-                    color: 'white',
+                    color: 'var(--text-main)',
                     fontWeight: 600,
                     cursor: 'pointer',
                     fontSize: '0.82rem',
@@ -164,10 +164,10 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
               style={{
                 width: '100%',
                 padding: '10px 14px',
-                background: 'rgba(15, 23, 42, 0.7)',
+                background: 'var(--input-bg)',
                 border: '1px solid var(--border-color)',
                 borderRadius: '10px',
-                color: 'white',
+                color: 'var(--text-main)',
                 fontSize: '0.88rem',
                 outline: 'none',
               }}
@@ -195,7 +195,7 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
         </form>
 
         {error && (
-          <div style={{ marginTop: '12px', padding: '10px', background: 'rgba(239,68,68,0.15)', border: '1px solid var(--critical)', borderRadius: '8px', color: '#fca5a5', fontSize: '0.8rem' }}>
+          <div style={{ marginTop: '12px', padding: '10px', background: 'rgba(239,68,68,0.15)', border: '1px solid var(--critical)', borderRadius: '8px', color: 'var(--critical)', fontSize: '0.8rem' }}>
             {error}
           </div>
         )}
@@ -204,7 +204,7 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
         {result && (
           <div style={{
             marginTop: '16px',
-            background: 'rgba(255, 255, 255, 0.03)',
+            background: 'var(--panel-inner-bg)',
             border: '1px solid rgba(16, 185, 129, 0.3)',
             borderRadius: '14px',
             padding: '14px',
@@ -213,7 +213,7 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
             <div className="flex justify-between items-center" style={{ marginBottom: '12px' }}>
               <div className="flex items-center gap-2">
                 <CheckCircle2 size={18} color="var(--success)" />
-                <span style={{ fontWeight: 700, fontSize: '0.92rem', color: 'white' }}>
+                <span style={{ fontWeight: 700, fontSize: '0.92rem', color: 'var(--text-main)' }}>
                   {result.provider} Status Verified
                 </span>
               </div>
@@ -230,23 +230,23 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
             </div>
 
             <div className="grid grid-cols-3 gap-2" style={{ marginBottom: '12px' }}>
-              <div style={{ background: 'rgba(0,0,0,0.2)', padding: '8px', borderRadius: '8px', textAlign: 'center' }}>
+              <div style={{ background: 'var(--panel-bg-solid)', border: '1px solid var(--border-color)', padding: '8px', borderRadius: '8px', textAlign: 'center' }}>
                 <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Score</div>
                 <div style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--success)' }}>{result.security_score}/100</div>
               </div>
-              <div style={{ background: 'rgba(0,0,0,0.2)', padding: '8px', borderRadius: '8px', textAlign: 'center' }}>
+              <div style={{ background: 'var(--panel-bg-solid)', border: '1px solid var(--border-color)', padding: '8px', borderRadius: '8px', textAlign: 'center' }}>
                 <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Resources</div>
-                <div style={{ fontSize: '1.2rem', fontWeight: 700, color: 'white' }}>{result.total_resources}</div>
+                <div style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-main)' }}>{result.total_resources}</div>
               </div>
-              <div style={{ background: 'rgba(0,0,0,0.2)', padding: '8px', borderRadius: '8px', textAlign: 'center' }}>
+              <div style={{ background: 'var(--panel-bg-solid)', border: '1px solid var(--border-color)', padding: '8px', borderRadius: '8px', textAlign: 'center' }}>
                 <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Region</div>
                 <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--primary)', marginTop: '4px' }}>{result.region}</div>
               </div>
             </div>
 
             <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
-              <div><strong>Compliance:</strong> <span style={{ color: 'white' }}>{result.compliance_status}</span></div>
-              <div><strong>Services:</strong> <span style={{ color: 'white' }}>{result.monitored_services?.join(', ')}</span></div>
+              <div><strong>Compliance:</strong> <span style={{ color: 'var(--text-main)' }}>{result.compliance_status}</span></div>
+              <div><strong>Services:</strong> <span style={{ color: 'var(--text-main)' }}>{result.monitored_services?.join(', ')}</span></div>
             </div>
           </div>
         )}
@@ -260,7 +260,7 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
       style={{
         position: 'fixed',
         top: 0, left: 0, right: 0, bottom: 0,
-        background: 'rgba(15, 23, 42, 0.75)',
+        background: 'rgba(3, 7, 18, 0.75)',
         backdropFilter: 'blur(10px)',
         WebkitBackdropFilter: 'blur(10px)',
         display: 'flex',
@@ -285,9 +285,9 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
           padding: '32px',
           borderRadius: '24px',
           position: 'relative',
-          boxShadow: '0 25px 60px rgba(0, 0, 0, 0.6)',
-          background: '#0d1527',
-          border: '1px solid rgba(255, 255, 255, 0.18)',
+          boxShadow: 'var(--glass-shadow-hover)',
+          background: 'var(--panel-bg-solid)',
+          border: '1px solid var(--border-color)',
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -302,11 +302,11 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
 
         {/* Modal Title */}
         <div className="flex items-center gap-3" style={{ marginBottom: '20px' }}>
-          <div style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent))', padding: '12px', borderRadius: '16px' }}>
+          <div style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent))', padding: '12px', borderRadius: '16px', boxShadow: '0 2px 8px rgba(220, 38, 38, 0.3)' }}>
             <ShieldCheck size={26} color="white" />
           </div>
           <div>
-            <h2 style={{ margin: 0, fontSize: '1.4rem' }}>Cloud Account Status Verification</h2>
+            <h2 style={{ margin: 0, fontSize: '1.4rem', color: 'var(--text-main)' }}>Cloud Account Status Verification</h2>
             <p style={{ margin: '4px 0 0 0', color: 'var(--text-muted)', fontSize: '0.88rem' }}>
               Verify cloud connection status, credentials, and live security score.
             </p>
@@ -335,11 +335,11 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
                     if (p.name === 'GCP') setAccountId('cloudguard-sec-prod');
                   }}
                   style={{
-                    background: provider === p.name ? `${p.color}25` : 'rgba(255, 255, 255, 0.05)',
+                    background: provider === p.name ? `${p.color}25` : 'var(--panel-inner-bg)',
                     border: `1px solid ${provider === p.name ? p.color : 'var(--border-color)'}`,
                     borderRadius: '12px',
                     padding: '10px',
-                    color: 'white',
+                    color: 'var(--text-main)',
                     fontWeight: 600,
                     cursor: 'pointer',
                     fontSize: '0.9rem',
@@ -370,10 +370,10 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
               style={{
                 width: '100%',
                 padding: '12px 16px',
-                background: 'rgba(15, 23, 42, 0.6)',
+                background: 'var(--input-bg)',
                 border: '1px solid var(--border-color)',
                 borderRadius: '12px',
-                color: 'white',
+                color: 'var(--text-main)',
                 fontSize: '0.95rem',
                 outline: 'none',
               }}
@@ -401,7 +401,7 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
         </form>
 
         {error && (
-          <div style={{ marginTop: '16px', padding: '12px', background: 'rgba(239,68,68,0.15)', border: '1px solid var(--critical)', borderRadius: '10px', color: '#fca5a5', fontSize: '0.85rem' }}>
+          <div style={{ marginTop: '16px', padding: '12px', background: 'rgba(239,68,68,0.15)', border: '1px solid var(--critical)', borderRadius: '10px', color: 'var(--critical)', fontSize: '0.85rem' }}>
             {error}
           </div>
         )}
@@ -410,7 +410,7 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
         {result && (
           <div style={{
             marginTop: '20px',
-            background: 'rgba(255, 255, 255, 0.03)',
+            background: 'var(--panel-inner-bg)',
             border: '1px solid rgba(16, 185, 129, 0.3)',
             borderRadius: '16px',
             padding: '20px',
@@ -419,7 +419,7 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
             <div className="flex justify-between items-center" style={{ marginBottom: '16px' }}>
               <div className="flex items-center gap-2">
                 <CheckCircle2 size={20} color="var(--success)" />
-                <span style={{ fontWeight: 700, fontSize: '1rem', color: 'white' }}>
+                <span style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-main)' }}>
                   {result.provider} Account Verified
                 </span>
               </div>
@@ -436,24 +436,24 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
             </div>
 
             <div className="grid grid-cols-3 gap-3" style={{ marginBottom: '16px' }}>
-              <div style={{ background: 'rgba(0,0,0,0.2)', padding: '12px', borderRadius: '10px' }}>
+              <div style={{ background: 'var(--panel-bg-solid)', border: '1px solid var(--border-color)', padding: '12px', borderRadius: '10px' }}>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Security Score</div>
                 <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--success)' }}>{result.security_score}/100</div>
               </div>
-              <div style={{ background: 'rgba(0,0,0,0.2)', padding: '12px', borderRadius: '10px' }}>
+              <div style={{ background: 'var(--panel-bg-solid)', border: '1px solid var(--border-color)', padding: '12px', borderRadius: '10px' }}>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Monitored Resources</div>
-                <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'white' }}>{result.total_resources}</div>
+                <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--text-main)' }}>{result.total_resources}</div>
               </div>
-              <div style={{ background: 'rgba(0,0,0,0.2)', padding: '12px', borderRadius: '10px' }}>
+              <div style={{ background: 'var(--panel-bg-solid)', border: '1px solid var(--border-color)', padding: '12px', borderRadius: '10px' }}>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Active Region</div>
                 <div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--primary)', marginTop: '4px' }}>{result.region}</div>
               </div>
             </div>
 
             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
-              <div><strong>Compliance:</strong> <span style={{ color: 'white' }}>{result.compliance_status}</span></div>
-              <div><strong>Monitored Services:</strong> <span style={{ color: 'white' }}>{result.monitored_services?.join(', ')}</span></div>
-              <div><strong>Last Verified:</strong> <span style={{ color: 'white' }}>{result.last_verification}</span></div>
+              <div><strong>Compliance:</strong> <span style={{ color: 'var(--text-main)' }}>{result.compliance_status}</span></div>
+              <div><strong>Monitored Services:</strong> <span style={{ color: 'var(--text-main)' }}>{result.monitored_services?.join(', ')}</span></div>
+              <div><strong>Last Verified:</strong> <span style={{ color: 'var(--text-main)' }}>{result.last_verification}</span></div>
             </div>
           </div>
         )}

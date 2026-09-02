@@ -72,7 +72,7 @@ export default function SubscriptionCheckoutModal({ isOpen, onClose, selectedTie
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(10, 15, 29, 0.85)',
+        backgroundColor: 'rgba(3, 7, 18, 0.75)',
         backdropFilter: 'blur(10px)',
         zIndex: 1000,
         display: 'flex',
@@ -94,10 +94,10 @@ export default function SubscriptionCheckoutModal({ isOpen, onClose, selectedTie
           overflowY: 'auto',
           padding: '32px',
           borderRadius: '24px',
-          border: '1px solid rgba(139, 92, 246, 0.4)',
-          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(139, 92, 246, 0.2)',
+          border: '1px solid var(--border-color)',
+          boxShadow: 'var(--glass-shadow-hover)',
           position: 'relative',
-          background: 'linear-gradient(180deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%)',
+          background: 'var(--panel-bg-solid)',
         }}
       >
         {/* Close Button */}
@@ -108,8 +108,8 @@ export default function SubscriptionCheckoutModal({ isOpen, onClose, selectedTie
             position: 'absolute',
             top: '20px',
             right: '20px',
-            background: 'rgba(255, 255, 255, 0.08)',
-            border: '1px solid rgba(255, 255, 255, 0.15)',
+            background: 'var(--panel-inner-bg)',
+            border: '1px solid var(--border-color)',
             color: 'var(--text-muted)',
             borderRadius: '50%',
             width: '36px',
@@ -121,12 +121,12 @@ export default function SubscriptionCheckoutModal({ isOpen, onClose, selectedTie
             transition: 'all 0.2s',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.color = '#fff';
-            e.currentTarget.style.background = 'rgba(255,255,255,0.15)';
+            e.currentTarget.style.color = 'var(--text-main)';
+            e.currentTarget.style.background = 'var(--badge-primary-bg)';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.color = 'var(--text-muted)';
-            e.currentTarget.style.background = 'rgba(255,255,255,0.08)';
+            e.currentTarget.style.background = 'var(--panel-inner-bg)';
           }}
         >
           <X size={18} />
@@ -139,195 +139,150 @@ export default function SubscriptionCheckoutModal({ isOpen, onClose, selectedTie
                 width: '80px',
                 height: '80px',
                 borderRadius: '50%',
-                background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(59, 130, 246, 0.25))',
+                background: 'rgba(16, 185, 129, 0.2)',
                 border: '2px solid var(--success)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 margin: '0 auto 20px',
-                boxShadow: '0 0 30px rgba(16, 185, 129, 0.4)',
-                animation: 'fadeIn 0.5s ease',
+                boxShadow: '0 0 30px rgba(16, 185, 129, 0.3)',
               }}
             >
-              <ShieldCheck size={44} color="var(--success)" />
+              <CheckCircle2 size={44} color="var(--success)" />
             </div>
 
-            <div style={{
-              display: 'inline-block',
-              padding: '4px 14px',
-              borderRadius: '20px',
-              background: 'rgba(16, 185, 129, 0.15)',
-              border: '1px solid rgba(16, 185, 129, 0.3)',
-              color: '#34d399',
-              fontSize: '0.85rem',
-              fontWeight: 700,
-              marginBottom: '12px',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em'
-            }}>
-              Subscription Active & Verified
-            </div>
-
-            <h2 style={{ fontSize: '1.8rem', fontWeight: 800, marginBottom: '8px', color: '#fff' }}>
-              Welcome to <span className="gradient-text">{targetTier.name}</span>!
+            <h2 style={{ fontSize: '1.8rem', fontWeight: 800, marginBottom: '8px', color: 'var(--text-main)' }}>
+              Upgrade Confirmed!
             </h2>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', maxWidth: '480px', margin: '0 auto 28px' }}>
-              Your account has been upgraded. All premium safeguards including <strong style={{ color: '#fff' }}>Safe Production Auto-Remediation</strong>, <strong style={{ color: '#fff' }}>24/7 Instant AI SecOps Help</strong>, and <strong style={{ color: '#fff' }}>Risk Contribution Analytics</strong> are now fully unlocked.
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', maxWidth: '480px', margin: '0 auto 24px' }}>
+              Your account is now activated as <strong>{targetTier.name}</strong>. Safe production auto-remediations, 24/7 instant AI SecOps hotline, and risk contribution analytics are unlocked.
             </p>
 
-            {/* Unlocked Features Highlights */}
             <div
               style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-                gap: '12px',
-                marginBottom: '28px',
+                background: 'var(--panel-inner-bg)',
+                border: '1px solid var(--border-color)',
+                borderRadius: '16px',
+                padding: '16px 20px',
+                maxWidth: '440px',
+                margin: '0 auto 28px',
                 textAlign: 'left',
               }}
             >
-              <div style={{ background: 'rgba(59, 130, 246, 0.08)', border: '1px solid rgba(59, 130, 246, 0.2)', padding: '14px', borderRadius: '12px' }}>
-                <div className="flex items-center gap-2" style={{ color: '#60a5fa', fontWeight: 600, fontSize: '0.85rem', marginBottom: '4px' }}>
-                  <ShieldCheck size={16} /> Safe Production
-                </div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Automated rollback-safe remediation activated.</div>
+              <div className="flex justify-between items-center" style={{ marginBottom: '8px', fontSize: '0.85rem' }}>
+                <span style={{ color: 'var(--text-muted)' }}>Status:</span>
+                <span style={{ color: 'var(--success)', fontWeight: 700 }}>Active & Protected ✓</span>
               </div>
-
-              <div style={{ background: 'rgba(139, 92, 246, 0.08)', border: '1px solid rgba(139, 92, 246, 0.2)', padding: '14px', borderRadius: '12px' }}>
-                <div className="flex items-center gap-2" style={{ color: '#c084fc', fontWeight: 600, fontSize: '0.85rem', marginBottom: '4px' }}>
-                  <Bot size={16} /> 24/7 Instant Help
-                </div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Priority SecOps AI hotline ready in chat drawer.</div>
+              <div className="flex justify-between items-center" style={{ marginBottom: '8px', fontSize: '0.85rem' }}>
+                <span style={{ color: 'var(--text-muted)' }}>Billed Amount:</span>
+                <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>${discountedPrice} USD</span>
               </div>
-
-              <div style={{ background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.2)', padding: '14px', borderRadius: '12px' }}>
-                <div className="flex items-center gap-2" style={{ color: '#34d399', fontWeight: 600, fontSize: '0.85rem', marginBottom: '4px' }}>
-                  <Activity size={16} /> Risk Contribution
-                </div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Deep blast-radius matrix fully available.</div>
+              <div className="flex justify-between items-center" style={{ fontSize: '0.85rem' }}>
+                <span style={{ color: 'var(--text-muted)' }}>Safe Production Engine:</span>
+                <span style={{ color: 'var(--primary)', fontWeight: 700 }}>Zero-Downtime Guardrails Enabled</span>
               </div>
             </div>
 
             <button
               className="btn btn-primary"
               onClick={onClose}
-              style={{
-                width: '100%',
-                maxWidth: '320px',
-                padding: '14px 24px',
-                fontSize: '1rem',
-                fontWeight: 600,
-                borderRadius: '12px',
-                cursor: 'pointer',
-              }}
+              style={{ padding: '12px 36px', fontSize: '1rem', fontWeight: 700 }}
             >
-              Start Exploring Pro Features <ArrowRight size={18} />
+              Enter Cloud Security Portal <ArrowRight size={18} />
             </button>
           </div>
         ) : (
           <div>
             {/* Header */}
-            <div className="flex items-center gap-3" style={{ marginBottom: '20px' }}>
+            <div className="flex items-center gap-3" style={{ marginBottom: '24px' }}>
               <div
                 style={{
                   background: 'linear-gradient(135deg, var(--primary), var(--accent))',
                   padding: '10px',
                   borderRadius: '14px',
-                  boxShadow: '0 4px 16px rgba(139, 92, 246, 0.4)',
+                  boxShadow: '0 4px 14px rgba(220, 38, 38, 0.4)',
                 }}
               >
                 <Zap size={22} color="white" />
               </div>
               <div>
-                <h2 style={{ fontSize: '1.4rem', fontWeight: 700, margin: 0 }}>
-                  Upgrade to <span className="gradient-text">{targetTier.name}</span>
-                </h2>
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: 0 }}>
-                  Instant activation • Safe Production protection • 24/7 Instant Help
-                </p>
+                <h3 style={{ fontSize: '1.35rem', fontWeight: 800, margin: 0, color: 'var(--text-main)' }}>
+                  Upgrade to {targetTier.name}
+                </h3>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                  Instant zero-downtime activation • 30-day money-back guarantee
+                </span>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-6" style={{ alignItems: 'start' }}>
-              {/* Left Column: Order Summary */}
+              {/* Left Column: Plan Summary & Highlights */}
               <div
                 style={{
-                  background: 'rgba(255, 255, 255, 0.03)',
+                  background: 'var(--panel-inner-bg)',
                   border: '1px solid var(--border-color)',
                   borderRadius: '16px',
                   padding: '20px',
                 }}
               >
-                <div className="flex justify-between items-center" style={{ marginBottom: '16px' }}>
-                  <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-muted)' }}>Selected Plan:</span>
-                  <span
-                    style={{
-                      background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2))',
-                      border: '1px solid rgba(139, 92, 246, 0.4)',
-                      padding: '4px 10px',
-                      borderRadius: '20px',
-                      fontSize: '0.8rem',
-                      fontWeight: 700,
-                      color: '#c084fc',
-                    }}
-                  >
-                    ${targetTier.price}/mo
-                  </span>
-                </div>
-
-                <div style={{ marginBottom: '20px' }}>
-                  <div style={{ fontSize: '1.25rem', fontWeight: 700, color: '#fff' }}>{targetTier.name}</div>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                    Billed {billingCycle === 'yearly' ? 'annually ($390/yr - save 2 months)' : 'monthly ($39/mo)'}
+                <div className="flex justify-between items-start" style={{ marginBottom: '16px' }}>
+                  <div>
+                    <span style={{ fontSize: '0.72rem', background: 'var(--badge-primary-bg)', color: 'var(--badge-primary-color)', border: '1px solid var(--badge-primary-border)', padding: '2px 8px', borderRadius: '8px', fontWeight: 700 }}>
+                      SELECTED PLAN
+                    </span>
+                    <h4 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '6px 0 0', color: 'var(--text-main)' }}>
+                      {targetTier.name}
+                    </h4>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                      ${discountedPrice}
+                    </div>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                      /{billingCycle === 'yearly' ? 'year (billed annually)' : 'month'}
+                    </span>
                   </div>
                 </div>
 
-                <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '14px', marginBottom: '16px' }}>
-                  <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#e2e8f0', marginBottom: '10px' }}>
-                    What's instantly unlocked:
+                <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '14px', marginBottom: '16px' }}>
+                  <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--primary)', marginBottom: '10px' }}>
+                    KEY HIGHLIGHTS:
                   </div>
-                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.8rem' }}>
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 size={16} color="var(--success)" />
-                      <strong style={{ color: '#fff' }}>Safe Production Auto-Fixes</strong> (zero downtime)
+                      <ShieldCheck size={14} color="var(--success)" />
+                      <span>Safe Production Zero-Downtime Auto-Fixes</span>
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 size={16} color="var(--success)" />
-                      <strong style={{ color: '#fff' }}>Instant Help 24/7</strong> AI SecOps Hotline
+                      <Sparkles size={14} color="var(--primary)" />
+                      <span>24/7 Instant AI SecOps Help Hotline</span>
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 size={16} color="var(--success)" />
-                      <strong style={{ color: '#fff' }}>Risk Contribution Matrix</strong> & blast radius
+                      <Activity size={14} color="var(--success)" />
+                      <span>Risk Contribution & Blast-Radius Simulator</span>
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle2 size={16} color="var(--success)" />
-                      <span>Continuous Real-Time Multi-Cloud Drift Detection</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle2 size={16} color="var(--success)" />
-                      <span>Unlimited Cloud Accounts (AWS, Azure, GCP)</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle2 size={16} color="var(--success)" />
-                      <span>1-Click SOC2 & CIS Compliance PDF Reports</span>
+                      <Layers size={14} color="var(--primary)" />
+                      <span>Continuous Multi-Cloud Scanning (AWS/Azure/GCP)</span>
                     </li>
                   </ul>
                 </div>
 
-                {/* Coupon Input */}
-                <form onSubmit={handleApplyCoupon} style={{ marginTop: '16px', display: 'flex', gap: '8px' }}>
+                {/* Coupon Box */}
+                <form onSubmit={handleApplyCoupon} className="flex gap-2">
                   <input
                     type="text"
-                    placeholder="Promo code (e.g. SECURE20)"
+                    placeholder="Coupon (e.g. SECURE20)"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value)}
                     style={{
                       flex: 1,
-                      background: 'rgba(0, 0, 0, 0.25)',
-                      border: '1px solid rgba(255, 255, 255, 0.12)',
                       padding: '8px 12px',
+                      background: 'var(--input-bg)',
+                      border: '1px solid var(--border-color)',
                       borderRadius: '8px',
-                      color: '#fff',
                       fontSize: '0.8rem',
+                      color: 'var(--text-main)',
                       outline: 'none',
                     }}
                   />
@@ -335,11 +290,13 @@ export default function SubscriptionCheckoutModal({ isOpen, onClose, selectedTie
                     type="submit"
                     className="btn"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      color: '#fff',
-                      padding: '8px 14px',
+                      background: 'var(--badge-primary-bg)',
+                      border: '1px solid var(--badge-primary-border)',
+                      color: 'var(--badge-primary-color)',
+                      padding: '8px 12px',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
                       borderRadius: '8px',
-                      fontSize: '0.8rem',
                       cursor: 'pointer',
                     }}
                   >
@@ -348,217 +305,167 @@ export default function SubscriptionCheckoutModal({ isOpen, onClose, selectedTie
                 </form>
 
                 {discountApplied && (
-                  <div style={{ marginTop: '8px', fontSize: '0.78rem', color: 'var(--success)', fontWeight: 600 }}>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--success)', marginTop: '6px', fontWeight: 600 }}>
                     ✓ 20% Security Discount Applied!
                   </div>
                 )}
                 {errorMsg && (
-                  <div style={{ marginTop: '8px', fontSize: '0.78rem', color: 'var(--critical)', fontWeight: 500 }}>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--critical)', marginTop: '6px' }}>
                     {errorMsg}
                   </div>
                 )}
-
-                {/* Total Line */}
-                <div
-                  className="flex justify-between items-center"
-                  style={{
-                    borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-                    marginTop: '16px',
-                    paddingTop: '14px',
-                  }}
-                >
-                  <span style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-muted)' }}>Due Today:</span>
-                  <div style={{ textAlign: 'right' }}>
-                    {discountApplied && (
-                      <span style={{ textDecoration: 'line-through', color: 'var(--text-muted)', fontSize: '0.85rem', marginRight: '6px' }}>
-                        ${basePrice}
-                      </span>
-                    )}
-                    <span style={{ fontSize: '1.4rem', fontWeight: 800, color: '#fff' }}>
-                      ${discountedPrice}
-                      <span style={{ fontSize: '0.8rem', fontWeight: 400, color: 'var(--text-muted)' }}>
-                        /{billingCycle === 'yearly' ? 'yr' : 'mo'}
-                      </span>
-                    </span>
-                  </div>
-                </div>
               </div>
 
               {/* Right Column: Payment Form */}
-              <form onSubmit={handleProcessPayment} className="flex flex-col gap-4">
-                {/* Method selector */}
-                <div>
-                  <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>
+              <div>
+                <div style={{ marginBottom: '14px' }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
                     Payment Method
                   </label>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                  <div className="grid grid-cols-3 gap-2" style={{ marginTop: '6px' }}>
                     {[
                       { id: 'card', label: 'Credit Card', icon: CreditCard },
-                      { id: 'paypal', label: 'PayPal / UPI', icon: Zap },
-                      { id: 'crypto', label: 'Corporate Inv.', icon: Shield },
-                    ].map(method => (
-                      <button
-                        key={method.id}
-                        type="button"
-                        onClick={() => setPaymentMethod(method.id)}
-                        style={{
-                          background: paymentMethod === method.id ? 'rgba(59, 130, 246, 0.25)' : 'rgba(255, 255, 255, 0.04)',
-                          border: paymentMethod === method.id ? '1px solid var(--primary)' : '1px solid var(--border-color)',
-                          color: paymentMethod === method.id ? '#60a5fa' : 'var(--text-muted)',
-                          padding: '10px 8px',
-                          borderRadius: '10px',
-                          fontSize: '0.75rem',
-                          fontWeight: 600,
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          gap: '4px',
-                          cursor: 'pointer',
-                          transition: 'all 0.2s',
-                        }}
-                      >
-                        <method.icon size={16} />
-                        {method.label}
-                      </button>
-                    ))}
+                      { id: 'paypal', label: 'PayPal', icon: Zap },
+                      { id: 'crypto', label: 'Crypto', icon: Lock },
+                    ].map((m) => {
+                      const Icon = m.icon;
+                      const active = paymentMethod === m.id;
+                      return (
+                        <button
+                          key={m.id}
+                          type="button"
+                          onClick={() => setPaymentMethod(m.id)}
+                          style={{
+                            padding: '8px',
+                            borderRadius: '10px',
+                            background: active ? 'var(--badge-primary-bg)' : 'var(--panel-inner-bg)',
+                            border: active ? '1px solid var(--primary)' : '1px solid var(--border-color)',
+                            color: active ? 'var(--primary)' : 'var(--text-muted)',
+                            fontSize: '0.78rem',
+                            fontWeight: 600,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: '4px',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          <Icon size={16} />
+                          {m.label}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
-                {/* Card Inputs */}
-                <div className="flex flex-col gap-3">
+                <form onSubmit={handleProcessPayment} className="flex flex-col gap-3">
                   <div>
-                    <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '4px', display: 'block' }}>
-                      Cardholder Name
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={cardHolder}
-                      onChange={(e) => setCardHolder(e.target.value)}
-                      placeholder="Jane Doe"
-                      style={{
-                        width: '100%',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        border: '1px solid var(--border-color)',
-                        padding: '10px 14px',
-                        borderRadius: '8px',
-                        color: '#fff',
-                        fontSize: '0.85rem',
-                        outline: 'none',
-                      }}
-                    />
-                  </div>
-
-                  <div>
-                    <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '4px', display: 'block' }}>
-                      Card Number
-                    </label>
+                    <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>Card Number</label>
                     <div style={{ position: 'relative' }}>
+                      <CreditCard size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                       <input
                         type="text"
                         required
                         value={cardNumber}
                         onChange={(e) => setCardNumber(e.target.value)}
-                        placeholder="4242 4242 4242 4242"
                         style={{
                           width: '100%',
-                          background: 'rgba(255, 255, 255, 0.05)',
+                          padding: '10px 12px 10px 36px',
+                          background: 'var(--input-bg)',
                           border: '1px solid var(--border-color)',
-                          padding: '10px 14px',
                           borderRadius: '8px',
-                          color: '#fff',
                           fontSize: '0.85rem',
+                          color: 'var(--text-main)',
                           outline: 'none',
-                          letterSpacing: '0.05em',
                         }}
                       />
-                      <CreditCard size={18} color="var(--text-muted)" style={{ position: 'absolute', right: '12px', top: '11px' }} />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>Name on Card</label>
+                    <input
+                      type="text"
+                      required
+                      value={cardHolder}
+                      onChange={(e) => setCardHolder(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '10px 12px',
+                        background: 'var(--input-bg)',
+                        border: '1px solid var(--border-color)',
+                        borderRadius: '8px',
+                        fontSize: '0.85rem',
+                        color: 'var(--text-main)',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '4px', display: 'block' }}>
-                        Expiration
-                      </label>
+                      <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>Expiry</label>
                       <input
                         type="text"
                         required
                         value={cardExp}
                         onChange={(e) => setCardExp(e.target.value)}
-                        placeholder="MM/YY"
                         style={{
                           width: '100%',
-                          background: 'rgba(255, 255, 255, 0.05)',
+                          padding: '10px 12px',
+                          background: 'var(--input-bg)',
                           border: '1px solid var(--border-color)',
-                          padding: '10px 14px',
                           borderRadius: '8px',
-                          color: '#fff',
                           fontSize: '0.85rem',
+                          color: 'var(--text-main)',
                           outline: 'none',
                         }}
                       />
                     </div>
                     <div>
-                      <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '4px', display: 'block' }}>
-                        CVC / CVV
-                      </label>
+                      <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>CVC / CVV</label>
                       <input
                         type="password"
                         required
-                        maxLength={4}
                         value={cardCvc}
                         onChange={(e) => setCardCvc(e.target.value)}
-                        placeholder="•••"
                         style={{
                           width: '100%',
-                          background: 'rgba(255, 255, 255, 0.05)',
+                          padding: '10px 12px',
+                          background: 'var(--input-bg)',
                           border: '1px solid var(--border-color)',
-                          padding: '10px 14px',
                           borderRadius: '8px',
-                          color: '#fff',
                           fontSize: '0.85rem',
+                          color: 'var(--text-main)',
                           outline: 'none',
                         }}
                       />
                     </div>
                   </div>
-                </div>
 
-                {/* 256-bit encryption guarantee */}
-                <div className="flex items-center gap-2" style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                  <Lock size={14} color="var(--success)" />
-                  <span>256-bit SSL encrypted • Instant access & cancel anytime</span>
-                </div>
+                  <button
+                    type="submit"
+                    disabled={isProcessing}
+                    className="btn btn-primary"
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: '10px',
+                      fontSize: '0.95rem',
+                      fontWeight: 700,
+                      marginTop: '8px',
+                      cursor: isProcessing ? 'wait' : 'pointer',
+                    }}
+                  >
+                    {isProcessing ? 'Securing Transaction...' : `Pay $${discountedPrice} & Activate Now`}
+                  </button>
 
-                {/* Submit Action */}
-                <button
-                  type="submit"
-                  disabled={isProcessing}
-                  className="btn btn-primary"
-                  style={{
-                    padding: '14px 20px',
-                    borderRadius: '12px',
-                    fontSize: '0.95rem',
-                    fontWeight: 700,
-                    width: '100%',
-                    cursor: isProcessing ? 'not-allowed' : 'pointer',
-                    marginTop: '8px',
-                    boxShadow: '0 8px 25px rgba(59, 130, 246, 0.5)',
-                  }}
-                >
-                  {isProcessing ? (
-                    <span className="flex items-center gap-2">
-                      <Sparkles size={18} style={{ animation: 'spin 1s linear infinite' }} />
-                      Activating $39 Pro Subscription...
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-2">
-                      Confirm & Upgrade (${discountedPrice}) <ArrowRight size={18} />
-                    </span>
-                  )}
-                </button>
-              </form>
+                  <div className="flex items-center justify-center gap-2" style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                    <Lock size={12} />
+                    <span>256-Bit TLS End-to-End Encryption • Cancel Anytime</span>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
         )}

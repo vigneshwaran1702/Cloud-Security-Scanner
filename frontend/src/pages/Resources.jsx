@@ -92,7 +92,7 @@ export default function Resources() {
                 onClick={() => setCloudFilter(tab)}
                 className="btn"
                 style={{
-                  background: cloudFilter === tab ? 'linear-gradient(135deg, var(--primary), var(--accent))' : 'rgba(255,255,255,0.05)',
+                  background: cloudFilter === tab ? 'linear-gradient(135deg, var(--primary), var(--accent))' : 'var(--panel-inner-bg)',
                   color: cloudFilter === tab ? '#fff' : 'var(--text-muted)',
                   padding: '8px 18px',
                   fontSize: '0.85rem',
@@ -111,7 +111,7 @@ export default function Resources() {
               value={severityFilter}
               onChange={e => setSeverityFilter(e.target.value)}
               style={{
-                background: 'rgba(255,255,255,0.05)',
+                background: 'var(--input-bg)',
                 border: '1px solid var(--border-color)',
                 color: 'var(--text-main)',
                 padding: '8px 14px',
@@ -122,7 +122,7 @@ export default function Resources() {
               }}
             >
               {severityOptions.map(opt => (
-                <option key={opt} value={opt} style={{ background: 'var(--bg-color)' }}>{opt === 'All' ? 'All Severities' : opt}</option>
+                <option key={opt} value={opt} style={{ background: 'var(--bg-color)', color: 'var(--text-main)' }}>{opt === 'All' ? 'All Severities' : opt}</option>
               ))}
             </select>
 
@@ -135,7 +135,7 @@ export default function Resources() {
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 style={{
-                  background: 'rgba(255,255,255,0.05)',
+                  background: 'var(--input-bg)',
                   border: '1px solid var(--border-color)',
                   color: 'var(--text-main)',
                   padding: '8px 14px 8px 36px',
@@ -155,7 +155,7 @@ export default function Resources() {
       <div className="glass-panel" style={{ padding: 0, overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
+            <tr style={{ borderBottom: '1px solid var(--border-color)', background: 'var(--panel-inner-bg)' }}>
               {['Resource', 'Type', 'Cloud', 'Region', 'Severity', 'Status', 'Issue'].map(h => (
                 <th key={h} style={{ textAlign: 'left', padding: '16px 20px', fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   {h}
@@ -179,19 +179,19 @@ export default function Resources() {
                   <tr
                     key={res.id}
                     style={{
-                      borderBottom: i < filtered.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                      borderBottom: i < filtered.length - 1 ? '1px solid var(--border-color)' : 'none',
                       transition: 'var(--transition)',
                       cursor: 'pointer',
                     }}
-                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
+                    onMouseEnter={e => e.currentTarget.style.background = 'var(--table-hover)'}
                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                   >
                     <td style={{ padding: '14px 20px' }}>
                       <div className="flex items-center gap-3">
-                        <div style={{ padding: '8px', borderRadius: '8px', background: 'rgba(255,255,255,0.05)' }}>
+                        <div style={{ padding: '8px', borderRadius: '8px', background: 'var(--panel-inner-bg)', border: '1px solid var(--border-color)' }}>
                           <TypeIcon size={16} color="var(--primary)" />
                         </div>
-                        <span style={{ fontWeight: 500, fontSize: '0.9rem' }}>{res.name}</span>
+                        <span style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-main)' }}>{res.name}</span>
                       </div>
                     </td>
                     <td style={{ padding: '14px 20px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>{res.type}</td>

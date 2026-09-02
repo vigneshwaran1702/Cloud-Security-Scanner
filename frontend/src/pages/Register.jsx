@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Shield, User, Mail, Lock, UserPlus, ShieldAlert, CheckCircle2, ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
+import { Shield, User, Mail, Lock, UserPlus, ShieldAlert, CheckCircle2, ArrowLeft, Eye, EyeOff, Sun, Moon } from 'lucide-react';
 
 export default function Register() {
   const [name, setName] = useState('');
@@ -15,6 +16,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
 
   const { register, user } = useAuth();
+  const { theme, toggleTheme, isDark } = useTheme();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -79,14 +81,51 @@ export default function Register() {
       alignItems: 'center',
       justifyContent: 'center',
       padding: '24px',
-      background: 'radial-gradient(ellipse at top, rgba(59, 130, 246, 0.25) 0%, rgba(15, 23, 42, 1) 70%)',
+      background: 'var(--auth-bg-gradient)',
+      position: 'relative',
     }}>
+      {/* Floating Theme Toggle in Top Right */}
+      <button
+        onClick={toggleTheme}
+        type="button"
+        style={{
+          position: 'absolute',
+          top: '24px',
+          right: '24px',
+          background: 'var(--panel-bg)',
+          border: '1px solid var(--border-color)',
+          color: 'var(--text-main)',
+          padding: '8px 14px',
+          borderRadius: '12px',
+          fontSize: '0.85rem',
+          fontWeight: 600,
+          cursor: 'pointer',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '6px',
+          boxShadow: 'var(--glass-shadow)',
+          transition: 'var(--transition)',
+        }}
+      >
+        {isDark ? (
+          <>
+            <Sun size={16} color="#fbbf24" />
+            <span>Light Mode</span>
+          </>
+        ) : (
+          <>
+            <Moon size={16} color="#dc2626" />
+            <span>Dark Mode</span>
+          </>
+        )}
+      </button>
+
       <div className="glass-panel animate-fade-in" style={{
         width: '100%',
         maxWidth: '480px',
         padding: '36px 32px',
         borderRadius: '28px',
-        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)',
+        boxShadow: 'var(--glass-shadow)',
       }}>
         {/* Header Branding */}
         <div className="flex flex-col items-center gap-3 text-center" style={{ marginBottom: '28px' }}>
@@ -94,7 +133,7 @@ export default function Register() {
             background: 'linear-gradient(135deg, var(--primary), var(--accent))',
             padding: '14px',
             borderRadius: '18px',
-            boxShadow: '0 8px 24px rgba(59, 130, 246, 0.4)',
+            boxShadow: '0 8px 24px rgba(220, 38, 38, 0.4)',
             display: 'inline-flex'
           }}>
             <Shield size={36} color="white" />
@@ -116,7 +155,7 @@ export default function Register() {
             border: '1px solid var(--success)',
             borderRadius: '12px',
             padding: '12px 16px',
-            color: '#a7f3d0',
+            color: isDark ? '#a7f3d0' : '#059669',
             fontSize: '0.85rem',
             marginBottom: '18px',
             display: 'flex',
@@ -135,7 +174,7 @@ export default function Register() {
             border: '1px solid var(--critical)',
             borderRadius: '12px',
             padding: '12px 16px',
-            color: '#fca5a5',
+            color: isDark ? '#fca5a5' : '#dc2626',
             fontSize: '0.85rem',
             marginBottom: '18px',
             display: 'flex',
@@ -164,13 +203,9 @@ export default function Register() {
                 style={{
                   width: '100%',
                   padding: '12px 14px 12px 42px',
-                  background: 'rgba(15, 23, 42, 0.6)',
-                  border: '1px solid var(--border-color)',
                   borderRadius: '10px',
-                  color: 'white',
                   fontSize: '0.95rem',
                   outline: 'none',
-                  transition: 'var(--transition)'
                 }}
               />
             </div>
@@ -191,13 +226,9 @@ export default function Register() {
                 style={{
                   width: '100%',
                   padding: '12px 14px 12px 42px',
-                  background: 'rgba(15, 23, 42, 0.6)',
-                  border: '1px solid var(--border-color)',
                   borderRadius: '10px',
-                  color: 'white',
                   fontSize: '0.95rem',
                   outline: 'none',
-                  transition: 'var(--transition)'
                 }}
               />
             </div>
@@ -219,13 +250,9 @@ export default function Register() {
                 style={{
                   width: '100%',
                   padding: '12px 42px 12px 42px',
-                  background: 'rgba(15, 23, 42, 0.6)',
-                  border: '1px solid var(--border-color)',
                   borderRadius: '10px',
-                  color: 'white',
                   fontSize: '0.95rem',
                   outline: 'none',
-                  transition: 'var(--transition)'
                 }}
               />
               <button
@@ -267,13 +294,9 @@ export default function Register() {
                 style={{
                   width: '100%',
                   padding: '12px 42px 12px 42px',
-                  background: 'rgba(15, 23, 42, 0.6)',
-                  border: '1px solid var(--border-color)',
                   borderRadius: '10px',
-                  color: 'white',
                   fontSize: '0.95rem',
                   outline: 'none',
-                  transition: 'var(--transition)'
                 }}
               />
               <button

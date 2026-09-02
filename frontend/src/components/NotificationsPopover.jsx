@@ -4,10 +4,10 @@ import { useNotifications } from '../context/NotificationContext';
 import { useNavigate } from 'react-router-dom';
 
 const typeIcons = {
-  critical: { icon: ShieldAlert, color: '#f87171', bg: 'rgba(239, 68, 68, 0.2)', border: 'rgba(239, 68, 68, 0.4)' },
-  high: { icon: AlertTriangle, color: '#fb923c', bg: 'rgba(249, 115, 22, 0.2)', border: 'rgba(249, 115, 22, 0.4)' },
-  success: { icon: CheckCircle2, color: '#34d399', bg: 'rgba(16, 185, 129, 0.2)', border: 'rgba(16, 185, 129, 0.4)' },
-  info: { icon: Info, color: '#60a5fa', bg: 'rgba(59, 130, 246, 0.2)', border: 'rgba(59, 130, 246, 0.4)' },
+  critical: { icon: ShieldAlert, color: '#f87171', bg: 'rgba(239, 68, 68, 0.15)', border: 'rgba(239, 68, 68, 0.35)' },
+  high: { icon: AlertTriangle, color: '#fb923c', bg: 'rgba(249, 115, 22, 0.15)', border: 'rgba(249, 115, 22, 0.35)' },
+  success: { icon: CheckCircle2, color: '#34d399', bg: 'rgba(16, 185, 129, 0.15)', border: 'rgba(16, 185, 129, 0.35)' },
+  info: { icon: Info, color: '#60a5fa', bg: 'rgba(59, 130, 246, 0.15)', border: 'rgba(59, 130, 246, 0.35)' },
 };
 
 export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
@@ -61,10 +61,10 @@ export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
         width: '400px',
         maxWidth: 'calc(100vw - 32px)',
         zIndex: 9999,
-        background: '#0d1527',
-        border: '1px solid rgba(255, 255, 255, 0.18)',
+        background: 'var(--panel-bg-solid)',
+        border: '1px solid var(--border-color)',
         borderRadius: '16px',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.1), 0 10px 25px rgba(0, 0, 0, 0.6)',
+        boxShadow: 'var(--glass-shadow-hover)',
         overflow: 'hidden',
         animation: 'fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
         display: 'flex',
@@ -77,8 +77,8 @@ export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
         className="flex items-center justify-between"
         style={{
           padding: '14px 18px',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
-          background: '#131e36',
+          borderBottom: '1px solid var(--border-color)',
+          background: 'var(--panel-inner-bg)',
         }}
       >
         <div className="flex items-center gap-3">
@@ -90,14 +90,14 @@ export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)',
+              boxShadow: '0 2px 8px rgba(220, 38, 38, 0.3)',
             }}
           >
             <Bell size={17} color="white" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 style={{ margin: 0, fontSize: '0.98rem', fontWeight: 700, color: '#ffffff' }}>Notifications</h3>
+              <h3 style={{ margin: 0, fontSize: '0.98rem', fontWeight: 700, color: 'var(--text-main)' }}>Notifications</h3>
               {unreadCount > 0 && (
                 <span
                   style={{
@@ -125,9 +125,9 @@ export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
               className="btn"
               style={{
                 padding: '5px 9px',
-                background: 'rgba(255, 255, 255, 0.08)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                color: '#e2e8f0',
+                background: 'var(--panel-inner-bg)',
+                border: '1px solid var(--border-color)',
+                color: 'var(--text-main)',
                 fontSize: '0.75rem',
                 borderRadius: '7px',
                 cursor: 'pointer',
@@ -143,9 +143,9 @@ export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
           <button
             onClick={onClose}
             style={{
-              background: 'rgba(255, 255, 255, 0.06)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              color: '#94a3b8',
+              background: 'transparent',
+              border: '1px solid var(--border-color)',
+              color: 'var(--text-muted)',
               cursor: 'pointer',
               padding: '6px',
               borderRadius: '7px',
@@ -155,12 +155,12 @@ export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
               transition: 'all 0.2s',
             }}
             onMouseEnter={e => {
-              e.currentTarget.style.color = '#ffffff';
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+              e.currentTarget.style.color = 'var(--text-main)';
+              e.currentTarget.style.background = 'var(--badge-primary-bg)';
             }}
             onMouseLeave={e => {
-              e.currentTarget.style.color = '#94a3b8';
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)';
+              e.currentTarget.style.color = 'var(--text-muted)';
+              e.currentTarget.style.background = 'transparent';
             }}
           >
             <X size={16} />
@@ -173,8 +173,8 @@ export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
         className="flex items-center justify-between"
         style={{
           padding: '8px 16px',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-          background: '#090f1d',
+          borderBottom: '1px solid var(--border-color)',
+          background: 'var(--panel-inner-bg)',
         }}
       >
         <div className="flex items-center gap-1.5">
@@ -191,25 +191,13 @@ export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
                 style={{
                   padding: '4px 10px',
                   borderRadius: '14px',
-                  border: isActive ? '1px solid var(--primary)' : '1px solid rgba(255, 255, 255, 0.06)',
-                  background: isActive ? 'var(--primary)' : 'rgba(255, 255, 255, 0.06)',
-                  color: isActive ? '#ffffff' : '#94a3b8',
+                  border: isActive ? '1px solid var(--primary)' : '1px solid var(--border-color)',
+                  background: isActive ? 'var(--primary)' : 'transparent',
+                  color: isActive ? '#ffffff' : 'var(--text-muted)',
                   fontSize: '0.75rem',
                   fontWeight: 600,
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
-                }}
-                onMouseEnter={e => {
-                  if (!isActive) {
-                    e.currentTarget.style.color = '#ffffff';
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)';
-                  }
-                }}
-                onMouseLeave={e => {
-                  if (!isActive) {
-                    e.currentTarget.style.color = '#94a3b8';
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)';
-                  }
                 }}
               >
                 {tab.label}
@@ -224,7 +212,7 @@ export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
             style={{
               background: 'transparent',
               border: 'none',
-              color: '#94a3b8',
+              color: 'var(--text-muted)',
               fontSize: '0.72rem',
               fontWeight: 500,
               cursor: 'pointer',
@@ -236,11 +224,11 @@ export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
               transition: 'all 0.2s',
             }}
             onMouseEnter={e => {
-              e.currentTarget.style.color = '#f87171';
+              e.currentTarget.style.color = 'var(--critical)';
               e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)';
             }}
             onMouseLeave={e => {
-              e.currentTarget.style.color = '#94a3b8';
+              e.currentTarget.style.color = 'var(--text-muted)';
               e.currentTarget.style.background = 'transparent';
             }}
           >
@@ -258,7 +246,6 @@ export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
           display: 'flex',
           flexDirection: 'column',
           gap: '8px',
-          background: '#0d1527',
           maxHeight: '360px',
         }}
       >
@@ -267,13 +254,13 @@ export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
             style={{
               padding: '40px 20px',
               textAlign: 'center',
-              color: '#94a3b8',
+              color: 'var(--text-muted)',
               fontSize: '0.88rem',
             }}
           >
             <CheckCircle2 size={36} color="var(--success)" style={{ margin: '0 auto 12px auto', opacity: 0.9 }} />
-            <p style={{ margin: 0, fontWeight: 600, color: '#ffffff' }}>No notifications</p>
-            <p style={{ margin: '4px 0 0 0', fontSize: '0.78rem', color: '#94a3b8' }}>You are completely up to date!</p>
+            <p style={{ margin: 0, fontWeight: 600, color: 'var(--text-main)' }}>No notifications</p>
+            <p style={{ margin: '4px 0 0 0', fontSize: '0.78rem', color: 'var(--text-muted)' }}>You are completely up to date!</p>
           </div>
         ) : (
           filteredNotifications.map(item => {
@@ -287,22 +274,14 @@ export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
                 style={{
                   padding: '12px 14px',
                   borderRadius: '10px',
-                  background: item.isRead ? '#131d31' : '#162544',
-                  border: item.isRead ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(59, 130, 246, 0.35)',
+                  background: item.isRead ? 'var(--panel-inner-bg)' : 'var(--badge-primary-bg)',
+                  border: item.isRead ? '1px solid var(--border-color)' : '1px solid var(--border-color-hover)',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
                   position: 'relative',
                   display: 'flex',
                   gap: '12px',
                   alignItems: 'flex-start',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.background = item.isRead ? '#1a2742' : '#1e325c';
-                  e.currentTarget.style.borderColor = item.isRead ? 'rgba(255, 255, 255, 0.18)' : 'rgba(59, 130, 246, 0.6)';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.background = item.isRead ? '#131d31' : '#162544';
-                  e.currentTarget.style.borderColor = item.isRead ? 'rgba(255, 255, 255, 0.08)' : 'rgba(59, 130, 246, 0.35)';
                 }}
               >
                 {/* Unread indicator dot */}
@@ -339,21 +318,22 @@ export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
 
                 <div style={{ flex: 1, minWidth: 0, paddingRight: item.isRead ? '18px' : '24px' }}>
                   <div className="flex items-center gap-2" style={{ marginBottom: '3px' }}>
-                    <span style={{ fontSize: '0.86rem', fontWeight: item.isRead ? 600 : 700, color: '#ffffff' }}>
+                    <span style={{ fontSize: '0.86rem', fontWeight: item.isRead ? 600 : 700, color: 'var(--text-main)' }}>
                       {item.title}
                     </span>
                   </div>
 
-                  <p style={{ margin: '2px 0 6px 0', fontSize: '0.79rem', color: '#cbd5e1', lineHeight: 1.45 }}>
+                  <p style={{ margin: '2px 0 6px 0', fontSize: '0.79rem', color: 'var(--text-muted)', lineHeight: 1.45 }}>
                     {item.description}
                   </p>
 
-                  <div className="flex items-center gap-2" style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
+                  <div className="flex items-center gap-2" style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
                     {item.cloud && (
                       <span
                         style={{
-                          background: 'rgba(255, 255, 255, 0.1)',
-                          color: '#e2e8f0',
+                          background: 'var(--panel-inner-bg)',
+                          border: '1px solid var(--border-color)',
+                          color: 'var(--text-main)',
                           padding: '2px 6px',
                           borderRadius: '4px',
                           fontWeight: 600,
@@ -364,7 +344,7 @@ export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
                       </span>
                     )}
                     <span>•</span>
-                    <span style={{ color: '#94a3b8' }}>{item.time}</span>
+                    <span style={{ color: 'var(--text-muted)' }}>{item.time}</span>
                   </div>
                 </div>
 
@@ -381,7 +361,7 @@ export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
                     right: '8px',
                     background: 'transparent',
                     border: 'none',
-                    color: '#94a3b8',
+                    color: 'var(--text-muted)',
                     cursor: 'pointer',
                     opacity: 0.6,
                     padding: '4px',
@@ -390,16 +370,6 @@ export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
                     alignItems: 'center',
                     justifyContent: 'center',
                     transition: 'all 0.15s',
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.opacity = '1';
-                    e.currentTarget.style.color = '#f87171';
-                    e.currentTarget.style.background = 'rgba(239, 68, 68, 0.15)';
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.opacity = '0.6';
-                    e.currentTarget.style.color = '#94a3b8';
-                    e.currentTarget.style.background = 'transparent';
                   }}
                 >
                   <Trash2 size={13} />
@@ -415,8 +385,8 @@ export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
         className="flex items-center justify-between"
         style={{
           padding: '10px 16px',
-          borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-          background: '#090f1d',
+          borderTop: '1px solid var(--border-color)',
+          background: 'var(--panel-inner-bg)',
         }}
       >
         <button
@@ -427,8 +397,7 @@ export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
           className="btn"
           style={{
             width: '100%',
-            background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(139, 92, 246, 0.25))',
-            border: '1px solid rgba(59, 130, 246, 0.4)',
+            background: 'linear-gradient(135deg, var(--primary), var(--accent))',
             color: '#ffffff',
             fontSize: '0.8rem',
             fontWeight: 600,
@@ -440,14 +409,6 @@ export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
             gap: '6px',
             cursor: 'pointer',
             transition: 'all 0.2s',
-          }}
-          onMouseEnter={e => {
-            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(59, 130, 246, 0.4), rgba(139, 92, 246, 0.4))';
-            e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.6)';
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(139, 92, 246, 0.25))';
-            e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.4)';
           }}
         >
           View All Security Findings <ArrowRight size={14} />

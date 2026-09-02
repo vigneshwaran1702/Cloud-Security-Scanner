@@ -96,7 +96,7 @@ export default function ScanModal({ isOpen, onClose }) {
         bottom: 0,
         width: '100vw',
         height: '100vh',
-        background: 'rgba(10, 15, 29, 0.82)',
+        background: 'rgba(3, 7, 18, 0.75)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         display: 'flex',
@@ -122,9 +122,9 @@ export default function ScanModal({ isOpen, onClose }) {
           padding: '32px',
           borderRadius: '24px',
           position: 'relative',
-          background: 'rgba(23, 33, 53, 0.95)',
-          border: '1px solid rgba(255, 255, 255, 0.15)',
-          boxShadow: '0 25px 70px rgba(0, 0, 0, 0.6), 0 0 30px rgba(59, 130, 246, 0.2)',
+          background: 'var(--panel-bg-solid)',
+          border: '1px solid var(--border-color)',
+          boxShadow: 'var(--glass-shadow-hover)',
           transform: 'translateY(0)',
           margin: 'auto',
         }}
@@ -137,8 +137,8 @@ export default function ScanModal({ isOpen, onClose }) {
             position: 'absolute',
             top: '20px',
             right: '20px',
-            background: 'rgba(255, 255, 255, 0.06)',
-            border: 'none',
+            background: 'var(--panel-inner-bg)',
+            border: '1px solid var(--border-color)',
             borderRadius: '10px',
             color: 'var(--text-muted)',
             cursor: 'pointer',
@@ -149,12 +149,12 @@ export default function ScanModal({ isOpen, onClose }) {
             transition: 'var(--transition)',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
-            e.currentTarget.style.color = 'white';
+            e.currentTarget.style.color = 'var(--text-main)';
+            e.currentTarget.style.background = 'var(--badge-primary-bg)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)';
             e.currentTarget.style.color = 'var(--text-muted)';
+            e.currentTarget.style.background = 'var(--panel-inner-bg)';
           }}
         >
           <X size={20} />
@@ -180,7 +180,7 @@ export default function ScanModal({ isOpen, onClose }) {
               <CheckCircle2 size={40} color="var(--success)" />
             </div>
 
-            <h3 style={{ fontSize: '1.4rem', margin: '0 0 8px 0', fontWeight: 700 }}>
+            <h3 style={{ fontSize: '1.4rem', margin: '0 0 8px 0', fontWeight: 700, color: 'var(--text-main)' }}>
               Cloud Scan Completed
             </h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', maxWidth: '420px', margin: '0 0 24px 0' }}>
@@ -192,19 +192,19 @@ export default function ScanModal({ isOpen, onClose }) {
               className="grid grid-cols-3 gap-3"
               style={{ width: '100%', marginBottom: '24px' }}
             >
-              <div style={{ background: 'rgba(0,0,0,0.25)', padding: '14px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ background: 'var(--panel-inner-bg)', padding: '14px', borderRadius: '14px', border: '1px solid var(--border-color)' }}>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Resources</div>
-                <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'white' }}>356</div>
+                <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--text-main)' }}>356</div>
                 <div style={{ fontSize: '0.72rem', color: 'var(--success)' }}>100% Checked</div>
               </div>
 
-              <div style={{ background: 'rgba(0,0,0,0.25)', padding: '14px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ background: 'var(--panel-inner-bg)', padding: '14px', borderRadius: '14px', border: '1px solid var(--border-color)' }}>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Security Score</div>
                 <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--success)' }}>84<span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>/100</span></div>
                 <div style={{ fontSize: '0.72rem', color: 'var(--success)' }}>+4% Improved</div>
               </div>
 
-              <div style={{ background: 'rgba(0,0,0,0.25)', padding: '14px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ background: 'var(--panel-inner-bg)', padding: '14px', borderRadius: '14px', border: '1px solid var(--border-color)' }}>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Critical Alerts</div>
                 <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--critical)' }}>5</div>
                 <div style={{ fontSize: '0.72rem', color: 'var(--critical)' }}>Action Required</div>
@@ -217,9 +217,9 @@ export default function ScanModal({ isOpen, onClose }) {
               style={{
                 width: '100%',
                 padding: '12px 16px',
-                background: 'rgba(255, 255, 255, 0.03)',
+                background: 'var(--panel-inner-bg)',
                 borderRadius: '12px',
-                border: '1px solid rgba(255, 255, 255, 0.06)',
+                border: '1px solid var(--border-color)',
                 marginBottom: '24px',
                 fontSize: '0.82rem',
               }}
@@ -248,7 +248,8 @@ export default function ScanModal({ isOpen, onClose }) {
                 className="btn"
                 onClick={onClose}
                 style={{
-                  background: 'rgba(255, 255, 255, 0.08)',
+                  background: 'var(--panel-inner-bg)',
+                  border: '1px solid var(--border-color)',
                   color: 'var(--text-main)',
                   padding: '12px 20px',
                   borderRadius: '10px',
@@ -266,8 +267,8 @@ export default function ScanModal({ isOpen, onClose }) {
                 width: '72px',
                 height: '72px',
                 borderRadius: '50%',
-                background: 'rgba(59, 130, 246, 0.15)',
-                border: '2px solid rgba(59, 130, 246, 0.3)',
+                background: 'var(--badge-primary-bg)',
+                border: '2px solid var(--badge-primary-border)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -276,17 +277,9 @@ export default function ScanModal({ isOpen, onClose }) {
               }}
             >
               <Loader2 size={38} color="var(--primary)" style={{ animation: 'spin 1.2s linear infinite' }} />
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  borderRadius: '50%',
-                  boxShadow: '0 0 20px rgba(59, 130, 246, 0.4)',
-                }}
-              />
             </div>
 
-            <h3 style={{ fontSize: '1.35rem', margin: '0 0 6px 0', fontWeight: 700 }}>
+            <h3 style={{ fontSize: '1.35rem', margin: '0 0 6px 0', fontWeight: 700, color: 'var(--text-main)' }}>
               Scanning Cloud Infrastructure
             </h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', margin: '0 0 20px 0' }}>
@@ -298,7 +291,8 @@ export default function ScanModal({ isOpen, onClose }) {
               style={{
                 width: '100%',
                 height: '10px',
-                background: 'rgba(255, 255, 255, 0.08)',
+                background: 'var(--panel-inner-bg)',
+                border: '1px solid var(--border-color)',
                 borderRadius: '6px',
                 overflow: 'hidden',
                 position: 'relative',
@@ -311,7 +305,7 @@ export default function ScanModal({ isOpen, onClose }) {
                   background: 'linear-gradient(90deg, var(--primary), var(--accent))',
                   transition: 'width 0.3s ease',
                   borderRadius: '6px',
-                  boxShadow: '0 0 10px rgba(139, 92, 246, 0.5)',
+                  boxShadow: '0 0 10px rgba(220, 38, 38, 0.4)',
                 }}
               />
             </div>
@@ -327,8 +321,8 @@ export default function ScanModal({ isOpen, onClose }) {
               style={{
                 width: '100%',
                 padding: '14px 16px',
-                background: 'rgba(255, 255, 255, 0.04)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: 'var(--panel-inner-bg)',
+                border: '1px solid var(--border-color)',
                 borderRadius: '14px',
                 textAlign: 'left',
                 marginBottom: '20px',
@@ -338,8 +332,8 @@ export default function ScanModal({ isOpen, onClose }) {
                 style={{
                   padding: '8px',
                   borderRadius: '10px',
-                  background: 'rgba(59, 130, 246, 0.15)',
-                  border: '1px solid rgba(59, 130, 246, 0.3)',
+                  background: 'var(--badge-primary-bg)',
+                  border: '1px solid var(--badge-primary-border)',
                   flexShrink: 0,
                 }}
               >
@@ -347,7 +341,7 @@ export default function ScanModal({ isOpen, onClose }) {
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Current Step</div>
-                <div style={{ fontSize: '0.86rem', color: 'white', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <div style={{ fontSize: '0.86rem', color: 'var(--text-main)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {currentStep.label}
                 </div>
               </div>
@@ -358,11 +352,11 @@ export default function ScanModal({ isOpen, onClose }) {
               <span style={{ fontSize: '0.78rem', color: progress > 15 ? '#ff9900' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <Cloud size={14} /> AWS {progress > 45 ? '✓' : '...'}
               </span>
-              <span style={{ color: 'rgba(255,255,255,0.2)' }}>•</span>
+              <span style={{ color: 'var(--border-color)' }}>•</span>
               <span style={{ fontSize: '0.78rem', color: progress > 45 ? '#0078d4' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <Server size={14} /> Azure {progress > 70 ? '✓' : '...'}
               </span>
-              <span style={{ color: 'rgba(255,255,255,0.2)' }}>•</span>
+              <span style={{ color: 'var(--border-color)' }}>•</span>
               <span style={{ fontSize: '0.78rem', color: progress > 70 ? '#4285f4' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <Database size={14} /> GCP {progress > 90 ? '✓' : '...'}
               </span>
