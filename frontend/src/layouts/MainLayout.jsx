@@ -14,7 +14,7 @@ const pageTitles = {
   '/dashboard': 'Overview',
   '/resources': 'Cloud Resources',
   '/subscription': 'Subscription & Upgrades',
-  '/settings': 'Settings',
+  '/settings': 'Settings & Theme',
   '/admin/users': 'User Governance',
 };
 
@@ -53,15 +53,26 @@ export default function MainLayout() {
   return (
     <div className="flex" style={{ minHeight: '100vh', position: 'relative' }}>
       {/* Sidebar */}
-      <aside className="glass-panel flex-col flex" style={{ width: '260px', margin: '16px', borderRadius: '24px', padding: '24px' }}>
-        <div className="flex items-center gap-4" style={{ marginBottom: '32px' }}>
-          <div style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent))', padding: '10px', borderRadius: '12px', boxShadow: '0 4px 14px rgba(220, 38, 38, 0.35)' }}>
-            <Shield size={24} color="white" />
+      <aside className="glass-panel flex-col flex" style={{ width: '264px', margin: '16px', borderRadius: '24px', padding: '24px' }}>
+        <div className="flex items-center gap-3" style={{ marginBottom: '32px' }}>
+          <div style={{
+            background: 'linear-gradient(135deg, var(--primary), var(--accent))',
+            padding: '10px',
+            borderRadius: '14px',
+            boxShadow: '0 4px 16px var(--primary-glow)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <Shield size={22} color="white" />
           </div>
-          <h2 className="gradient-text" style={{ fontSize: '1.25rem', margin: 0, fontWeight: 700 }}>CloudGuard AI</h2>
+          <div>
+            <h2 className="gradient-text" style={{ fontSize: '1.25rem', margin: 0, fontWeight: 800, letterSpacing: '-0.03em' }}>CloudGuard AI</h2>
+            <div style={{ fontSize: '0.68rem', color: 'var(--text-subtle)', fontWeight: 600, letterSpacing: '0.04em' }}>CLOUD SECURITY</div>
+          </div>
         </div>
 
-        <nav className="flex flex-col gap-3" style={{ flex: 1 }}>
+        <nav className="flex flex-col gap-2" style={{ flex: 1 }}>
           {navItems.map(item => {
             const isActive = currentPath === item.path;
             const Icon = item.icon;
@@ -73,24 +84,25 @@ export default function MainLayout() {
                 style={{
                   color: isActive ? 'var(--text-main)' : 'var(--text-muted)',
                   textDecoration: 'none',
-                  padding: '12px 14px',
+                  padding: '11px 14px',
                   borderRadius: '12px',
                   background: isActive
-                    ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(225, 29, 72, 0.15))'
+                    ? 'var(--sidebar-active-bg)'
                     : item.isProHighlight
-                    ? 'rgba(239, 68, 68, 0.05)'
+                    ? 'var(--badge-primary-bg)'
                     : 'transparent',
                   border: isActive
-                    ? '1px solid rgba(239, 68, 68, 0.35)'
+                    ? '1px solid var(--sidebar-active-border)'
                     : item.isProHighlight
-                    ? '1px solid rgba(239, 68, 68, 0.15)'
+                    ? '1px solid var(--badge-primary-border)'
                     : '1px solid transparent',
                   transition: 'var(--transition)',
                   fontWeight: isActive ? 600 : 500,
+                  fontSize: '0.9rem',
                 }}
               >
                 <div className="flex items-center gap-3">
-                  <Icon size={19} color={isActive ? 'var(--primary)' : item.isProHighlight ? 'var(--accent)' : 'currentColor'} />
+                  <Icon size={18} color={isActive ? 'var(--primary)' : item.isProHighlight ? 'var(--accent)' : 'currentColor'} />
                   <span>{item.label}</span>
                 </div>
                 {item.badge && (
@@ -99,14 +111,14 @@ export default function MainLayout() {
                       fontSize: '0.65rem',
                       fontWeight: 800,
                       padding: '2px 7px',
-                      borderRadius: '10px',
+                      borderRadius: '8px',
                       background: isPro
-                        ? 'rgba(16, 185, 129, 0.15)'
+                        ? 'var(--success-bg)'
                         : 'linear-gradient(135deg, var(--primary), var(--accent))',
                       color: isPro ? 'var(--success)' : '#fff',
-                      border: isPro ? '1px solid rgba(16, 185, 129, 0.35)' : 'none',
+                      border: isPro ? '1px solid var(--success-border)' : 'none',
                       letterSpacing: '0.04em',
-                      boxShadow: !isPro ? '0 2px 8px rgba(220, 38, 38, 0.35)' : 'none',
+                      boxShadow: !isPro ? '0 2px 8px var(--primary-glow)' : 'none',
                     }}
                   >
                     {item.badge}
@@ -124,16 +136,16 @@ export default function MainLayout() {
               marginTop: 'auto',
               padding: '16px',
               borderRadius: '16px',
-              background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(225, 29, 72, 0.1))',
-              border: '1px solid rgba(239, 68, 68, 0.25)',
+              background: 'linear-gradient(135deg, var(--badge-primary-bg), rgba(6, 182, 212, 0.08))',
+              border: '1px solid var(--badge-primary-border)',
               textAlign: 'center',
             }}
           >
             <div className="flex items-center justify-center gap-1.5" style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '0.85rem', marginBottom: '4px' }}>
               <Sparkles size={16} /> Unlock Pro $39/mo
             </div>
-            <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: '12px', lineHeight: 1.3 }}>
-              Safe production auto-fixes & 24/7 instant SecOps help.
+            <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: '12px', lineHeight: 1.35 }}>
+              Safe production auto-fixes & 24/7 instant SecOps AI assist.
             </p>
             <Link
               to="/subscription"
@@ -159,7 +171,7 @@ export default function MainLayout() {
         {/* Top Header */}
         <header className="glass-panel flex justify-between items-center" style={{ position: 'relative', zIndex: 100, marginBottom: '24px', padding: '16px 24px', borderRadius: '24px' }}>
           <div className="flex items-center gap-3">
-            <h1 style={{ fontSize: '1.5rem', margin: 0 }}>{pageTitle}</h1>
+            <h1 style={{ fontSize: '1.45rem', margin: 0, fontWeight: 700 }}>{pageTitle}</h1>
             <Link
               to="/subscription"
               style={{
@@ -167,12 +179,12 @@ export default function MainLayout() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '6px',
-                fontSize: '0.75rem',
+                fontSize: '0.72rem',
                 fontWeight: 700,
                 padding: '4px 10px',
                 borderRadius: '12px',
-                background: isPro ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.12)',
-                border: isPro ? '1px solid rgba(16, 185, 129, 0.35)' : '1px solid rgba(239, 68, 68, 0.25)',
+                background: isPro ? 'var(--success-bg)' : 'var(--badge-primary-bg)',
+                border: isPro ? '1px solid var(--success-border)' : '1px solid var(--badge-primary-border)',
                 color: isPro ? 'var(--success)' : 'var(--primary)',
                 transition: 'all 0.2s',
               }}
@@ -187,15 +199,12 @@ export default function MainLayout() {
             {/* Theme Toggle Button (Light/Dark) */}
             <button
               onClick={toggleTheme}
-              className="btn"
+              className="btn btn-secondary"
               type="button"
               style={{
-                background: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(220, 38, 38, 0.1)',
-                border: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(220, 38, 38, 0.25)'}`,
-                color: isDark ? '#f8fafc' : '#dc2626',
                 padding: '8px 14px',
                 borderRadius: '12px',
-                fontSize: '0.85rem',
+                fontSize: '0.84rem',
                 fontWeight: 600,
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -203,16 +212,16 @@ export default function MainLayout() {
                 cursor: 'pointer',
                 transition: 'var(--transition)',
               }}
-              title={isDark ? 'Switch to Light Mode (White & Red)' : 'Switch to Dark Mode (Black)'}
+              title={isDark ? 'Switch to Crisp Light Mode' : 'Switch to Cyber Dark Mode'}
             >
               {isDark ? (
                 <>
-                  <Sun size={17} color="#fbbf24" />
+                  <Sun size={16} color="#fbbf24" />
                   <span>Light Mode</span>
                 </>
               ) : (
                 <>
-                  <Moon size={17} color="#dc2626" />
+                  <Moon size={16} color="var(--primary)" />
                   <span>Dark Mode</span>
                 </>
               )}
@@ -226,12 +235,12 @@ export default function MainLayout() {
                 type="button"
                 onClick={() => setIsVerifierOpen(!isVerifierOpen)}
                 style={{
-                  background: isVerifierOpen ? 'rgba(16, 185, 129, 0.22)' : 'rgba(16, 185, 129, 0.12)',
-                  border: isVerifierOpen ? '1px solid rgba(16, 185, 129, 0.5)' : '1px solid rgba(16, 185, 129, 0.25)',
-                  color: isDark ? '#a7f3d0' : '#059669',
+                  background: isVerifierOpen ? 'var(--success-bg)' : 'rgba(16, 185, 129, 0.08)',
+                  border: isVerifierOpen ? '1px solid var(--success)' : '1px solid var(--success-border)',
+                  color: 'var(--success)',
                   padding: '8px 14px',
                   borderRadius: '12px',
-                  fontSize: '0.85rem',
+                  fontSize: '0.84rem',
                   fontWeight: 600,
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -241,7 +250,7 @@ export default function MainLayout() {
                 }}
                 title="Verify Cloud Connection & Security Status"
               >
-                <ShieldCheck size={18} color="var(--success)" />
+                <ShieldCheck size={17} color="var(--success)" />
                 Verify Cloud Status
               </button>
 
@@ -257,12 +266,12 @@ export default function MainLayout() {
               data-chat-trigger="true"
               onClick={() => setIsChatOpen(!isChatOpen)}
               style={{
-                background: isChatOpen ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.35), rgba(225, 29, 72, 0.35))' : 'linear-gradient(135deg, rgba(239, 68, 68, 0.18), rgba(225, 29, 72, 0.18))',
-                border: isChatOpen ? '1px solid rgba(239, 68, 68, 0.6)' : '1px solid rgba(239, 68, 68, 0.35)',
+                background: isChatOpen ? 'linear-gradient(135deg, var(--badge-primary-bg), rgba(6, 182, 212, 0.2))' : 'var(--badge-primary-bg)',
+                border: isChatOpen ? '1px solid var(--primary)' : '1px solid var(--badge-primary-border)',
                 color: 'var(--primary)',
                 padding: '8px 14px',
                 borderRadius: '12px',
-                fontSize: '0.85rem',
+                fontSize: '0.84rem',
                 fontWeight: 600,
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -271,12 +280,12 @@ export default function MainLayout() {
                 transition: 'all 0.2s ease',
               }}
             >
-              <Sparkles size={18} color="var(--primary)" />
+              <Sparkles size={17} color="var(--primary)" />
               Security Chat
             </button>
 
             <button className="btn btn-primary" onClick={() => setIsScanning(true)}>
-              <Shield size={18} />
+              <Shield size={17} />
               Run Scan
             </button>
 
@@ -286,7 +295,7 @@ export default function MainLayout() {
                 type="button"
                 onClick={() => setIsNotifOpen(!isNotifOpen)}
                 style={{
-                  background: isNotifOpen ? 'rgba(239, 68, 68, 0.2)' : 'var(--badge-primary-bg)',
+                  background: isNotifOpen ? 'var(--badge-primary-bg)' : 'var(--panel-inner-bg)',
                   border: isNotifOpen ? '1px solid var(--primary)' : '1px solid var(--border-color)',
                   cursor: 'pointer',
                   padding: '9px',
@@ -299,24 +308,24 @@ export default function MainLayout() {
                 }}
                 title="Security Notifications"
               >
-                <Bell size={19} color={isNotifOpen ? 'var(--primary)' : 'var(--text-muted)'} />
+                <Bell size={18} color={isNotifOpen ? 'var(--primary)' : 'var(--text-muted)'} />
                 {unreadCount > 0 && (
                   <div style={{
                     position: 'absolute',
-                    top: '3px',
-                    right: '3px',
+                    top: '2px',
+                    right: '2px',
                     minWidth: '16px',
                     height: '16px',
                     padding: '0 4px',
                     background: 'var(--critical)',
                     color: 'white',
-                    fontSize: '0.65rem',
+                    fontSize: '0.62rem',
                     fontWeight: 'bold',
                     borderRadius: '10px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: '0 2px 6px rgba(239, 68, 68, 0.4)'
+                    boxShadow: '0 2px 6px rgba(244, 63, 94, 0.4)'
                   }}>
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </div>
@@ -333,28 +342,28 @@ export default function MainLayout() {
             {/* User Profile and Logout Button */}
             <div className="flex items-center gap-3" style={{ paddingLeft: '10px', borderLeft: '1px solid var(--border-color)' }}>
               <div style={{
-                width: '38px',
-                height: '38px',
+                width: '36px',
+                height: '36px',
                 borderRadius: '50%',
-                background: isAdmin ? 'linear-gradient(135deg, var(--primary), var(--accent))' : 'var(--primary)',
+                background: 'linear-gradient(135deg, var(--primary), var(--accent))',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontWeight: 'bold',
                 color: 'white',
-                fontSize: '0.88rem',
+                fontSize: '0.85rem',
                 flexShrink: 0,
-                boxShadow: '0 2px 8px rgba(220, 38, 38, 0.3)'
+                boxShadow: '0 2px 8px var(--primary-glow)'
               }}>
                 {userInitials}
               </div>
               <div>
-                <div className="flex items-center gap-2" style={{ fontSize: '0.88rem', fontWeight: 600 }}>
+                <div className="flex items-center gap-2" style={{ fontSize: '0.85rem', fontWeight: 600 }}>
                   {user?.name || 'User'}
                   <span style={{
-                    fontSize: '0.68rem',
+                    fontSize: '0.65rem',
                     padding: '2px 7px',
-                    borderRadius: '12px',
+                    borderRadius: '10px',
                     background: 'var(--badge-primary-bg)',
                     color: 'var(--badge-primary-color)',
                     border: '1px solid var(--badge-primary-border)',
@@ -364,7 +373,7 @@ export default function MainLayout() {
                     {user?.role || 'USER'}
                   </span>
                 </div>
-                <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{user?.email}</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{user?.email}</div>
               </div>
 
               {/* Logout Button directly near User ID */}
@@ -372,30 +381,28 @@ export default function MainLayout() {
                 onClick={logout}
                 title="Log out of account"
                 style={{
-                  background: 'rgba(239, 68, 68, 0.12)',
-                  border: '1px solid rgba(239, 68, 68, 0.25)',
+                  background: 'var(--critical-bg)',
+                  border: '1px solid var(--critical-border)',
                   color: 'var(--critical)',
                   padding: '7px 12px',
                   borderRadius: '10px',
-                  fontSize: '0.82rem',
+                  fontSize: '0.8rem',
                   fontWeight: 600,
                   cursor: 'pointer',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '6px',
+                  gap: '5px',
                   marginLeft: '6px',
                   transition: 'var(--transition)'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(239, 68, 68, 0.22)';
-                  e.currentTarget.style.color = '#ef4444';
+                  e.currentTarget.style.background = 'rgba(244, 63, 94, 0.2)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(239, 68, 68, 0.12)';
-                  e.currentTarget.style.color = 'var(--critical)';
+                  e.currentTarget.style.background = 'var(--critical-bg)';
                 }}
               >
-                <LogOut size={15} />
+                <LogOut size={14} />
                 <span>Logout</span>
               </button>
             </div>

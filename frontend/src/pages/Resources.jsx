@@ -16,10 +16,10 @@ const cloudTabs = ['All', 'AWS', 'Azure', 'GCP'];
 const severityOptions = ['All', 'Critical', 'High', 'Medium', 'Low'];
 
 const severityColors = {
-  critical: { bg: 'rgba(239, 68, 68, 0.1)', text: 'var(--critical)', border: 'rgba(239, 68, 68, 0.3)' },
-  high:     { bg: 'rgba(249, 115, 22, 0.1)', text: 'var(--high)',     border: 'rgba(249, 115, 22, 0.3)' },
-  medium:   { bg: 'rgba(234, 179, 8, 0.1)',  text: 'var(--medium)',   border: 'rgba(234, 179, 8, 0.3)' },
-  low:      { bg: 'rgba(59, 130, 246, 0.1)', text: 'var(--low)',      border: 'rgba(59, 130, 246, 0.3)' },
+  critical: { bg: 'var(--critical-bg)', text: 'var(--critical)', border: 'var(--critical-border)' },
+  high:     { bg: 'var(--high-bg)',     text: 'var(--high)',     border: 'var(--high-border)' },
+  medium:   { bg: 'var(--medium-bg)',   text: 'var(--medium)',   border: 'var(--medium-border)' },
+  low:      { bg: 'var(--low-bg)',      text: 'var(--low)',      border: 'var(--low-border)' },
 };
 
 const cloudColors = {

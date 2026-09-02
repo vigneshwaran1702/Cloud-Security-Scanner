@@ -133,7 +133,7 @@ export default function Register() {
             background: 'linear-gradient(135deg, var(--primary), var(--accent))',
             padding: '14px',
             borderRadius: '18px',
-            boxShadow: '0 8px 24px rgba(220, 38, 38, 0.4)',
+            boxShadow: '0 8px 24px var(--primary-glow)',
             display: 'inline-flex'
           }}>
             <Shield size={36} color="white" />
@@ -151,11 +151,11 @@ export default function Register() {
         {/* Success Alert */}
         {success && (
           <div style={{
-            background: 'rgba(16, 185, 129, 0.15)',
-            border: '1px solid var(--success)',
+            background: 'var(--success-bg)',
+            border: '1px solid var(--success-border)',
             borderRadius: '12px',
             padding: '12px 16px',
-            color: isDark ? '#a7f3d0' : '#059669',
+            color: 'var(--success)',
             fontSize: '0.85rem',
             marginBottom: '18px',
             display: 'flex',
@@ -170,11 +170,11 @@ export default function Register() {
         {/* Error Alert */}
         {error && (
           <div style={{
-            background: 'rgba(239, 68, 68, 0.15)',
-            border: '1px solid var(--critical)',
+            background: 'var(--critical-bg)',
+            border: '1px solid var(--critical-border)',
             borderRadius: '12px',
             padding: '12px 16px',
-            color: isDark ? '#fca5a5' : '#dc2626',
+            color: 'var(--critical)',
             fontSize: '0.85rem',
             marginBottom: '18px',
             display: 'flex',
