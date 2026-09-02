@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShieldAlert, Server, AlertTriangle, CheckCircle, Activity, Box, Loader2, ShieldCheck, Zap, Sparkles, Bot, ArrowRight, Lock, TrendingUp, HelpCircle } from 'lucide-react';
+import { ShieldAlert, Server, AlertTriangle, CheckCircle, Activity, Box, Loader2, ShieldCheck, Zap, Sparkles, Bot, ArrowRight, Lock, TrendingUp, HelpCircle, X } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useSubscription } from '../context/SubscriptionContext';
 import SubscriptionCheckoutModal from '../components/SubscriptionCheckoutModal';
@@ -113,6 +113,7 @@ export default function Dashboard() {
   const [chartData, setChartData] = useState(initialChartData);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [safeRemediationToast, setSafeRemediationToast] = useState(null);
+  const [isBannerDismissed, setIsBannerDismissed] = useState(false);
 
   const handleApplyFix = async (rec) => {
     setFixingId(rec.id);
@@ -186,41 +187,45 @@ export default function Dashboard() {
       )}
 
       {/* Pro Callout Banner if not subscribed */}
-      {!isPro && (
+      {!isPro && !isBannerDismissed && (
         <div
           className="glass-panel flex justify-between items-center"
           style={{
-            background: 'linear-gradient(135deg, var(--badge-primary-bg), rgba(6, 182, 212, 0.08))',
-            border: '1px solid var(--badge-primary-border)',
-            padding: '16px 24px',
-            borderRadius: '20px',
+            background: 'linear-gradient(135deg, var(--badge-primary-bg), rgba(6, 182, 212, 0.05))',
+            border: '1px solid var(--border-color)',
+            borderLeft: '4px solid var(--primary)',
+            padding: '14px 20px',
+            borderRadius: '16px',
+            gap: '16px',
           }}
         >
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3.5">
             <div
               style={{
-                background: 'linear-gradient(135deg, var(--primary), var(--accent))',
-                padding: '10px',
-                borderRadius: '14px',
-                boxShadow: '0 4px 14px var(--primary-glow)',
+                width: '36px',
+                height: '36px',
+                borderRadius: '10px',
+                background: 'var(--badge-primary-bg)',
+                border: '1px solid var(--badge-primary-border)',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                flexShrink: 0
               }}
             >
-              <Sparkles size={22} color="white" />
+              <Sparkles size={18} color="var(--primary)" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h4 style={{ fontSize: '1.05rem', margin: 0, color: 'var(--text-main)' }}>
-                  Upgrade to Pro Cloud Defender for <span style={{ color: 'var(--primary)', fontWeight: 800 }}>$39 / mo</span>
+                <h4 style={{ fontSize: '0.94rem', margin: 0, fontWeight: 700, color: 'var(--text-main)' }}>
+                  Upgrade to Pro Cloud Defender
                 </h4>
-                <span style={{ fontSize: '0.7rem', background: 'var(--badge-primary-bg)', color: 'var(--badge-primary-color)', border: '1px solid var(--badge-primary-border)', padding: '2px 8px', borderRadius: '10px', fontWeight: 700 }}>
-                  PRO FEATURES
+                <span style={{ fontSize: '0.68rem', background: 'var(--badge-primary-bg)', color: 'var(--badge-primary-color)', border: '1px solid var(--badge-primary-border)', padding: '1px 6px', borderRadius: '6px', fontWeight: 700 }}>
+                  $39 / mo
                 </span>
               </div>
-              <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: '2px 0 0' }}>
-                Unlock Safe Production Auto-Fixes, 24/7 Instant AI SecOps Help, and Risk Contribution matrix.
+              <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: '2px 0 0' }}>
+                Automated zero-downtime remediation, 24/7 SecOps AI, and deep risk analysis.
               </p>
             </div>
           </div>
@@ -230,29 +235,50 @@ export default function Dashboard() {
               onClick={() => setIsCheckoutOpen(true)}
               className="btn btn-primary"
               style={{
-                padding: '9px 18px',
+                padding: '7px 15px',
                 borderRadius: '10px',
-                fontSize: '0.85rem',
-                fontWeight: 700,
+                fontSize: '0.82rem',
+                fontWeight: 600,
                 cursor: 'pointer',
               }}
             >
-              <Zap size={16} /> Upgrade for $39
+              <Zap size={14} /> Upgrade Now
             </button>
             <Link
               to="/subscription"
               style={{
                 color: 'var(--primary)',
                 textDecoration: 'none',
-                fontSize: '0.85rem',
+                fontSize: '0.82rem',
                 fontWeight: 600,
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '4px',
               }}
             >
-              View Plan <ArrowRight size={14} />
+              View Plan <ArrowRight size={13} />
             </Link>
+            <button
+              onClick={() => setIsBannerDismissed(true)}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--text-subtle)',
+                cursor: 'pointer',
+                padding: '4px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '6px',
+                marginLeft: '4px',
+                transition: 'var(--transition)',
+              }}
+              title="Dismiss banner"
+              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-main)'}
+              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-subtle)'}
+            >
+              <X size={16} />
+            </button>
           </div>
         </div>
       )}
