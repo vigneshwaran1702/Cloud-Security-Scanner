@@ -56,7 +56,8 @@ export default function MainLayout() {
   const location = useLocation();
   const currentPath = location.pathname;
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isPromoClosed, setIsPromoClosed] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isVerifierOpen, setIsVerifierOpen] = useState(false);
@@ -439,16 +440,38 @@ export default function MainLayout() {
             })}
           </nav>
 
-          {/* Sidebar Pro Tier Banner (when open) */}
-          {isSidebarOpen && !isPro && (
+          {/* Sidebar Pro Tier Banner (when sidebar open and not dismissed) */}
+          {isSidebarOpen && !isPro && !isPromoClosed && (
             <div style={{
               margin: '16px',
               padding: '14px',
               borderRadius: '12px',
               background: 'var(--panel-inner-bg)',
               border: '1px solid var(--border-color)',
+              position: 'relative',
+              animation: 'fadeIn 0.2s ease',
             }}>
-              <div className="flex items-center gap-1.5" style={{ color: '#1a73e8', fontWeight: 700, fontSize: '0.82rem', marginBottom: '4px' }}>
+              <button
+                type="button"
+                onClick={() => setIsPromoClosed(true)}
+                style={{
+                  position: 'absolute',
+                  top: '10px',
+                  right: '10px',
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                  padding: '2px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+                title="Dismiss"
+              >
+                <X size={14} />
+              </button>
+              <div className="flex items-center gap-1.5" style={{ color: '#1a73e8', fontWeight: 700, fontSize: '0.82rem', marginBottom: '4px', paddingRight: '16px' }}>
                 <Sparkles size={14} /> Upgrade to Pro ($39)
               </div>
               <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', margin: '0 0 10px 0', lineHeight: 1.35 }}>
