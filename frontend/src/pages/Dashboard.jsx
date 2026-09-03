@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ShieldAlert, Server, AlertTriangle, CheckCircle, Activity, Box, Loader2, ShieldCheck, Zap, Sparkles, Bot, ArrowRight, Lock, TrendingUp, HelpCircle, X, Cloud, RefreshCw, Check, Shield } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useSubscription } from '../context/SubscriptionContext';
+import { useAuth } from '../context/AuthContext';
 import SubscriptionCheckoutModal from '../components/SubscriptionCheckoutModal';
 import CloudAccountVerifierModal from '../components/CloudAccountVerifierModal';
 import ScanModal from '../components/ScanModal';
@@ -27,6 +28,7 @@ const severityStyles = {
 
 export default function Dashboard() {
   const { isPro } = useSubscription();
+  const { requireAuth } = useAuth();
   const [cloudState, setCloudState] = useState(() => getCloudState());
   const [stats, setStats] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
@@ -75,82 +77,86 @@ export default function Dashboard() {
   }, []);
 
   const handleApplyFix = async (rec) => {
-    setFixingId(rec.id);
-    try {
-      const res = await apiRequest(`/api/v1/recommendations/${rec.id}/apply`, { method: 'POST' });
-      
-      setRecommendations(prev =>
-        prev.map(r => r.id === rec.id ? { ...r, status: 'resolved' } : r)
-      );
+    requireAuth(async () => {
+      setFixingId(rec.id);
+      try {
+        const res = await apiRequest(`/api/v1/recommendations/${rec.id}/apply`, { method: 'POST' });
+        
+        setRecommendations(prev =>
+          prev.map(r => r.id === rec.id ? { ...r, status: 'resolved' } : r)
+        );
 
-      if (res.stats) {
-        setStats(res.stats);
-      } else {
-        setStats(prev => {
-          if (!prev) return prev;
-          const openCrit = recommendations.filter(r => r.id !== rec.id && r.status === 'open' && r.severity === 'critical').length;
-          const openHigh = recommendations.filter(r => r.id !== rec.id && r.status === 'open' && r.severity === 'high').length;
-          const isClean = openCrit === 0 && openHigh === 0;
-          return {
-            ...prev,
-            critical_issues: openCrit,
-            high_issues: openHigh,
-            security_score: isClean ? 100 : Math.min(100, (prev.security_score || 76) + 12),
-          };
+        if (res.stats) {
+          setStats(res.stats);
+        } else {
+          setStats(prev => {
+            if (!prev) return prev;
+            const openCrit = recommendations.filter(r => r.id !== rec.id && r.status === 'open' && r.severity === 'critical').length;
+            const openHigh = recommendations.filter(r => r.id !== rec.id && r.status === 'open' && r.severity === 'high').length;
+            const isClean = openCrit === 0 && openHigh === 0;
+            return {
+              ...prev,
+              critical_issues: openCrit,
+              high_issues: openHigh,
+              security_score: isClean ? 100 : Math.min(100, (prev.security_score || 76) + 12),
+            };
+          });
+        }
+
+        setChartData(prev => [
+          ...prev,
+          { name: 'Remediated', score: 92 }
+        ]);
+
+        setSafeRemediationToast({
+          title: 'Remediation Applied Successfully',
+          detail: `Issue "${rec.title}" resolved on ${rec.resource}. Risk neutralized.`
         });
+        setTimeout(() => setSafeRemediationToast(null), 4500);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setFixingId(null);
       }
-
-      setChartData(prev => [
-        ...prev,
-        { name: 'Remediated', score: 92 }
-      ]);
-
-      setSafeRemediationToast({
-        title: 'Remediation Applied Successfully',
-        detail: `Issue "${rec.title}" resolved on ${rec.resource}. Risk neutralized.`
-      });
-      setTimeout(() => setSafeRemediationToast(null), 4500);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setFixingId(null);
-    }
+    }, "Sign in with Google or Gmail/password to apply automated remediation fixes.");
   };
 
   const handleClearAllRisks = async () => {
-    setClearingAll(true);
-    try {
-      const res = await apiRequest('/api/v1/recommendations/clear-all', { method: 'POST' });
-      
-      setRecommendations(prev => prev.map(r => ({ ...r, status: 'resolved' })));
-      
-      if (res.stats) {
-        setStats(res.stats);
-      } else {
-        setStats(prev => ({
-          ...(prev || {}),
-          security_score: 100,
-          critical_issues: 0,
-          high_issues: 0,
-          score_change: 'All risks & failures cleared (100% Protected)'
-        }));
+    requireAuth(async () => {
+      setClearingAll(true);
+      try {
+        const res = await apiRequest('/api/v1/recommendations/clear-all', { method: 'POST' });
+        
+        setRecommendations(prev => prev.map(r => ({ ...r, status: 'resolved' })));
+        
+        if (res.stats) {
+          setStats(res.stats);
+        } else {
+          setStats(prev => ({
+            ...(prev || {}),
+            security_score: 100,
+            critical_issues: 0,
+            high_issues: 0,
+            score_change: 'All risks & failures cleared (100% Protected)'
+          }));
+        }
+
+        setChartData(prev => [
+          ...prev,
+          { name: 'Secured', score: 100 }
+        ]);
+
+        setSafeRemediationToast({
+          title: 'All Cloud Risks & Failures Cleared!',
+          detail: '100% Security Posture achieved. All non-compliant configurations remediated.'
+        });
+        setTimeout(() => setSafeRemediationToast(null), 5000);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setClearingAll(false);
       }
-
-      setChartData(prev => [
-        ...prev,
-        { name: 'Secured', score: 100 }
-      ]);
-
-      setSafeRemediationToast({
-        title: 'All Cloud Risks & Failures Cleared!',
-        detail: '100% Security Posture achieved. All non-compliant configurations remediated.'
-      });
-      setTimeout(() => setSafeRemediationToast(null), 5000);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setClearingAll(false);
-    }
+    }, "Sign in with Google or Gmail/password to clear and remediate all cloud risks.");
   };
 
   const activeCloudId = cloudState.activeCloudId || stats?.active_cloud_id;
@@ -206,7 +212,7 @@ export default function Dashboard() {
 
           <div className="flex items-center gap-3">
             <button
-              onClick={() => setIsVerifierOpen(true)}
+              onClick={() => requireAuth(() => setIsVerifierOpen(true), "Sign in with your Google account or Gmail/password to verify and connect your cloud ID.")}
               className="btn btn-primary"
               style={{ padding: '12px 24px', fontSize: '0.95rem', fontWeight: 700 }}
             >
@@ -214,7 +220,7 @@ export default function Dashboard() {
               Verify Cloud ID
             </button>
             <button
-              onClick={() => setIsScanOpen(true)}
+              onClick={() => requireAuth(() => setIsScanOpen(true), "Sign in with your Google account or Gmail/password to start live cloud scans.")}
               className="btn"
               style={{
                 background: 'var(--panel-inner-bg)',
@@ -299,7 +305,7 @@ export default function Dashboard() {
               </button>
             )}
             <button
-              onClick={() => setIsScanOpen(true)}
+              onClick={() => requireAuth(() => setIsScanOpen(true), "Sign in with your Google account or Gmail/password to rescan cloud infrastructure.")}
               className="btn"
               style={{
                 padding: '9px 14px',
@@ -313,7 +319,7 @@ export default function Dashboard() {
               <RefreshCw size={14} /> Rescan
             </button>
             <button
-              onClick={() => setIsVerifierOpen(true)}
+              onClick={() => requireAuth(() => setIsVerifierOpen(true), "Sign in with your Google account or Gmail/password to switch cloud accounts.")}
               className="btn"
               style={{
                 padding: '9px 14px',
@@ -448,7 +454,7 @@ export default function Dashboard() {
               <p style={{ margin: '0 0 20px 0', color: 'var(--text-muted)', fontSize: '0.88rem', maxWidth: '380px' }}>
                 Please enter your AWS, Azure, or GCP Cloud ID to analyze vulnerabilities and evaluate infrastructure risks.
               </p>
-              <button onClick={() => setIsVerifierOpen(true)} className="btn btn-primary" style={{ padding: '10px 20px' }}>
+              <button onClick={() => requireAuth(() => setIsVerifierOpen(true), "Sign in with your Google account or Gmail/password to connect your cloud ID.")} className="btn btn-primary" style={{ padding: '10px 20px' }}>
                 <ShieldCheck size={16} /> Enter Cloud ID
               </button>
             </div>
@@ -625,7 +631,7 @@ export default function Dashboard() {
             </h4>
             <div className="flex flex-col gap-2.5">
               <button
-                onClick={() => setIsVerifierOpen(true)}
+                onClick={() => requireAuth(() => setIsVerifierOpen(true), "Sign in with your Google account or Gmail/password to verify and connect cloud ID.")}
                 className="btn"
                 style={{
                   width: '100%',
@@ -646,7 +652,7 @@ export default function Dashboard() {
               </button>
 
               <button
-                onClick={() => setIsScanOpen(true)}
+                onClick={() => requireAuth(() => setIsScanOpen(true), "Sign in with your Google account or Gmail/password to perform a vulnerability audit.")}
                 className="btn"
                 style={{
                   width: '100%',

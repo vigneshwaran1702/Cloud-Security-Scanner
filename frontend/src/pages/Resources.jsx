@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Cloud, Search, Filter, AlertTriangle, ShieldAlert, ShieldCheck, Info, Server, Database, HardDrive, Key, Box, Sparkles, Loader2, Check, RefreshCw, ArrowRight } from 'lucide-react';
 import { apiRequest, getCloudState } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import CloudAccountVerifierModal from '../components/CloudAccountVerifierModal';
 import ScanModal from '../components/ScanModal';
 
@@ -35,6 +36,7 @@ const typeIcons = {
 };
 
 export default function Resources() {
+  const { requireAuth } = useAuth();
   const [resources, setResources] = useState([]);
   const [cloudFilter, setCloudFilter] = useState('All');
   const [severityFilter, setSeverityFilter] = useState('All');
@@ -69,37 +71,36 @@ export default function Resources() {
 
   const handleClearAllFailures = async () => {
     setClearingAll(true);
-    try {
-      const res = await apiRequest('/api/v1/resources/clear-failures', { method: 'POST' });
-      if (res.resources) {
-        setResources(res.resources);
-      } else {
-        setResources(prev =>
-          prev.map(r => ({ ...r, status: 'Compliant', severity: 'low', issue: 'Remediated & Secured via CloudGuard AI' }))
-        );
+    requireAuth(async () => {
+      setClearingAll(true);
+      try {
+        await apiRequest('/api/v1/resources/clear-failures', { method: 'POST' });
+        await loadResources();
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setClearingAll(false);
       }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setClearingAll(false);
-    }
+    }, "Sign in with your Google account or Gmail/password to remediate non-compliant resources.");
   };
 
   const handleRemediateSingle = async (resItem) => {
-    setRemediatingId(resItem.id);
-    try {
-      await new Promise(r => setTimeout(r, 600));
-      setResources(prev =>
-        prev.map(r => r.id === resItem.id ? {
-          ...r,
-          status: 'Compliant',
-          severity: 'low',
-          issue: 'Remediated: Configuration Secured'
-        } : r)
-      );
-    } finally {
-      setRemediatingId(null);
-    }
+    requireAuth(async () => {
+      setRemediatingId(resItem.id);
+      try {
+        await new Promise(r => setTimeout(r, 600));
+        setResources(prev =>
+          prev.map(r => r.id === resItem.id ? {
+            ...r,
+            status: 'Compliant',
+            severity: 'low',
+            issue: 'Remediated: Configuration Secured'
+          } : r)
+        );
+      } finally {
+        setRemediatingId(null);
+      }
+    }, "Sign in with your Google account or Gmail/password to remediate this resource.");
   };
 
   const filtered = useMemo(() => {
@@ -158,7 +159,7 @@ export default function Resources() {
           )}
 
           <button
-            onClick={() => setIsScanOpen(true)}
+            onClick={() => requireAuth(() => setIsScanOpen(true), "Sign in with your Google account or Gmail/password to rescan cloud infrastructure.")}
             className="btn"
             style={{
               padding: '10px 16px',
@@ -272,7 +273,7 @@ export default function Resources() {
               Enter your AWS Account ID, Azure Subscription ID, or GCP Project ID to discover assets and check compliance.
             </p>
             <button
-              onClick={() => setIsVerifierOpen(true)}
+              onClick={() => requireAuth(() => setIsVerifierOpen(true), "Sign in with your Google account or Gmail/password to connect your cloud ID.")}
               className="btn btn-primary"
               style={{ padding: '12px 24px', fontSize: '0.95rem' }}
             >
