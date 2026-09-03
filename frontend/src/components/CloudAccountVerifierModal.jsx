@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { apiRequest, getCloudState } from '../services/api';
-import { Cloud, ShieldCheck, CheckCircle2, X, Loader2, RefreshCw, ArrowRight } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { Cloud, ShieldCheck, CheckCircle2, X, Loader2, RefreshCw, ArrowRight, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function CloudAccountVerifierModal({ isOpen, onClose }) {
+  const { user, openAuthModal } = useAuth();
   const [provider, setProvider] = useState('AWS');
   const [accountId, setAccountId] = useState('');
   const [loading, setLoading] = useState(false);
@@ -42,6 +44,18 @@ export default function CloudAccountVerifierModal({ isOpen, onClose }) {
 
   const handleVerify = async (e) => {
     e?.preventDefault();
+
+    if (!user) {
+      openAuthModal({
+        title: 'Create Account or Log In',
+        subtitle: 'Please create an account or sign in first to enter and verify your Cloud ID.',
+        onSuccess: () => {
+          handleVerify();
+        }
+      });
+      return;
+    }
+
     const cleanId = accountId.trim();
     if (!cleanId) {
       setError('Please enter your Cloud Account ID / Subscription ID.');
@@ -195,6 +209,42 @@ export default function CloudAccountVerifierModal({ isOpen, onClose }) {
             </p>
           </div>
         </div>
+
+        {/* Account requirement banner if guest */}
+        {!user && (
+          <div style={{
+            background: 'rgba(26, 115, 232, 0.08)',
+            border: '1px solid rgba(26, 115, 232, 0.25)',
+            borderRadius: '14px',
+            padding: '14px 16px',
+            marginBottom: '16px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '12px',
+            flexWrap: 'wrap'
+          }}>
+            <div className="flex items-center gap-2.5">
+              <Lock size={18} color="#1a73e8" />
+              <div>
+                <div style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                  Account Required to Connect Cloud ID
+                </div>
+                <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                  Please create an account or sign in to enter and connect your cloud ID.
+                </div>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => openAuthModal({ title: 'Create Account', subtitle: 'Create an account to connect and verify your cloud infrastructure.' })}
+              className="btn btn-primary"
+              style={{ padding: '6px 14px', fontSize: '0.8rem', borderRadius: '8px', background: '#1a73e8', borderColor: '#1a73e8' }}
+            >
+              Create Account / Login
+            </button>
+          </div>
+        )}
 
         {/* Form */}
         <form onSubmit={handleVerify} className="flex flex-col gap-4">
