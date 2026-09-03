@@ -312,16 +312,17 @@ export default function MainLayout() {
                 type="button"
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                 style={{
-                  background: 'transparent',
-                  border: 'none',
+                  background: isUserMenuOpen ? 'var(--panel-inner-bg)' : 'transparent',
+                  border: isUserMenuOpen ? '1px solid var(--border-color-hover)' : '1px solid transparent',
                   cursor: 'pointer',
-                  padding: '2px',
-                  borderRadius: '50%',
+                  padding: '4px 10px 4px 4px',
+                  borderRadius: '10px',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '6px',
+                  gap: '8px',
+                  transition: 'var(--transition)',
                 }}
-                title={`Google Account: ${displayName}`}
+                title={`Account: ${displayName}`}
               >
                 {user?.picture ? (
                   <img
@@ -353,6 +354,15 @@ export default function MainLayout() {
                     {userInitials}
                   </div>
                 )}
+                <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-main)', lineHeight: 1.2 }}>
+                    {displayName}
+                  </span>
+                  <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', lineHeight: 1.2, maxWidth: '130px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {userIdentifier}
+                  </span>
+                </div>
+                <ChevronDown size={14} color="var(--text-muted)" style={{ transform: isUserMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }} />
               </button>
 
               {/* Google Account Profile Dropdown */}
