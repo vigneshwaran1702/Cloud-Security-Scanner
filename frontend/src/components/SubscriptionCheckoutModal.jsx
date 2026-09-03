@@ -34,7 +34,7 @@ export default function SubscriptionCheckoutModal({ isOpen, onClose, selectedTie
 
   if (!isOpen) return null;
 
-  const basePrice = billingCycle === 'yearly' ? targetTier.priceYearly : targetTier.priceMonthly;
+  const basePrice = targetTier.price ?? 39;
   const discountedPrice = discountApplied ? Math.round(basePrice * 0.8) : basePrice;
 
   const handleApplyCoupon = (e) => {
@@ -239,7 +239,7 @@ export default function SubscriptionCheckoutModal({ isOpen, onClose, selectedTie
                       ${discountedPrice}
                     </div>
                     <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                      /{billingCycle === 'yearly' ? 'year (billed annually)' : 'month'}
+                      /{targetTier.period}
                     </span>
                   </div>
                 </div>
