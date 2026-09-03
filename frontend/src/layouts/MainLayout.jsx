@@ -211,25 +211,16 @@ export default function MainLayout() {
           </div>
           
           <div className="flex items-center gap-2.5">
-            {/* Verify Cloud Status Dropdown Popover */}
-            <div style={{ position: 'relative' }}>
-              <button
-                ref={verifierBtnRef}
-                type="button"
-                onClick={() => setIsVerifierOpen(!isVerifierOpen)}
-                className={`header-action-btn ${isVerifierOpen ? 'active' : ''}`}
-                title="Verify Cloud Connection & Security Status"
-              >
-                <ShieldCheck size={16} color="var(--success)" />
-                <span>Verify Cloud</span>
-              </button>
-
-              <CloudAccountVerifierModal
-                isOpen={isVerifierOpen}
-                onClose={() => setIsVerifierOpen(false)}
-                triggerRef={verifierBtnRef}
-              />
-            </div>
+            {/* Verify Cloud Action */}
+            <button
+              type="button"
+              onClick={() => setIsVerifierOpen(true)}
+              className={`header-action-btn ${isVerifierOpen ? 'active' : ''}`}
+              title="Verify Cloud Connection & Security Status"
+            >
+              <ShieldCheck size={16} color="var(--success)" />
+              <span>Verify Cloud</span>
+            </button>
 
             {/* AI Security Chat Trigger */}
             <button
@@ -498,6 +489,12 @@ export default function MainLayout() {
           <Outlet />
         </div>
       </main>
+
+      {/* Full-Screen Centered Cloud ID Verifier Modal */}
+      <CloudAccountVerifierModal
+        isOpen={isVerifierOpen}
+        onClose={() => setIsVerifierOpen(false)}
+      />
 
       {/* Full-Screen Centered Multi-Cloud Scan Modal */}
       <ScanModal

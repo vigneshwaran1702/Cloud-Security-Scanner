@@ -1,16 +1,16 @@
 import { useState, useRef, useEffect } from 'react';
-import { apiRequest, getCloudState, saveCloudState } from '../services/api';
-import { Cloud, ShieldCheck, CheckCircle2, AlertTriangle, X, Loader2, RefreshCw, Server, Activity, ShieldAlert, Sparkles, ArrowRight, Check } from 'lucide-react';
+import { apiRequest, getCloudState } from '../services/api';
+import { Cloud, ShieldCheck, CheckCircle2, X, Loader2, RefreshCw, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef }) {
+export default function CloudAccountVerifierModal({ isOpen, onClose }) {
   const [provider, setProvider] = useState('AWS');
   const [accountId, setAccountId] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
-  const [scanInitiated, setScanInitiated] = useState(false);
-  const popoverRef = useRef(null);
+  const [, setScanInitiated] = useState(false);
+  const modalContentRef = useRef(null);
   const navigate = useNavigate();
 
   // Load existing active cloud ID if user already entered one
@@ -21,28 +21,9 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
         setAccountId(state.activeCloudId);
         if (state.activeProvider) setProvider(state.activeProvider);
       }
+      setError('');
     }
   }, [isOpen]);
-
-  // Close on outside click
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (
-        popoverRef.current &&
-        !popoverRef.current.contains(event.target) &&
-        (!triggerRef?.current || !triggerRef.current.contains(event.target))
-      ) {
-        onClose();
-      }
-    }
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isOpen, onClose, triggerRef]);
 
   // Close on escape key
   useEffect(() => {
@@ -124,277 +105,91 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
     return 'Enter GCP Project ID (e.g., my-cloud-project-prod)';
   };
 
-  // Render as anchored popover dropdown if triggerRef is provided
-  if (triggerRef) {
-    return (
-      <div
-        ref={popoverRef}
-        style={{
-          position: 'absolute',
-          top: 'calc(100% + 12px)',
-          left: 0,
-          width: '520px',
-          maxWidth: 'calc(100vw - 32px)',
-          zIndex: 9999,
-          background: 'var(--panel-bg-solid)',
-          border: '1px solid var(--border-color)',
-          borderRadius: '20px',
-          boxShadow: 'var(--glass-shadow-hover)',
-          padding: '24px',
-          animation: 'fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-          color: 'var(--text-main)',
-        }}
-      >
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
-          title="Close"
-        >
-          <X size={20} />
-        </button>
-
-        {/* Modal Title */}
-        <div className="flex items-center gap-3" style={{ marginBottom: '18px' }}>
-          <div style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent))', padding: '10px', borderRadius: '12px', boxShadow: '0 2px 8px var(--primary-glow)' }}>
-            <ShieldCheck size={22} color="white" />
-          </div>
-          <div>
-            <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-main)' }}>Verify Your Cloud ID</h3>
-            <p style={{ margin: '2px 0 0 0', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
-              Enter your real cloud account or project ID to check live security posture.
-            </p>
-          </div>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleVerify} className="flex flex-col gap-3">
-          <div>
-            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px', textTransform: 'uppercase' }}>
-              Select Cloud Provider
-            </label>
-            <div className="grid grid-cols-3 gap-2">
-              {[
-                { name: 'AWS', color: '#ff9900' },
-                { name: 'Azure', color: '#0078d4' },
-                { name: 'GCP', color: '#4285f4' }
-              ].map(p => (
-                <button
-                  key={p.name}
-                  type="button"
-                  onClick={() => {
-                    setProvider(p.name);
-                    setError('');
-                  }}
-                  style={{
-                    background: provider === p.name ? `${p.color}25` : 'var(--panel-inner-bg)',
-                    border: `1px solid ${provider === p.name ? p.color : 'var(--border-color)'}`,
-                    borderRadius: '10px',
-                    padding: '8px',
-                    color: 'var(--text-main)',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    fontSize: '0.82rem',
-                    transition: 'var(--transition)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '6px'
-                  }}
-                >
-                  <Cloud size={14} color={p.color} />
-                  {p.name}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px', textTransform: 'uppercase' }}>
-              Your {provider} Cloud ID / Subscription ID
-            </label>
-            <input
-              type="text"
-              required
-              value={accountId}
-              onChange={(e) => {
-                setAccountId(e.target.value);
-                setError('');
-              }}
-              placeholder={getPlaceholder()}
-              style={{
-                width: '100%',
-                padding: '11px 14px',
-                background: 'var(--input-bg)',
-                border: '1px solid var(--border-color)',
-                borderRadius: '10px',
-                color: 'var(--text-main)',
-                fontSize: '0.88rem',
-                outline: 'none',
-              }}
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="btn btn-primary"
-            style={{ width: '100%', padding: '10px', borderRadius: '10px', fontWeight: 600, fontSize: '0.88rem', marginTop: '4px' }}
-          >
-            {loading ? (
-              <>
-                <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} />
-                Verifying & Inspecting Cloud ID...
-              </>
-            ) : (
-              <>
-                <RefreshCw size={16} />
-                Verify & Scan Cloud ID
-              </>
-            )}
-          </button>
-        </form>
-
-        {error && (
-          <div style={{ marginTop: '12px', padding: '10px', background: 'var(--critical-bg)', border: '1px solid var(--critical-border)', borderRadius: '8px', color: 'var(--critical)', fontSize: '0.8rem' }}>
-            {error}
-          </div>
-        )}
-
-        {/* Verification Result Display */}
-        {result && (
-          <div style={{
-            marginTop: '16px',
-            background: 'var(--panel-inner-bg)',
-            border: '1px solid rgba(16, 185, 129, 0.3)',
-            borderRadius: '14px',
-            padding: '14px',
-            animation: 'fadeIn 0.3s ease',
-          }}>
-            <div className="flex justify-between items-center" style={{ marginBottom: '12px' }}>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 size={18} color="var(--success)" />
-                <span style={{ fontWeight: 700, fontSize: '0.92rem', color: 'var(--text-main)' }}>
-                  {result.provider} ID {result.account_id} Verified
-                </span>
-              </div>
-              <span style={{
-                background: 'rgba(16, 185, 129, 0.2)',
-                color: 'var(--success)',
-                padding: '3px 8px',
-                borderRadius: '16px',
-                fontSize: '0.72rem',
-                fontWeight: 700
-              }}>
-                {result.status}
-              </span>
-            </div>
-
-            <div className="grid grid-cols-3 gap-2" style={{ marginBottom: '12px' }}>
-              <div style={{ background: 'var(--panel-bg-solid)', border: '1px solid var(--border-color)', padding: '8px', borderRadius: '8px', textAlign: 'center' }}>
-                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Initial Score</div>
-                <div style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--accent)' }}>{result.security_score}/100</div>
-              </div>
-              <div style={{ background: 'var(--panel-bg-solid)', border: '1px solid var(--border-color)', padding: '8px', borderRadius: '8px', textAlign: 'center' }}>
-                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Resources</div>
-                <div style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-main)' }}>{result.total_resources}</div>
-              </div>
-              <div style={{ background: 'var(--panel-bg-solid)', border: '1px solid var(--border-color)', padding: '8px', borderRadius: '8px', textAlign: 'center' }}>
-                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Region</div>
-                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--primary)', marginTop: '4px' }}>{result.region}</div>
-              </div>
-            </div>
-
-            {/* Clear Risks & Open Dashboard Action */}
-            <div className="flex gap-2" style={{ marginTop: '12px' }}>
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={() => {
-                  onClose();
-                  navigate('/');
-                  window.location.reload();
-                }}
-                style={{ flex: 1, padding: '8px', fontSize: '0.82rem', fontWeight: 600 }}
-              >
-                View Dashboard <ArrowRight size={14} />
-              </button>
-              <button
-                type="button"
-                className="btn"
-                onClick={handleClearRisksDirectly}
-                style={{
-                  background: 'rgba(16, 185, 129, 0.15)',
-                  border: '1px solid rgba(16, 185, 129, 0.4)',
-                  color: 'var(--success)',
-                  padding: '8px 12px',
-                  fontSize: '0.82rem',
-                  fontWeight: 600,
-                  borderRadius: '10px'
-                }}
-              >
-                Clear All Risks
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  // Centered Modal Mode when opened without triggerRef
   return (
     <div
       style={{
         position: 'fixed',
-        top: 0, left: 0, right: 0, bottom: 0,
+        inset: 0,
+        width: '100vw',
+        height: '100vh',
         background: 'rgba(3, 7, 18, 0.75)',
-        backdropFilter: 'blur(10px)',
-        WebkitBackdropFilter: 'blur(10px)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 2500,
+        padding: '20px',
         animation: 'fadeIn 0.25s ease',
-        padding: '16px',
+        overflowY: 'auto',
       }}
       onClick={(e) => {
-        if (e.target === e.currentTarget) {
+        if (e.target === e.currentTarget && !loading) {
           onClose();
         }
       }}
     >
       <div
-        ref={popoverRef}
+        ref={modalContentRef}
         className="glass-panel"
         style={{
           width: '100%',
           maxWidth: '560px',
+          maxHeight: '90vh',
+          overflowY: 'auto',
           padding: '32px',
           borderRadius: '24px',
           position: 'relative',
           boxShadow: 'var(--glass-shadow-hover)',
           background: 'var(--panel-bg-solid)',
           border: '1px solid var(--border-color)',
+          color: 'var(--text-main)',
         }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button
           onClick={onClose}
-          style={{ position: 'absolute', top: '20px', right: '20px', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
-          title="Close"
+          disabled={loading}
+          style={{
+            position: 'absolute',
+            top: '20px',
+            right: '20px',
+            background: 'var(--panel-inner-bg)',
+            border: '1px solid var(--border-color)',
+            borderRadius: '50%',
+            width: '36px',
+            height: '36px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'var(--text-muted)',
+            cursor: 'pointer',
+            transition: 'var(--transition)',
+          }}
+          title="Close Modal"
         >
-          <X size={22} />
+          <X size={20} />
         </button>
 
         {/* Modal Title */}
-        <div className="flex items-center gap-3" style={{ marginBottom: '20px' }}>
-          <div style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent))', padding: '12px', borderRadius: '16px', boxShadow: '0 2px 8px var(--primary-glow)' }}>
+        <div className="flex items-center gap-3" style={{ marginBottom: '20px', paddingRight: '36px' }}>
+          <div
+            style={{
+              background: 'linear-gradient(135deg, var(--primary), var(--accent))',
+              padding: '12px',
+              borderRadius: '16px',
+              boxShadow: '0 2px 8px var(--primary-glow)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}
+          >
             <ShieldCheck size={26} color="white" />
           </div>
           <div>
-            <h2 style={{ margin: 0, fontSize: '1.4rem', color: 'var(--text-main)' }}>Verify Your Cloud ID</h2>
+            <h2 style={{ margin: 0, fontSize: '1.35rem', fontWeight: 700, color: 'var(--text-main)' }}>Verify Your Cloud ID</h2>
             <p style={{ margin: '4px 0 0 0', color: 'var(--text-muted)', fontSize: '0.88rem' }}>
               Connect your AWS Account ID, Azure Subscription ID, or GCP Project ID to verify & scan live posture.
             </p>
@@ -404,7 +199,7 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
         {/* Form */}
         <form onSubmit={handleVerify} className="flex flex-col gap-4">
           <div>
-            <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px', textTransform: 'uppercase' }}>
+            <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Select Cloud Provider
             </label>
             <div className="grid grid-cols-3 gap-3">
@@ -421,8 +216,8 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
                     setError('');
                   }}
                   style={{
-                    background: provider === p.name ? `${p.color}25` : 'var(--panel-inner-bg)',
-                    border: `1px solid ${provider === p.name ? p.color : 'var(--border-color)'}`,
+                    background: provider === p.name ? `${p.color}20` : 'var(--panel-inner-bg)',
+                    border: `1.5px solid ${provider === p.name ? p.color : 'var(--border-color)'}`,
                     borderRadius: '12px',
                     padding: '10px',
                     color: 'var(--text-main)',
@@ -433,7 +228,8 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '8px'
+                    gap: '8px',
+                    boxShadow: provider === p.name ? `0 0 12px ${p.color}30` : 'none',
                   }}
                 >
                   <Cloud size={16} color={p.color} />
@@ -444,7 +240,7 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px', textTransform: 'uppercase' }}>
+            <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Your {provider} Account ID / Subscription / Project ID
             </label>
             <input
@@ -465,6 +261,7 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
                 color: 'var(--text-main)',
                 fontSize: '0.95rem',
                 outline: 'none',
+                boxSizing: 'border-box',
               }}
             />
           </div>
@@ -473,7 +270,17 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
             type="submit"
             disabled={loading}
             className="btn btn-primary"
-            style={{ width: '100%', padding: '12px', borderRadius: '12px', fontWeight: 600, fontSize: '0.95rem' }}
+            style={{
+              width: '100%',
+              padding: '12px',
+              borderRadius: '12px',
+              fontWeight: 600,
+              fontSize: '0.95rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+            }}
           >
             {loading ? (
               <>
@@ -490,7 +297,7 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
         </form>
 
         {error && (
-          <div style={{ marginTop: '16px', padding: '12px', background: 'var(--critical-bg)', border: '1px solid var(--critical-border)', borderRadius: '10px', color: 'var(--critical)', fontSize: '0.85rem' }}>
+          <div style={{ marginTop: '16px', padding: '12px', background: 'var(--critical-bg)', border: '1px solid var(--critical-border)', borderRadius: '12px', color: 'var(--critical)', fontSize: '0.85rem' }}>
             {error}
           </div>
         )}
@@ -525,17 +332,17 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
             </div>
 
             <div className="grid grid-cols-3 gap-3" style={{ marginBottom: '16px' }}>
-              <div style={{ background: 'var(--panel-bg-solid)', border: '1px solid var(--border-color)', padding: '12px', borderRadius: '10px' }}>
+              <div style={{ background: 'var(--panel-bg-solid)', border: '1px solid var(--border-color)', padding: '12px', borderRadius: '12px', textAlign: 'center' }}>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Initial Score</div>
                 <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--accent)' }}>{result.security_score}/100</div>
               </div>
-              <div style={{ background: 'var(--panel-bg-solid)', border: '1px solid var(--border-color)', padding: '12px', borderRadius: '10px' }}>
+              <div style={{ background: 'var(--panel-bg-solid)', border: '1px solid var(--border-color)', padding: '12px', borderRadius: '12px', textAlign: 'center' }}>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Discovered Resources</div>
                 <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--text-main)' }}>{result.total_resources}</div>
               </div>
-              <div style={{ background: 'var(--panel-bg-solid)', border: '1px solid var(--border-color)', padding: '12px', borderRadius: '10px' }}>
+              <div style={{ background: 'var(--panel-bg-solid)', border: '1px solid var(--border-color)', padding: '12px', borderRadius: '12px', textAlign: 'center' }}>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Active Region</div>
-                <div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--primary)', marginTop: '4px' }}>{result.region}</div>
+                <div style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--primary)', marginTop: '4px' }}>{result.region}</div>
               </div>
             </div>
 
@@ -548,7 +355,7 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
                   navigate('/');
                   window.location.reload();
                 }}
-                style={{ flex: 1, padding: '12px', fontSize: '0.95rem', fontWeight: 600 }}
+                style={{ flex: 1, padding: '12px', fontSize: '0.92rem', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
               >
                 Go To Live Dashboard <ArrowRight size={16} />
               </button>
@@ -560,8 +367,8 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
                   background: 'rgba(16, 185, 129, 0.15)',
                   border: '1px solid rgba(16, 185, 129, 0.4)',
                   color: 'var(--success)',
-                  padding: '12px 20px',
-                  fontSize: '0.95rem',
+                  padding: '12px 18px',
+                  fontSize: '0.92rem',
                   fontWeight: 600,
                   borderRadius: '12px'
                 }}
