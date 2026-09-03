@@ -1,14 +1,28 @@
 import { useState, useRef, useEffect } from 'react';
-import { apiRequest } from '../services/api';
-import { Cloud, ShieldCheck, CheckCircle2, AlertTriangle, X, Loader2, RefreshCw, Server, Activity, ShieldAlert } from 'lucide-react';
+import { apiRequest, getCloudState, saveCloudState } from '../services/api';
+import { Cloud, ShieldCheck, CheckCircle2, AlertTriangle, X, Loader2, RefreshCw, Server, Activity, ShieldAlert, Sparkles, ArrowRight, Check } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef }) {
   const [provider, setProvider] = useState('AWS');
-  const [accountId, setAccountId] = useState('891230912401');
+  const [accountId, setAccountId] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
+  const [scanInitiated, setScanInitiated] = useState(false);
   const popoverRef = useRef(null);
+  const navigate = useNavigate();
+
+  // Load existing active cloud ID if user already entered one
+  useEffect(() => {
+    if (isOpen) {
+      const state = getCloudState();
+      if (state.activeCloudId) {
+        setAccountId(state.activeCloudId);
+        if (state.activeProvider) setProvider(state.activeProvider);
+      }
+    }
+  }, [isOpen]);
 
   // Close on outside click
   useEffect(() => {
@@ -47,6 +61,26 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
 
   const handleVerify = async (e) => {
     e?.preventDefault();
+    const cleanId = accountId.trim();
+    if (!cleanId) {
+      setError('Please enter your Cloud Account ID / Subscription ID.');
+      return;
+    }
+
+    // Provider format validation
+    if (provider === 'AWS' && cleanId.length < 5) {
+      setError('Please enter a valid AWS Account ID (e.g. 12-digit number or identifier).');
+      return;
+    }
+    if (provider === 'AZURE' && cleanId.length < 5) {
+      setError('Please enter a valid Azure Subscription ID or Tenant UUID.');
+      return;
+    }
+    if (provider === 'GCP' && cleanId.length < 3) {
+      setError('Please enter a valid GCP Project ID.');
+      return;
+    }
+
     setLoading(true);
     setError('');
     setResult(null);
@@ -54,14 +88,40 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
     try {
       const data = await apiRequest('/api/v1/cloud/verify-account', {
         method: 'POST',
-        body: JSON.stringify({ provider, account_id: accountId }),
+        body: JSON.stringify({ provider, account_id: cleanId }),
       });
       setResult(data.account_status);
+
+      // Automatically scan to prepare live dashboard
+      await apiRequest('/api/v1/scan/start', {
+        method: 'POST',
+        body: JSON.stringify({ provider, account_id: cleanId }),
+      });
+      setScanInitiated(true);
     } catch (err) {
       setError(err.message || 'Failed to verify cloud account status.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleClearRisksDirectly = async () => {
+    try {
+      setLoading(true);
+      await apiRequest('/api/v1/recommendations/clear-all', { method: 'POST' });
+      onClose();
+      window.location.reload();
+    } catch (err) {
+      setError('Failed to clear risks: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getPlaceholder = () => {
+    if (provider === 'AWS') return 'Enter 12-digit AWS Account ID (e.g., 492019381029)';
+    if (provider === 'AZURE') return 'Enter Azure Subscription ID / Tenant ID';
+    return 'Enter GCP Project ID (e.g., my-cloud-project-prod)';
   };
 
   // Render as anchored popover dropdown if triggerRef is provided
@@ -73,7 +133,7 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
           position: 'absolute',
           top: 'calc(100% + 12px)',
           left: 0,
-          width: '500px',
+          width: '520px',
           maxWidth: 'calc(100vw - 32px)',
           zIndex: 9999,
           background: 'var(--panel-bg-solid)',
@@ -96,13 +156,13 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
 
         {/* Modal Title */}
         <div className="flex items-center gap-3" style={{ marginBottom: '18px' }}>
-          <div style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent))', padding: '10px', borderRadius: '12px', boxShadow: '0 2px 8px rgba(220, 38, 38, 0.3)' }}>
+          <div style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent))', padding: '10px', borderRadius: '12px', boxShadow: '0 2px 8px var(--primary-glow)' }}>
             <ShieldCheck size={22} color="white" />
           </div>
           <div>
-            <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-main)' }}>Cloud Status Verification</h3>
+            <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-main)' }}>Verify Your Cloud ID</h3>
             <p style={{ margin: '2px 0 0 0', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
-              Verify cloud connection credentials & live score.
+              Enter your real cloud account or project ID to check live security posture.
             </p>
           </div>
         </div>
@@ -111,7 +171,7 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
         <form onSubmit={handleVerify} className="flex flex-col gap-3">
           <div>
             <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px', textTransform: 'uppercase' }}>
-              Cloud Provider
+              Select Cloud Provider
             </label>
             <div className="grid grid-cols-3 gap-2">
               {[
@@ -124,9 +184,7 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
                   type="button"
                   onClick={() => {
                     setProvider(p.name);
-                    if (p.name === 'AWS') setAccountId('891230912401');
-                    if (p.name === 'Azure') setAccountId('sub-89123-az-4019');
-                    if (p.name === 'GCP') setAccountId('cloudguard-sec-prod');
+                    setError('');
                   }}
                   style={{
                     background: provider === p.name ? `${p.color}25` : 'var(--panel-inner-bg)',
@@ -153,17 +211,20 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
 
           <div>
             <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px', textTransform: 'uppercase' }}>
-              Account ID / Subscription ID
+              Your {provider} Cloud ID / Subscription ID
             </label>
             <input
               type="text"
               required
               value={accountId}
-              onChange={(e) => setAccountId(e.target.value)}
-              placeholder="e.g. 891230912401 or sub-89123-az"
+              onChange={(e) => {
+                setAccountId(e.target.value);
+                setError('');
+              }}
+              placeholder={getPlaceholder()}
               style={{
                 width: '100%',
-                padding: '10px 14px',
+                padding: '11px 14px',
                 background: 'var(--input-bg)',
                 border: '1px solid var(--border-color)',
                 borderRadius: '10px',
@@ -183,19 +244,19 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
             {loading ? (
               <>
                 <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} />
-                Verifying Account...
+                Verifying & Inspecting Cloud ID...
               </>
             ) : (
               <>
                 <RefreshCw size={16} />
-                Verify Status Now
+                Verify & Scan Cloud ID
               </>
             )}
           </button>
         </form>
 
         {error && (
-          <div style={{ marginTop: '12px', padding: '10px', background: 'rgba(239,68,68,0.15)', border: '1px solid var(--critical)', borderRadius: '8px', color: 'var(--critical)', fontSize: '0.8rem' }}>
+          <div style={{ marginTop: '12px', padding: '10px', background: 'var(--critical-bg)', border: '1px solid var(--critical-border)', borderRadius: '8px', color: 'var(--critical)', fontSize: '0.8rem' }}>
             {error}
           </div>
         )}
@@ -214,7 +275,7 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
               <div className="flex items-center gap-2">
                 <CheckCircle2 size={18} color="var(--success)" />
                 <span style={{ fontWeight: 700, fontSize: '0.92rem', color: 'var(--text-main)' }}>
-                  {result.provider} Status Verified
+                  {result.provider} ID {result.account_id} Verified
                 </span>
               </div>
               <span style={{
@@ -231,8 +292,8 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
 
             <div className="grid grid-cols-3 gap-2" style={{ marginBottom: '12px' }}>
               <div style={{ background: 'var(--panel-bg-solid)', border: '1px solid var(--border-color)', padding: '8px', borderRadius: '8px', textAlign: 'center' }}>
-                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Score</div>
-                <div style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--success)' }}>{result.security_score}/100</div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Initial Score</div>
+                <div style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--accent)' }}>{result.security_score}/100</div>
               </div>
               <div style={{ background: 'var(--panel-bg-solid)', border: '1px solid var(--border-color)', padding: '8px', borderRadius: '8px', textAlign: 'center' }}>
                 <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Resources</div>
@@ -244,9 +305,36 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
               </div>
             </div>
 
-            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
-              <div><strong>Compliance:</strong> <span style={{ color: 'var(--text-main)' }}>{result.compliance_status}</span></div>
-              <div><strong>Services:</strong> <span style={{ color: 'var(--text-main)' }}>{result.monitored_services?.join(', ')}</span></div>
+            {/* Clear Risks & Open Dashboard Action */}
+            <div className="flex gap-2" style={{ marginTop: '12px' }}>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => {
+                  onClose();
+                  navigate('/');
+                  window.location.reload();
+                }}
+                style={{ flex: 1, padding: '8px', fontSize: '0.82rem', fontWeight: 600 }}
+              >
+                View Dashboard <ArrowRight size={14} />
+              </button>
+              <button
+                type="button"
+                className="btn"
+                onClick={handleClearRisksDirectly}
+                style={{
+                  background: 'rgba(16, 185, 129, 0.15)',
+                  border: '1px solid rgba(16, 185, 129, 0.4)',
+                  color: 'var(--success)',
+                  padding: '8px 12px',
+                  fontSize: '0.82rem',
+                  fontWeight: 600,
+                  borderRadius: '10px'
+                }}
+              >
+                Clear All Risks
+              </button>
             </div>
           </div>
         )}
@@ -302,13 +390,13 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
 
         {/* Modal Title */}
         <div className="flex items-center gap-3" style={{ marginBottom: '20px' }}>
-          <div style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent))', padding: '12px', borderRadius: '16px', boxShadow: '0 2px 8px rgba(220, 38, 38, 0.3)' }}>
+          <div style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent))', padding: '12px', borderRadius: '16px', boxShadow: '0 2px 8px var(--primary-glow)' }}>
             <ShieldCheck size={26} color="white" />
           </div>
           <div>
-            <h2 style={{ margin: 0, fontSize: '1.4rem', color: 'var(--text-main)' }}>Cloud Account Status Verification</h2>
+            <h2 style={{ margin: 0, fontSize: '1.4rem', color: 'var(--text-main)' }}>Verify Your Cloud ID</h2>
             <p style={{ margin: '4px 0 0 0', color: 'var(--text-muted)', fontSize: '0.88rem' }}>
-              Verify cloud connection status, credentials, and live security score.
+              Connect your AWS Account ID, Azure Subscription ID, or GCP Project ID to verify & scan live posture.
             </p>
           </div>
         </div>
@@ -317,7 +405,7 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
         <form onSubmit={handleVerify} className="flex flex-col gap-4">
           <div>
             <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px', textTransform: 'uppercase' }}>
-              Cloud Provider
+              Select Cloud Provider
             </label>
             <div className="grid grid-cols-3 gap-3">
               {[
@@ -330,9 +418,7 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
                   type="button"
                   onClick={() => {
                     setProvider(p.name);
-                    if (p.name === 'AWS') setAccountId('891230912401');
-                    if (p.name === 'Azure') setAccountId('sub-89123-az-4019');
-                    if (p.name === 'GCP') setAccountId('cloudguard-sec-prod');
+                    setError('');
                   }}
                   style={{
                     background: provider === p.name ? `${p.color}25` : 'var(--panel-inner-bg)',
@@ -359,14 +445,17 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
 
           <div>
             <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px', textTransform: 'uppercase' }}>
-              Account ID / Subscription / Project ID
+              Your {provider} Account ID / Subscription / Project ID
             </label>
             <input
               type="text"
               required
               value={accountId}
-              onChange={(e) => setAccountId(e.target.value)}
-              placeholder="e.g. 891230912401 or sub-89123-az"
+              onChange={(e) => {
+                setAccountId(e.target.value);
+                setError('');
+              }}
+              placeholder={getPlaceholder()}
               style={{
                 width: '100%',
                 padding: '12px 16px',
@@ -389,19 +478,19 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
             {loading ? (
               <>
                 <Loader2 size={18} style={{ animation: 'spin 1s linear infinite' }} />
-                Verifying Account Status...
+                Verifying Cloud Account...
               </>
             ) : (
               <>
                 <RefreshCw size={18} />
-                Verify Cloud Account Status
+                Verify & Inspect Security Status
               </>
             )}
           </button>
         </form>
 
         {error && (
-          <div style={{ marginTop: '16px', padding: '12px', background: 'rgba(239,68,68,0.15)', border: '1px solid var(--critical)', borderRadius: '10px', color: 'var(--critical)', fontSize: '0.85rem' }}>
+          <div style={{ marginTop: '16px', padding: '12px', background: 'var(--critical-bg)', border: '1px solid var(--critical-border)', borderRadius: '10px', color: 'var(--critical)', fontSize: '0.85rem' }}>
             {error}
           </div>
         )}
@@ -420,7 +509,7 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
               <div className="flex items-center gap-2">
                 <CheckCircle2 size={20} color="var(--success)" />
                 <span style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-main)' }}>
-                  {result.provider} Account Verified
+                  {result.provider} ID: {result.account_id} Verified
                 </span>
               </div>
               <span style={{
@@ -437,11 +526,11 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
 
             <div className="grid grid-cols-3 gap-3" style={{ marginBottom: '16px' }}>
               <div style={{ background: 'var(--panel-bg-solid)', border: '1px solid var(--border-color)', padding: '12px', borderRadius: '10px' }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Security Score</div>
-                <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--success)' }}>{result.security_score}/100</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Initial Score</div>
+                <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--accent)' }}>{result.security_score}/100</div>
               </div>
               <div style={{ background: 'var(--panel-bg-solid)', border: '1px solid var(--border-color)', padding: '12px', borderRadius: '10px' }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Monitored Resources</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Discovered Resources</div>
                 <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--text-main)' }}>{result.total_resources}</div>
               </div>
               <div style={{ background: 'var(--panel-bg-solid)', border: '1px solid var(--border-color)', padding: '12px', borderRadius: '10px' }}>
@@ -450,10 +539,35 @@ export default function CloudAccountVerifierModal({ isOpen, onClose, triggerRef 
               </div>
             </div>
 
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
-              <div><strong>Compliance:</strong> <span style={{ color: 'var(--text-main)' }}>{result.compliance_status}</span></div>
-              <div><strong>Monitored Services:</strong> <span style={{ color: 'var(--text-main)' }}>{result.monitored_services?.join(', ')}</span></div>
-              <div><strong>Last Verified:</strong> <span style={{ color: 'var(--text-main)' }}>{result.last_verification}</span></div>
+            <div className="flex gap-3" style={{ marginTop: '16px' }}>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => {
+                  onClose();
+                  navigate('/');
+                  window.location.reload();
+                }}
+                style={{ flex: 1, padding: '12px', fontSize: '0.95rem', fontWeight: 600 }}
+              >
+                Go To Live Dashboard <ArrowRight size={16} />
+              </button>
+              <button
+                type="button"
+                className="btn"
+                onClick={handleClearRisksDirectly}
+                style={{
+                  background: 'rgba(16, 185, 129, 0.15)',
+                  border: '1px solid rgba(16, 185, 129, 0.4)',
+                  color: 'var(--success)',
+                  padding: '12px 20px',
+                  fontSize: '0.95rem',
+                  fontWeight: 600,
+                  borderRadius: '12px'
+                }}
+              >
+                Clear All Risks
+              </button>
             </div>
           </div>
         )}

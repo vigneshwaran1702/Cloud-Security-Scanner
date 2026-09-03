@@ -3,31 +3,33 @@ import { Link } from 'react-router-dom';
 import { Cloud, Shield, Key, Bell, Clock, AlertTriangle, Save, ToggleLeft, ToggleRight, Mail, MessageSquare, Zap, CreditCard, Sparkles, ArrowRight, ShieldCheck, Sun, Moon, Palette, Check } from 'lucide-react';
 import { useSubscription } from '../context/SubscriptionContext';
 import { useTheme, ACCENT_PALETTES } from '../context/ThemeContext';
+import { getCloudState, saveCloudState } from '../services/api';
 
 const initialSettings = {
   aws: {
-    enabled: true,
-    access_key_id: 'AKIA************',
-    secret_access_key: '********************************',
+    enabled: false,
+    account_id: '',
+    access_key_id: '',
+    secret_access_key: '',
     region: 'us-east-1',
   },
   azure: {
-    enabled: true,
-    tenant_id: '72f988bf-86f1-41af-91ab-2d7cd011db47',
-    client_id: '3b290918-a402-4a02-a16f-998811aabbcc',
-    subscription_id: '00000000-0000-0000-0000-000000000000',
+    enabled: false,
+    tenant_id: '',
+    client_id: '',
+    subscription_id: '',
   },
   gcp: {
-    enabled: true,
-    project_id: 'cloud-sec-scanner-prod',
-    service_account_email: 'scanner-sa@cloud-sec-scanner-prod.iam.gserviceaccount.com',
+    enabled: false,
+    project_id: '',
+    service_account_email: '',
   },
   general: {
-    auto_remediation: false,
+    auto_remediation: true,
     scan_frequency: 'Every 6 Hours',
     min_severity: 'Medium',
     email_notifications: true,
-    slack_webhook: 'https://hooks.slack.com/services/T00/B00/XXXXX',
+    slack_webhook: '',
   },
 };
 
@@ -126,6 +128,15 @@ export default function Settings() {
   };
 
   const handleSave = () => {
+    // If user provided a cloud ID in settings, persist it
+    const activeId = settings.aws.account_id || settings.azure.subscription_id || settings.gcp.project_id;
+    const activeProv = settings.aws.account_id ? 'AWS' : settings.azure.subscription_id ? 'AZURE' : settings.gcp.project_id ? 'GCP' : null;
+    if (activeId) {
+      const state = getCloudState();
+      state.activeCloudId = activeId;
+      if (activeProv) state.activeProvider = activeProv;
+      saveCloudState(state);
+    }
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
   };
@@ -138,8 +149,9 @@ export default function Settings() {
       color: '#ff9900',
       fields: (
         <div className="grid grid-cols-2 gap-4" style={{ marginTop: '16px' }}>
-          <SettingsInput label="Access Key ID" value={settings.aws.access_key_id} onChange={v => updateCloud('aws', 'access_key_id', v)} />
-          <SettingsInput label="Secret Access Key" value={settings.aws.secret_access_key} onChange={v => updateCloud('aws', 'secret_access_key', v)} type="password" />
+          <SettingsInput label="AWS Account ID" placeholder="e.g. 12-digit ID (492019381029)" value={settings.aws.account_id} onChange={v => updateCloud('aws', 'account_id', v)} />
+          <SettingsInput label="Access Key ID" placeholder="AKIA..." value={settings.aws.access_key_id} onChange={v => updateCloud('aws', 'access_key_id', v)} />
+          <SettingsInput label="Secret Access Key" placeholder="••••••••••••••••" value={settings.aws.secret_access_key} onChange={v => updateCloud('aws', 'secret_access_key', v)} type="password" />
           <SettingsSelect label="Primary Region" value={settings.aws.region} onChange={v => updateCloud('aws', 'region', v)} options={awsRegions} />
         </div>
       ),
