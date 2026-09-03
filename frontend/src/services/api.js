@@ -94,12 +94,19 @@ function handleLocalFallback(endpoint, options) {
     const rawPassword = body.password || '';
     if (!rawEmail || !rawPassword) throw new Error('Please enter both email and password.');
     
+    // Derive a clean, readable name from email if needed
+    const emailPrefix = rawEmail.split('@')[0].replace(/[._-]/g, ' ');
+    const formattedName = emailPrefix
+      .split(' ')
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
+
     return {
       access_token: `jwt_token_${Date.now()}`,
       token_type: 'bearer',
       user: {
-        id: 1,
-        name: rawEmail === 'vigneshcloud@gmail.com' ? 'Vignesh Cloud Admin' : 'Security Lead',
+        id: rawEmail === 'vigneshcloud@gmail.com' ? 1 : Math.floor(Math.random() * 9000) + 1000,
+        name: rawEmail === 'vigneshcloud@gmail.com' ? 'Vignesh Waran' : (formattedName || 'Cloud Engineer'),
         email: rawEmail,
         role: rawEmail === 'vigneshcloud@gmail.com' ? 'admin' : 'user',
         auth_provider: 'email',
@@ -111,15 +118,20 @@ function handleLocalFallback(endpoint, options) {
 
   if (endpoint === '/api/v1/auth/google') {
     const rawEmail = (body.email || 'user@gmail.com').trim().toLowerCase();
-    const rawName = (body.name || (rawEmail.includes('@') ? rawEmail.split('@')[0] : 'Google User')).trim();
+    const emailPrefix = rawEmail.split('@')[0].replace(/[._-]/g, ' ');
+    const formattedName = emailPrefix
+      .split(' ')
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
+    const rawName = (body.name || formattedName || 'Google User').trim();
     const avatar = body.picture || `https://api.dicebear.com/7.x/bottts/svg?seed=${rawEmail}`;
     
     return {
       access_token: `jwt_google_${Date.now()}`,
       token_type: 'bearer',
       user: {
-        id: Math.floor(Math.random() * 1000) + 1,
-        name: rawEmail === 'vigneshcloud@gmail.com' ? 'Vignesh (Admin)' : (rawName || 'Google Cloud Engineer'),
+        id: rawEmail === 'vigneshcloud@gmail.com' ? 1 : Math.floor(Math.random() * 9000) + 1000,
+        name: rawEmail === 'vigneshcloud@gmail.com' ? 'Vignesh Waran' : rawName,
         email: rawEmail,
         role: rawEmail === 'vigneshcloud@gmail.com' ? 'admin' : 'user',
         auth_provider: 'google',
@@ -137,7 +149,7 @@ function handleLocalFallback(endpoint, options) {
       access_token: `jwt_token_${Date.now()}`,
       token_type: 'bearer',
       user: {
-        id: Math.floor(Math.random() * 1000) + 1,
+        id: Math.floor(Math.random() * 9000) + 1000,
         name: rawName,
         email: rawEmail,
         role: rawEmail === 'vigneshcloud@gmail.com' ? 'admin' : (body.role || 'user'),
