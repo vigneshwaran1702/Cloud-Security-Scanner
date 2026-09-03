@@ -575,7 +575,125 @@ textarea::placeholder {
   background: var(--text-subtle);
 }
 
-/* ================= Cloudflare Learning Center Design System ================= */
+/* ================= Google Cloud Console Design System ================= */
+:root {
+  --gcp-blue: #1a73e8;
+  --gcp-blue-hover: #1557b0;
+  --gcp-blue-subtle: rgba(26, 115, 232, 0.1);
+  --gcp-red: #ea4335;
+  --gcp-yellow: #fbbc04;
+  --gcp-green: #34a853;
+  --gcp-surface: #ffffff;
+  --gcp-header-bg: #ffffff;
+  --gcp-border: #dadce0;
+}
+
+[data-theme="dark"] {
+  --gcp-surface: #1e1e1e;
+  --gcp-header-bg: #202124;
+  --gcp-border: #3c4043;
+}
+
+.gcp-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background: var(--panel-bg-solid);
+  border-bottom: 1px solid var(--border-color);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1);
+}
+
+.gcp-project-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: var(--panel-inner-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  font-size: 0.84rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.gcp-project-selector:hover {
+  border-color: #1a73e8;
+  background: rgba(26, 115, 232, 0.06);
+}
+
+.gcp-search-bar {
+  display: flex;
+  align-items: center;
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0 14px;
+  width: 480px;
+  height: 38px;
+  transition: var(--transition-fast);
+}
+
+.gcp-search-bar:focus-within {
+  border-color: #1a73e8;
+  box-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.2), 0 4px 8px 3px rgba(60, 64, 67, 0.1);
+}
+
+.gcp-sidebar {
+  background: var(--panel-bg-solid);
+  border-right: 1px solid var(--border-color);
+  height: calc(100vh - 56px);
+  position: sticky;
+  top: 56px;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.gcp-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 16px;
+  border-radius: 0 24px 24px 0;
+  margin-right: 12px;
+  margin-bottom: 2px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 500;
+  transition: var(--transition-fast);
+  white-space: nowrap;
+}
+
+.gcp-nav-item:hover {
+  background: var(--panel-inner-bg);
+  color: var(--text-main);
+}
+
+.gcp-nav-item.active {
+  background: rgba(26, 115, 232, 0.12);
+  color: #1a73e8;
+  font-weight: 600;
+}
+
+.gcp-main-container {
+  flex: 1;
+  padding: 24px 32px 48px;
+  min-width: 0;
+  overflow-y: auto;
+}
 .cf-global-header {
   position: sticky;
   top: 0;
