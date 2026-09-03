@@ -38,6 +38,7 @@ import CloudAccountVerifierModal from '../components/CloudAccountVerifierModal';
 import ScanModal from '../components/ScanModal';
 import NotificationsPopover from '../components/NotificationsPopover';
 import AuthModal from '../components/AuthModal';
+import AccountDetailsModal from '../components/AccountDetailsModal';
 
 const breadcrumbMap = {
   '/dashboard': 'Security Command Center Overview',
@@ -61,6 +62,7 @@ export default function MainLayout() {
   const [isVerifierOpen, setIsVerifierOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isAccountDetailsOpen, setIsAccountDetailsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
   const bellBtnRef = useRef(null);
@@ -286,35 +288,58 @@ export default function MainLayout() {
 
           <div style={{ width: '1px', height: '24px', background: 'var(--border-color)', margin: '0 4px' }} />
 
-          {/* User Profile or Login Button */}
+          {/* User Profile or Guest Login/Register Buttons */}
           {!isLoggedIn ? (
-            <button
-              type="button"
-              onClick={() => openAuthModal({ title: 'Sign In to Cloud Security', subtitle: 'Sign in with your Google account or email/password to access full scanning, verification, and Pro features.' })}
-              className="btn btn-primary"
-              style={{
-                padding: '6px 16px',
-                background: '#1a73e8',
-                borderColor: '#1a73e8',
-                borderRadius: '8px',
-                fontSize: '0.84rem',
-                fontWeight: 600,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-              }}
-            >
-              <LogIn size={15} />
-              <span>Login</span>
-            </button>
-          ) : (
-            <div style={{ position: 'relative' }} ref={userMenuRef}>
+            <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                onClick={() => openAuthModal({ title: 'Sign In to Cloud Security', subtitle: 'Sign in with your Google account or email/password.' })}
+                className="btn btn-primary"
                 style={{
-                  background: isUserMenuOpen ? 'var(--panel-inner-bg)' : 'transparent',
-                  border: isUserMenuOpen ? '1px solid var(--border-color-hover)' : '1px solid transparent',
+                  padding: '6px 14px',
+                  background: '#1a73e8',
+                  borderColor: '#1a73e8',
+                  borderRadius: '8px',
+                  fontSize: '0.82rem',
+                  fontWeight: 600,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                }}
+              >
+                <LogIn size={15} />
+                <span>Login</span>
+              </button>
+              
+              <button
+                type="button"
+                onClick={() => openAuthModal({ title: 'Create Cloud Security Account', subtitle: 'Create a new account with your Google account or email/password.' })}
+                className="btn"
+                style={{
+                  padding: '6px 12px',
+                  background: 'var(--panel-inner-bg)',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-main)',
+                  borderRadius: '8px',
+                  fontSize: '0.82rem',
+                  fontWeight: 600,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                }}
+              >
+                <User size={14} />
+                <span>Create Account</span>
+              </button>
+            </div>
+          ) : (
+            <div style={{ position: 'relative' }}>
+              <button
+                type="button"
+                onClick={() => setIsAccountDetailsOpen(true)}
+                style={{
+                  background: isAccountDetailsOpen ? 'var(--panel-inner-bg)' : 'transparent',
+                  border: isAccountDetailsOpen ? '1px solid var(--border-color-hover)' : '1px solid var(--border-color)',
                   cursor: 'pointer',
                   padding: '4px 10px 4px 4px',
                   borderRadius: '10px',
@@ -323,7 +348,7 @@ export default function MainLayout() {
                   gap: '8px',
                   transition: 'var(--transition)',
                 }}
-                title={`Account: ${displayName}`}
+                title={`Account Details: ${displayName} (Click to manage)`}
               >
                 {user?.picture ? (
                   <img
@@ -363,135 +388,8 @@ export default function MainLayout() {
                     {userIdentifier}
                   </span>
                 </div>
-                <ChevronDown size={14} color="var(--text-muted)" style={{ transform: isUserMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }} />
+                <ChevronDown size={14} color="var(--text-muted)" style={{ transform: isAccountDetailsOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }} />
               </button>
-
-              {/* Google Account Profile Dropdown */}
-              {isUserMenuOpen && (
-                <div
-                  className="glass-panel"
-                  style={{
-                    position: 'absolute',
-                    top: 'calc(100% + 8px)',
-                    right: 0,
-                    width: '260px',
-                    padding: '16px',
-                    borderRadius: '16px',
-                    zIndex: 200,
-                    boxShadow: '0 8px 30px rgba(0,0,0,0.2)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '8px',
-                    border: '1px solid var(--border-color)',
-                    background: 'var(--panel-bg-solid)',
-                    animation: 'fadeIn 0.15s ease-out'
-                  }}
-                >
-                  <div style={{ textAlign: 'center', paddingBottom: '12px', borderBottom: '1px solid var(--border-color)' }}>
-                    <div style={{
-                      width: '48px',
-                      height: '48px',
-                      borderRadius: '50%',
-                      background: 'linear-gradient(135deg, #4285F4, #34A853)',
-                      color: 'white',
-                      fontWeight: 800,
-                      fontSize: '1.2rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      margin: '0 auto 8px',
-                    }}>
-                      {userInitials}
-                    </div>
-                    <div style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-main)' }}>
-                      {displayName}
-                    </div>
-                    <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '2px' }}>
-                      {userIdentifier}
-                    </div>
-                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
-                      <span style={{
-                        fontSize: '0.64rem',
-                        padding: '2px 8px',
-                        borderRadius: '12px',
-                        background: 'rgba(26, 115, 232, 0.12)',
-                        color: '#1a73e8',
-                        fontWeight: 700,
-                        textTransform: 'uppercase'
-                      }}>
-                        {user?.role || 'USER'}
-                      </span>
-                      <span style={{
-                        fontSize: '0.64rem',
-                        padding: '2px 8px',
-                        borderRadius: '12px',
-                        background: isPro ? 'var(--success-bg)' : 'var(--table-header-bg)',
-                        color: isPro ? 'var(--success)' : 'var(--text-subtle)',
-                        border: isPro ? '1px solid var(--success-border)' : '1px solid var(--border-subtle)',
-                        fontWeight: 600,
-                      }}>
-                        {activeTier.toUpperCase()}
-                      </span>
-                    </div>
-                  </div>
-
-                  <Link
-                    to="/settings"
-                    onClick={() => setIsUserMenuOpen(false)}
-                    style={{ padding: '8px 10px', borderRadius: '8px', color: 'var(--text-main)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.84rem', fontWeight: 500 }}
-                  >
-                    <User size={15} color="var(--text-muted)" />
-                    <span>Manage Account</span>
-                  </Link>
-
-                  <Link
-                    to="/subscription"
-                    onClick={() => setIsUserMenuOpen(false)}
-                    style={{ padding: '8px 10px', borderRadius: '8px', color: 'var(--text-main)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.84rem', fontWeight: 500 }}
-                  >
-                    <Zap size={15} color="#1a73e8" />
-                    <span>Billing & Subscriptions</span>
-                  </Link>
-
-                  {isAdmin && (
-                    <Link
-                      to="/admin/users"
-                      onClick={() => setIsUserMenuOpen(false)}
-                      style={{ padding: '8px 10px', borderRadius: '8px', color: '#1a73e8', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.84rem', fontWeight: 600 }}
-                    >
-                      <Users size={15} color="#1a73e8" />
-                      <span>IAM & Admin</span>
-                    </Link>
-                  )}
-
-                  <div style={{ height: '1px', background: 'var(--border-color)', margin: '4px 0' }} />
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsUserMenuOpen(false);
-                      logout();
-                    }}
-                    style={{
-                      padding: '8px 10px',
-                      borderRadius: '8px',
-                      color: 'var(--critical)',
-                      background: 'transparent',
-                      border: 'none',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      fontSize: '0.84rem',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                    }}
-                  >
-                    <LogOut size={15} color="var(--critical)" />
-                    <span>Sign Out</span>
-                  </button>
-                </div>
-              )}
             </div>
           )}
         </div>
@@ -594,6 +492,10 @@ export default function MainLayout() {
 
       {/* GLOBAL MODALS */}
       <AuthModal />
+      <AccountDetailsModal
+        isOpen={isAccountDetailsOpen}
+        onClose={() => setIsAccountDetailsOpen(false)}
+      />
       <CloudAccountVerifierModal
         isOpen={isVerifierOpen}
         onClose={() => setIsVerifierOpen(false)}
