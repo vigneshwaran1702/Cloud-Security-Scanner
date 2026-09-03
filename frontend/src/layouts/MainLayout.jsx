@@ -111,8 +111,8 @@ export default function MainLayout() {
       
       {/* 1. GOOGLE CLOUD CONSOLE TOP APP BAR */}
       <header className="gcp-header">
-        {/* Left: Navigation Drawer Toggle & Google Cloud Brand */}
-        <div className="flex items-center gap-3">
+        {/* Left: Navigation Drawer Toggle & Cloud Brand & Project Selector */}
+        <div className="flex items-center gap-3" style={{ flexShrink: 0, minWidth: 'max-content' }}>
           <button
             type="button"
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -126,37 +126,77 @@ export default function MainLayout() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              flexShrink: 0,
             }}
             title="Navigation menu"
           >
             <Menu size={20} />
           </button>
 
-          {/* Logo & Security Suite Name */}
-          <Link to="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
+          {/* Logo & Security Suite Name (Strictly Single Line) */}
+          <Link
+            to="/dashboard"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              textDecoration: 'none',
+              flexShrink: 0,
+              whiteSpace: 'nowrap',
+            }}
+          >
             {/* 4-Color Cloud Icon */}
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
               <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z" fill="#4285F4"/>
               <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4c-1.39 0-2.68.38-3.79 1.04l3.19 3.2c.2-.01.4-.04.6-.04 2.21 0 4 1.79 4 4 0 .2-.03.4-.04.6l3.39 3.4c.03-.38.05-.78.05-1.2 0-2.64-2.05-4.78-4.65-4.96z" fill="#EA4335"/>
               <path d="M6 20h13c.42 0 .82-.05 1.2-.15l-4.14-4.15c-.32.19-.69.3-1.06.3h-9c-2.21 0-4-1.79-4-4 0-.37.11-.74.3-1.06L.15 6.8C.05 7.18 0 7.58 0 8c0 3.31 2.69 6 6 6z" fill="#FBBC04"/>
               <path d="M12 4c1.39 0 2.68.38 3.79 1.04l-3.19 3.2C12.4 8.23 12.2 8.2 12 8.2c-2.21 0-4 1.79-4 4 0 .2.03.4.04.6l-3.39 3.4C4.62 15.82 4.6 15.42 4.6 15c0-3.31 2.69-6 6-6 1.39 0 2.68.38 3.79 1.04z" fill="#34A853"/>
             </svg>
-            <div style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)', letterSpacing: '-0.01em' }}>
-              Cloud <span style={{ color: '#1a73e8', fontWeight: 600 }}>Security</span>
+            <div style={{
+              fontSize: '1.05rem',
+              fontWeight: 700,
+              color: 'var(--text-main)',
+              letterSpacing: '-0.01em',
+              whiteSpace: 'nowrap',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+              flexShrink: 0
+            }}>
+              <span>Cloud</span>
+              <span style={{ color: '#1a73e8', fontWeight: 600 }}>Security</span>
             </div>
           </Link>
 
-          {/* Google Cloud Project / Account Selector Dropdown */}
+          {/* Cloud Project Selector (Strictly Single Line with Truncation) */}
           <div
-            onClick={() => requireAuth(() => setIsVerifierOpen(true), "Sign in with your Google account to connect and switch cloud projects.")}
+            onClick={() => requireAuth(() => setIsVerifierOpen(true), "Sign in to connect and switch cloud projects.")}
             className="gcp-project-selector"
             title="Select Cloud Project or Account"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              maxWidth: '210px',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              flexShrink: 0,
+              cursor: 'pointer'
+            }}
           >
-            <FolderGit2 size={15} color="#1a73e8" />
-            <span style={{ fontSize: '0.82rem', fontWeight: 600 }}>
-              {activeCloudId ? `${activeProvider}: ${activeCloudId.slice(0, 16)}...` : 'Select Cloud Project'}
+            <FolderGit2 size={15} color="#1a73e8" style={{ flexShrink: 0 }} />
+            <span style={{
+              fontSize: '0.82rem',
+              fontWeight: 600,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              maxWidth: '140px',
+              display: 'inline-block'
+            }}>
+              {activeCloudId ? `${activeProvider}: ${activeCloudId}` : 'Select Cloud Project'}
             </span>
-            <ChevronDown size={14} color="var(--text-muted)" />
+            <ChevronDown size={14} color="var(--text-muted)" style={{ flexShrink: 0 }} />
           </div>
         </div>
 
