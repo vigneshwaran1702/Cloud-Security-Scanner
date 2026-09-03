@@ -128,9 +128,9 @@ export default function MainLayout() {
             <Menu size={20} />
           </button>
 
-          {/* Google Cloud Logo & Security Suite Name */}
+          {/* Logo & Security Suite Name */}
           <Link to="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
-            {/* Google 4-Color Cloud Icon */}
+            {/* 4-Color Cloud Icon */}
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z" fill="#4285F4"/>
               <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4c-1.39 0-2.68.38-3.79 1.04l3.19 3.2c.2-.01.4-.04.6-.04 2.21 0 4 1.79 4 4 0 .2-.03.4-.04.6l3.39 3.4c.03-.38.05-.78.05-1.2 0-2.64-2.05-4.78-4.65-4.96z" fill="#EA4335"/>
@@ -138,7 +138,7 @@ export default function MainLayout() {
               <path d="M12 4c1.39 0 2.68.38 3.79 1.04l-3.19 3.2C12.4 8.23 12.2 8.2 12 8.2c-2.21 0-4 1.79-4 4 0 .2.03.4.04.6l-3.39 3.4C4.62 15.82 4.6 15.42 4.6 15c0-3.31 2.69-6 6-6 1.39 0 2.68.38 3.79 1.04z" fill="#34A853"/>
             </svg>
             <div style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)', letterSpacing: '-0.01em' }}>
-              Google Cloud <span style={{ color: '#1a73e8', fontWeight: 600 }}>Security</span>
+              Cloud <span style={{ color: '#1a73e8', fontWeight: 600 }}>Security</span>
             </div>
           </Link>
 
@@ -568,9 +568,9 @@ export default function MainLayout() {
 
         {/* Main Content Area */}
         <main className="gcp-main-container">
-          {/* Google Cloud Breadcrumbs */}
+          {/* Breadcrumbs */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '20px' }}>
-            <Link to="/dashboard" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Google Cloud Console</Link>
+            <Link to="/dashboard" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Cloud Security Platform</Link>
             <span>›</span>
             <span style={{ color: 'var(--text-muted)' }}>Security Command Center</span>
             <span>›</span>
