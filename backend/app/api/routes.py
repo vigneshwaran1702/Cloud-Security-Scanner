@@ -32,18 +32,7 @@ class GoogleAuthRequest(BaseModel):
     picture: Optional[str] = None
 
 # In-memory user store for demo/live backend
-backend_users = [
-    {
-        "id": 1,
-        "name": "Vignesh Waran",
-        "email": "vigneshcloud@gmail.com",
-        "password": "admin",
-        "role": "admin",
-        "auth_provider": "google",
-        "is_active": True,
-        "created_at": "2026-09-01 10:00:00"
-    }
-]
+backend_users = []
 
 @router.post("/auth/login")
 def auth_login(payload: LoginRequest):
@@ -65,10 +54,10 @@ def auth_login(payload: LoginRequest):
     prefix = email.split("@")[0].replace(".", " ").replace("_", " ").title()
     new_user = {
         "id": len(backend_users) + 1000,
-        "name": "Vignesh Waran" if email == "vigneshcloud@gmail.com" else prefix,
+        "name": prefix or "Cloud User",
         "email": email,
         "password": password,
-        "role": "admin" if email == "vigneshcloud@gmail.com" else "user",
+        "role": "user",
         "auth_provider": "email",
         "is_active": True,
         "created_at": "2026-09-03 12:00:00"
@@ -105,7 +94,7 @@ def auth_register(payload: RegisterRequest):
         "name": payload.name,
         "email": email,
         "password": payload.password,
-        "role": "admin" if email == "vigneshcloud@gmail.com" else (payload.role or "user"),
+        "role": payload.role or "user",
         "auth_provider": "email",
         "is_active": True,
         "created_at": "2026-09-03 12:00:00"
@@ -121,7 +110,7 @@ def auth_register(payload: RegisterRequest):
 @router.post("/auth/google")
 def auth_google(payload: GoogleAuthRequest):
     email = payload.email.strip().lower()
-    name = payload.name or ("Vignesh Waran" if email == "vigneshcloud@gmail.com" else email.split("@")[0].title())
+    name = payload.name or email.split("@")[0].replace(".", " ").title()
     
     existing = next((u for u in backend_users if u["email"].lower() == email), None)
     if existing:
@@ -136,7 +125,7 @@ def auth_google(payload: GoogleAuthRequest):
         "id": len(backend_users) + 1000,
         "name": name,
         "email": email,
-        "role": "admin" if email == "vigneshcloud@gmail.com" else "user",
+        "role": "user",
         "auth_provider": "google",
         "picture": payload.picture,
         "is_active": True,

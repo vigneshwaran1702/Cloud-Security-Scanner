@@ -49,14 +49,15 @@ export default function Login() {
     }
   };
 
-  const handleGoogleLogin = async (customEmail = null) => {
+  const handleGoogleLogin = async () => {
     setError('');
     setGoogleLoading(true);
     try {
-      const targetEmail = customEmail || (email.trim().toLowerCase().includes('@gmail.com') ? email.trim().toLowerCase() : 'vigneshcloud@gmail.com');
+      const cleanEmail = email.trim().toLowerCase();
+      const targetEmail = cleanEmail.includes('@') ? cleanEmail : 'user@gmail.com';
       await loginWithGoogle({
         email: targetEmail,
-        name: targetEmail === 'vigneshcloud@gmail.com' ? 'Vignesh (Admin)' : (targetEmail.split('@')[0]),
+        name: cleanEmail.split('@')[0].replace(/[._-]/g, ' ') || 'Google User',
       });
       navigate('/dashboard');
     } catch (err) {
@@ -255,7 +256,7 @@ export default function Login() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="vigneshcloud@gmail.com or name@company.com"
+                placeholder="your.email@gmail.com or name@company.com"
                 style={{
                   width: '100%',
                   padding: '12px 14px 12px 42px',
@@ -339,53 +340,6 @@ export default function Login() {
             )}
           </button>
         </form>
-
-        {/* Quick Demo Fast Login */}
-        <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--border-color)' }}>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '10px', textAlign: 'center', fontWeight: 600 }}>
-            ⚡ QUICK DEMO ACCESS
-          </div>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => handleGoogleLogin('vigneshcloud@gmail.com')}
-              style={{
-                flex: 1,
-                padding: '8px 10px',
-                borderRadius: '10px',
-                border: '1px solid rgba(79, 70, 229, 0.4)',
-                background: 'rgba(79, 70, 229, 0.12)',
-                color: 'var(--primary)',
-                fontSize: '0.78rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '4px',
-              }}
-            >
-              <Sparkles size={13} /> Admin (vigneshcloud)
-            </button>
-            <button
-              type="button"
-              onClick={() => handleGoogleLogin('security.lead@cloudcorp.io')}
-              style={{
-                flex: 1,
-                padding: '8px 10px',
-                borderRadius: '10px',
-                border: '1px solid var(--border-color)',
-                background: 'var(--panel-inner-bg)',
-                color: 'var(--text-main)',
-                fontSize: '0.78rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              SecOps Lead
-            </button>
-          </div>
-        </div>
 
         {/* Footer links */}
         <div style={{ textAlign: 'center', marginTop: '20px', fontSize: '0.88rem', color: 'var(--text-muted)' }}>

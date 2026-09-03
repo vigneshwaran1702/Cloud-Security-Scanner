@@ -79,9 +79,11 @@ export default function Register() {
     setError('');
     setGoogleLoading(true);
     try {
+      const cleanEmail = email.trim().toLowerCase();
+      const targetEmail = cleanEmail.includes('@') ? cleanEmail : 'user@gmail.com';
       await loginWithGoogle({
-        email: email.trim().toLowerCase() || 'vigneshcloud@gmail.com',
-        name: name.trim() || 'Google User',
+        email: targetEmail,
+        name: name.trim() || cleanEmail.split('@')[0].replace(/[._-]/g, ' ') || 'Google User',
       });
       navigate('/dashboard');
     } catch (err) {
@@ -272,7 +274,7 @@ export default function Register() {
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Vignesh Waran"
+                placeholder="e.g. John Doe"
                 style={{
                   width: '100%',
                   padding: '12px 14px 12px 42px',

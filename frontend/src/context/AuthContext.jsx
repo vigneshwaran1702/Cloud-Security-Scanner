@@ -89,8 +89,8 @@ export function AuthProvider({ children }) {
   };
 
   const loginWithGoogle = async (googleData = {}) => {
-    const email = typeof googleData === 'string' ? googleData : (googleData.email || 'vigneshcloud@gmail.com');
-    const name = googleData.name || (email.includes('@') ? email.split('@')[0] : 'Google User');
+    const email = typeof googleData === 'string' ? googleData : (googleData.email || 'user@gmail.com');
+    const name = googleData.name || (email.includes('@') ? email.split('@')[0].replace(/[._-]/g, ' ') : 'Google User');
     const picture = googleData.picture || `https://api.dicebear.com/7.x/bottts/svg?seed=${email}`;
 
     const data = await apiRequest('/api/v1/auth/google', {
@@ -171,7 +171,7 @@ export function AuthProvider({ children }) {
    * If guest/unauthenticated, open Auth Modal with action context.
    */
   const requireAuth = (actionCallback, reasonSubtitle = 'Sign in to access this feature') => {
-    if (user) {
+    if (user && user.email) {
       if (typeof actionCallback === 'function') actionCallback(user);
       return true;
     }
@@ -185,7 +185,7 @@ export function AuthProvider({ children }) {
     return false;
   };
 
-  const isAdmin = user?.role === 'admin' && user?.email?.toLowerCase() === 'vigneshcloud@gmail.com';
+  const isAdmin = user?.role === 'admin';
 
   return (
     <AuthContext.Provider
