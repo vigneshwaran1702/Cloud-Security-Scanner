@@ -100,57 +100,25 @@ function handleLocalFallback(endpoint, options) {
     } catch (e) { users = []; }
 
     const registeredUser = users.find(u => u.email.toLowerCase() === rawEmail);
-    if (registeredUser) {
-      if (registeredUser.password && registeredUser.password !== rawPassword) {
-        throw new Error('Incorrect password. Please try again.');
-      }
-      return {
-        access_token: `jwt_token_${Date.now()}`,
-        token_type: 'bearer',
-        user: {
-          id: registeredUser.id,
-          name: registeredUser.name,
-          email: registeredUser.email,
-          role: registeredUser.role || 'user',
-          auth_provider: 'email',
-          is_active: true,
-          created_at: registeredUser.created_at || new Date().toISOString().replace('T', ' ').slice(0, 19)
-        }
-      };
+    if (!registeredUser) {
+      throw new Error('Account not found with this email. Please create an account first before signing in.');
     }
 
-    // If logging in for the first time without prior register, create the account dynamically
-    const emailPrefix = rawEmail.split('@')[0].replace(/[._-]/g, ' ');
-    const formattedName = emailPrefix
-      .split(' ')
-      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(' ');
-
-    const newAccount = {
-      id: Math.floor(Math.random() * 9000) + 1000,
-      name: formattedName || 'Cloud User',
-      email: rawEmail,
-      password: rawPassword,
-      role: 'user',
-      auth_provider: 'email',
-      is_active: true,
-      created_at: new Date().toISOString().replace('T', ' ').slice(0, 19)
-    };
-
-    users.push(newAccount);
-    localStorage.setItem('cg_registered_users', JSON.stringify(users));
+    if (registeredUser.password && registeredUser.password !== rawPassword) {
+      throw new Error('Incorrect password. Please verify your password and try again.');
+    }
 
     return {
       access_token: `jwt_token_${Date.now()}`,
       token_type: 'bearer',
       user: {
-        id: newAccount.id,
-        name: newAccount.name,
-        email: newAccount.email,
-        role: newAccount.role,
+        id: registeredUser.id,
+        name: registeredUser.name,
+        email: registeredUser.email,
+        role: registeredUser.role || 'user',
         auth_provider: 'email',
         is_active: true,
-        created_at: newAccount.created_at
+        created_at: registeredUser.created_at || new Date().toISOString().replace('T', ' ').slice(0, 19)
       }
     };
   }
