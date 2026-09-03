@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, BackgroundTasks
+from fastapi import APIRouter, HTTPException, BackgroundTasks, Header
 from typing import Optional, Dict, Any, List
 from pydantic import BaseModel
 import asyncio
@@ -150,11 +150,16 @@ def auth_google(payload: GoogleAuthRequest):
     }
 
 @router.get("/auth/me")
-def auth_me():
+def auth_me(authorization: Optional[str] = Header(None)):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    token = authorization.replace("Bearer ", "").strip()
+    if not token or token == "null" or token == "undefined":
+        raise HTTPException(status_code=401, detail="Invalid token")
     if backend_users:
         user_data = {k: v for k, v in backend_users[0].items() if k != "password"}
         return user_data
-    return {"id": 1, "name": "Vignesh Waran", "email": "vigneshcloud@gmail.com", "role": "admin"}
+    raise HTTPException(status_code=401, detail="User not found")
 
 @router.get("/dashboard/stats")
 def get_dashboard_stats():

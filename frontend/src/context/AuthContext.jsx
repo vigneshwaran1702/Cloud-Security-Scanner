@@ -5,10 +5,24 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem('user');
-    return saved ? JSON.parse(saved) : null;
+    try {
+      const saved = localStorage.getItem('user');
+      const storedToken = localStorage.getItem('token');
+      if (saved && storedToken) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object' && parsed.email) {
+          return parsed;
+        }
+      }
+    } catch (e) {}
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    return null;
   });
-  const [token, setToken] = useState(localStorage.getItem('token') || null);
+  const [token, setToken] = useState(() => {
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? localStorage.getItem('token') : null;
+  });
   const [loading, setLoading] = useState(true);
 
   // Global Auth Modal State for Guest Action Interception
@@ -22,24 +36,33 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     async function initAuth() {
       const storedToken = localStorage.getItem('token');
-      if (storedToken) {
-        try {
-          const userData = await apiRequest('/api/v1/auth/me');
-          if (userData && userData.email) {
-            setUser(userData);
-            localStorage.setItem('user', JSON.stringify(userData));
-          }
+      const savedUserStr = localStorage.getItem('user');
+      
+      if (!storedToken || !savedUserStr) {
+        setUser(null);
+        setToken(null);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const parsedUser = JSON.parse(savedUserStr);
+        if (parsedUser && parsedUser.email) {
+          setUser(parsedUser);
           setToken(storedToken);
-        } catch (err) {
-          console.error("Auth validation failed:", err);
-          const savedUser = localStorage.getItem('user');
-          if (!savedUser) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            setToken(null);
-            setUser(null);
-          }
+        } else {
+          setUser(null);
+          setToken(null);
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
         }
+      } catch (err) {
+        setUser(null);
+        setToken(null);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
       }
       setLoading(false);
     }

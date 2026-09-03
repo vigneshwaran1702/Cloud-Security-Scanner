@@ -232,9 +232,15 @@ function handleLocalFallback(endpoint, options) {
   }
 
   if (endpoint === '/api/v1/auth/me') {
+    const token = localStorage.getItem('token');
     const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      return JSON.parse(savedUser);
+    if (token && savedUser) {
+      try {
+        const parsed = JSON.parse(savedUser);
+        if (parsed && parsed.email) {
+          return parsed;
+        }
+      } catch (e) {}
     }
     throw new Error('Not authenticated');
   }

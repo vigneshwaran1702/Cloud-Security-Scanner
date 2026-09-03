@@ -85,9 +85,10 @@ export default function MainLayout() {
     };
   }, [isUserMenuOpen]);
 
+  const isLoggedIn = Boolean(user && typeof user === 'object' && user.email);
   const displayName = user?.name || (user?.email ? user.email.split('@')[0] : 'User');
-  const userIdentifier = user?.email || (user?.id ? `ID: #${user.id}` : 'Verified User');
-  const userInitials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'US';
+  const userIdentifier = user?.email || (user?.id ? `ID: #${user.id}` : '');
+  const userInitials = (displayName || 'U').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'US';
 
   const navItems = [
     { path: '/dashboard', label: 'Security Command Center', icon: LayoutDashboard },
@@ -285,11 +286,11 @@ export default function MainLayout() {
 
           <div style={{ width: '1px', height: '24px', background: 'var(--border-color)', margin: '0 4px' }} />
 
-          {/* User Profile or Google Sign-In Button */}
-          {!user ? (
+          {/* User Profile or Login Button */}
+          {!isLoggedIn ? (
             <button
               type="button"
-              onClick={() => openAuthModal({ title: 'Sign In to Google Cloud Security', subtitle: 'Sign in with your Google account or Gmail/password to access scanning and compliance features.' })}
+              onClick={() => openAuthModal({ title: 'Sign In to Cloud Security', subtitle: 'Sign in with your Google account or email/password to access full scanning, verification, and Pro features.' })}
               className="btn btn-primary"
               style={{
                 padding: '6px 16px',
