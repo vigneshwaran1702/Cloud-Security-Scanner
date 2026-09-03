@@ -219,7 +219,7 @@ export default function Register() {
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. John Doe"
+                placeholder="Your Name"
                 style={{
                   width: '100%',
                   padding: '12px 14px 12px 42px',

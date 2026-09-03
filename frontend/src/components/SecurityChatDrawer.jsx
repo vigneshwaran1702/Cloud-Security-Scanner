@@ -126,7 +126,7 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
             ? `Security Score for ${cState.activeCloudId} is ${s}/100 with ${crit} critical issues. Click 'Clear All Risks' to auto-remediate all findings.`
             : "Please verify and scan your Cloud ID to evaluate active security posture.";
         } else if (lowerText.includes('admin') || lowerText.includes('who is admin')) {
-          botReply = "The system administrator for this portal is vigneshcloud@gmail.com.";
+          botReply = user?.role === 'admin' ? "You are currently logged in as an Administrator." : "Administrator privileges can be managed in the IAM & Governance panel.";
         } else if (lowerText.includes('hello') || lowerText.includes('hi')) {
           botReply = `Hello ${user?.name || ''}! How can I assist with your cloud security posture today?`;
         }
