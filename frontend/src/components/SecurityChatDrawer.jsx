@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useSubscription } from '../context/SubscriptionContext';
+import { getCloudState } from '../services/api';
 import { MessageSquare, X, Send, Sparkles, Key, CheckCircle, Bot, User, RefreshCw, Zap, ShieldCheck, Activity, Flame } from 'lucide-react';
 
 export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifier }) {
@@ -109,14 +110,23 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
           }
         }
 
+        const cState = getCloudState();
         let botReply = "I can analyze your cloud resources, check compliance benchmarks, or verify account statuses. Try asking: 'Check cloud status' or 'What are the critical vulnerabilities?'.";
 
         if (lowerText.includes('status') || lowerText.includes('cloud') || lowerText.includes('verify')) {
-          botReply = "CloudGuard actively monitors AWS (Account #891230912401), Azure, and GCP. Click 'Verify Cloud Status' below to run real-time connectivity diagnostics.";
-        } else if (lowerText.includes('scan') || lowerText.includes('security') || lowerText.includes('issue')) {
-          botReply = "Current Security Score is 84/100. 5 Critical & 12 High severity issues detected across monitored clouds. Auto-remediation is ready.";
+          if (cState.activeCloudId) {
+            botReply = `CloudGuard is currently monitoring ${cState.activeProvider || 'Cloud'} ID: ${cState.activeCloudId}. All configurations are actively inspected.`;
+          } else {
+            botReply = "No cloud account is currently connected. Click 'Verify Cloud Status' to input your AWS Account ID, Azure Subscription ID, or GCP Project ID.";
+          }
+        } else if (lowerText.includes('scan') || lowerText.includes('security') || lowerText.includes('issue') || lowerText.includes('score')) {
+          const s = cState.stats?.securityScore ?? cState.stats?.security_score ?? 100;
+          const crit = cState.stats?.criticalIssues ?? cState.stats?.critical_issues ?? 0;
+          botReply = cState.activeCloudId
+            ? `Security Score for ${cState.activeCloudId} is ${s}/100 with ${crit} critical issues. Click 'Clear All Risks' to auto-remediate all findings.`
+            : "Please verify and scan your Cloud ID to evaluate active security posture.";
         } else if (lowerText.includes('admin') || lowerText.includes('who is admin')) {
-          botReply = "The sole system administrator for this portal is vigneshcloud@gmail.com.";
+          botReply = "The system administrator for this portal is vigneshcloud@gmail.com.";
         } else if (lowerText.includes('hello') || lowerText.includes('hi')) {
           botReply = `Hello ${user?.name || ''}! How can I assist with your cloud security posture today?`;
         }

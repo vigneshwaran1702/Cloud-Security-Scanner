@@ -1,9 +1,20 @@
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 from typing import Optional, Dict, Any, List
+from pydantic import BaseModel
 import asyncio
 from app.mock_data import store
 
 router = APIRouter(prefix="/api/v1")
+
+class VerifyAccountRequest(BaseModel):
+    provider: str
+    account_id: str
+    region: Optional[str] = None
+
+class StartScanRequest(BaseModel):
+    provider: Optional[str] = "AWS"
+    account_id: Optional[str] = None
+    region: Optional[str] = None
 
 @router.get("/dashboard/stats")
 def get_dashboard_stats():
@@ -13,20 +24,43 @@ def get_dashboard_stats():
         "scan_info": store.scan_state
     }
 
-async def simulate_scan_task():
-    store.start_scan()
+async def simulate_scan_task(provider: str, account_id: str, region: Optional[str]):
+    store.start_scan(provider=provider, account_id=account_id)
     for progress in range(20, 101, 20):
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(0.4)
         store.scan_state["progress"] = progress
-    store.finish_scan()
+    store.finish_scan(provider=provider, account_id=account_id)
 
 @router.post("/scan/start")
-async def start_scan(background_tasks: BackgroundTasks):
+async def start_scan(payload: Optional[StartScanRequest] = None, background_tasks: BackgroundTasks = None):
     if store.scan_state["is_scanning"]:
         return {"success": False, "message": "Scan already in progress", "scan_info": store.scan_state}
     
-    background_tasks.add_task(simulate_scan_task)
-    return {"success": True, "message": "Cloud scan initiated successfully", "scan_info": store.scan_state}
+    provider = payload.provider if payload and payload.provider else (store.active_provider or "AWS")
+    account_id = payload.account_id if payload and payload.account_id else (store.active_cloud_id or "default-account")
+    region = payload.region if payload else None
+
+    if background_tasks:
+        background_tasks.add_task(simulate_scan_task, provider, account_id, region)
+    else:
+        await simulate_scan_task(provider, account_id, region)
+
+    return {
+        "success": True,
+        "message": f"Cloud scan initiated for {provider} Cloud ID: {account_id}",
+        "scan_info": store.scan_state
+    }
+
+@router.post("/cloud/verify-account")
+def verify_cloud_account(payload: VerifyAccountRequest):
+    if not payload.account_id or not payload.account_id.strip():
+        raise HTTPException(status_code=400, detail="Cloud Account ID / Subscription ID is required.")
+    
+    result = store.verify_account(payload.provider, payload.account_id, payload.region)
+    return {
+        "success": True,
+        "account_status": result
+    }
 
 @router.get("/scan/status")
 def get_scan_status():
@@ -49,6 +83,16 @@ def get_resources(cloud: Optional[str] = None, severity: Optional[str] = None, s
 def get_recommendations():
     return {"success": True, "data": store.recommendations}
 
+@router.post("/recommendations/clear-all")
+def clear_all_risks():
+    result = store.clear_all_risks_and_failures()
+    return result
+
+@router.post("/resources/clear-failures")
+def clear_resource_failures():
+    result = store.clear_all_risks_and_failures()
+    return result
+
 @router.post("/recommendations/{rec_id}/apply")
 def apply_fix(rec_id: str):
     success = store.apply_recommendation_fix(rec_id)
@@ -58,7 +102,8 @@ def apply_fix(rec_id: str):
         "success": True,
         "message": f"Auto-remediation applied successfully for {rec_id}",
         "stats": store.stats,
-        "recommendations": store.recommendations
+        "recommendations": store.recommendations,
+        "resources": store.resources
     }
 
 @router.get("/compliance")

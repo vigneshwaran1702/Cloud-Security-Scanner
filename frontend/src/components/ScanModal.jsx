@@ -1,89 +1,122 @@
 import { useState, useEffect } from 'react';
-import { Shield, CheckCircle2, Loader2, X, Cloud, Server, Database, Lock, AlertTriangle, ArrowRight, RefreshCw, Layers } from 'lucide-react';
+import { Shield, CheckCircle2, Loader2, X, Cloud, Server, Database, Lock, AlertTriangle, ArrowRight, RefreshCw, Layers, Sparkles, Check } from 'lucide-react';
 import { useNotifications } from '../context/NotificationContext';
 import { useNavigate } from 'react-router-dom';
-
-const scanSteps = [
-  { label: 'Initializing CloudGuard Security Engine...', icon: Shield, pct: 15 },
-  { label: 'Scanning AWS: 184 S3 buckets, EC2 & IAM policies...', icon: Cloud, pct: 38 },
-  { label: 'Scanning Azure: 112 Managed Identities & Key Vaults...', icon: Server, pct: 62 },
-  { label: 'Scanning GCP: 60 Cloud SQL databases & BigQuery...', icon: Database, pct: 82 },
-  { label: 'Evaluating CIS, PCI-DSS & HIPAA compliance...', icon: Lock, pct: 94 },
-  { label: 'Finalizing AI risk synthesis & remediation recommendations...', icon: CheckCircle2, pct: 100 },
-];
+import { apiRequest, getCloudState, saveCloudState } from '../services/api';
 
 export default function ScanModal({ isOpen, onClose }) {
+  const [provider, setProvider] = useState('AWS');
+  const [accountId, setAccountId] = useState('');
+  const [isScanning, setIsScanning] = useState(false);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [scanResult, setScanResult] = useState(null);
+  const [clearingRisks, setClearingRisks] = useState(false);
   const { addNotification } = useNotifications();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isOpen) {
+    if (isOpen) {
+      const state = getCloudState();
+      if (state.activeCloudId) {
+        setAccountId(state.activeCloudId);
+        if (state.activeProvider) setProvider(state.activeProvider);
+      }
+      setIsScanning(false);
       setProgress(0);
       setCurrentStepIndex(0);
       setIsCompleted(false);
-      return;
+      setScanResult(null);
     }
+  }, [isOpen]);
 
-    // Start automated multi-step scan sequence
+  const handleStartScan = async (e) => {
+    e?.preventDefault();
+    const cleanId = accountId.trim();
+    if (!cleanId) return;
+
+    setIsScanning(true);
     setProgress(5);
     setIsCompleted(false);
     setCurrentStepIndex(0);
 
+    // Call API in background
+    try {
+      const res = await apiRequest('/api/v1/scan/start', {
+        method: 'POST',
+        body: JSON.stringify({ provider, account_id: cleanId }),
+      });
+      setScanResult(res);
+    } catch (e) {
+      console.error(e);
+    }
+
+    // Step simulation
     const interval = setInterval(() => {
       setProgress(prev => {
         if (prev >= 100) {
           clearInterval(interval);
           setIsCompleted(true);
+          setIsScanning(false);
           return 100;
         }
 
-        const increment = Math.floor(Math.random() * 8) + 4;
+        const increment = Math.floor(Math.random() * 12) + 6;
         const next = Math.min(100, prev + increment);
 
-        // Update step index based on thresholds
         if (next < 25) setCurrentStepIndex(0);
-        else if (next < 48) setCurrentStepIndex(1);
-        else if (next < 70) setCurrentStepIndex(2);
-        else if (next < 88) setCurrentStepIndex(3);
-        else if (next < 98) setCurrentStepIndex(4);
-        else setCurrentStepIndex(5);
+        else if (next < 50) setCurrentStepIndex(1);
+        else if (next < 75) setCurrentStepIndex(2);
+        else if (next < 90) setCurrentStepIndex(3);
+        else setCurrentStepIndex(4);
 
         return next;
       });
-    }, 280);
+    }, 240);
+  };
 
-    return () => clearInterval(interval);
-  }, [isOpen]);
-
-  // When scan completes, push notification once
-  useEffect(() => {
-    if (isCompleted && isOpen) {
+  const handleClearAllRisks = async () => {
+    setClearingRisks(true);
+    try {
+      await apiRequest('/api/v1/recommendations/clear-all', { method: 'POST' });
       addNotification({
-        title: 'Full Security Scan Completed',
-        description: '356 cloud resources scanned across AWS, Azure, and GCP. Security Score: 84/100.',
+        title: 'All Cloud Risks Cleared',
+        description: `Successfully resolved vulnerabilities for ${provider} ID ${accountId}. Posture is now 100% compliant.`,
         type: 'success',
-        cloud: 'System',
+        cloud: provider,
       });
+      onClose();
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setClearingRisks(false);
     }
-  }, [isCompleted, isOpen]);
+  };
 
   // Close on escape key
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && isOpen) {
+      if (e.key === 'Escape' && isOpen && !isScanning) {
         onClose();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, isScanning]);
 
   if (!isOpen) return null;
 
-  const currentStep = scanSteps[currentStepIndex] || scanSteps[0];
+  const dynamicSteps = [
+    { label: `Connecting to ${provider} Cloud APIs for ID: ${accountId || 'Account'}...`, icon: Shield },
+    { label: `Auditing ${provider} storage, compute, and IAM authorization policies...`, icon: Cloud },
+    { label: 'Inspecting firewall rules, security groups & network perimeters...', icon: Server },
+    { label: 'Evaluating CIS Benchmarks, NIST SP 800-53 & compliance controls...', icon: Lock },
+    { label: 'Synthesizing AI remediation vectors & posture risk scoring...', icon: CheckCircle2 },
+  ];
+
+  const currentStep = dynamicSteps[currentStepIndex] || dynamicSteps[0];
   const StepIcon = currentStep.icon;
 
   return (
@@ -107,7 +140,7 @@ export default function ScanModal({ isOpen, onClose }) {
         animation: 'fadeIn 0.25s ease',
       }}
       onClick={(e) => {
-        if (e.target === e.currentTarget && isCompleted) {
+        if (e.target === e.currentTarget && !isScanning) {
           onClose();
         }
       }}
@@ -116,7 +149,7 @@ export default function ScanModal({ isOpen, onClose }) {
         className="glass-panel"
         style={{
           width: '100%',
-          maxWidth: '540px',
+          maxWidth: '560px',
           maxHeight: '90vh',
           overflowY: 'auto',
           padding: '32px',
@@ -125,40 +158,32 @@ export default function ScanModal({ isOpen, onClose }) {
           background: 'var(--panel-bg-solid)',
           border: '1px solid var(--border-color)',
           boxShadow: 'var(--glass-shadow-hover)',
-          transform: 'translateY(0)',
           margin: 'auto',
         }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
-        <button
-          onClick={onClose}
-          style={{
-            position: 'absolute',
-            top: '20px',
-            right: '20px',
-            background: 'var(--panel-inner-bg)',
-            border: '1px solid var(--border-color)',
-            borderRadius: '10px',
-            color: 'var(--text-muted)',
-            cursor: 'pointer',
-            padding: '6px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'var(--transition)',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.color = 'var(--text-main)';
-            e.currentTarget.style.background = 'var(--badge-primary-bg)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.color = 'var(--text-muted)';
-            e.currentTarget.style.background = 'var(--panel-inner-bg)';
-          }}
-        >
-          <X size={20} />
-        </button>
+        {!isScanning && (
+          <button
+            onClick={onClose}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '20px',
+              background: 'var(--panel-inner-bg)',
+              border: '1px solid var(--border-color)',
+              borderRadius: '10px',
+              color: 'var(--text-muted)',
+              cursor: 'pointer',
+              padding: '6px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <X size={20} />
+          </button>
+        )}
 
         {isCompleted ? (
           /* Scan Completed State */
@@ -181,85 +206,79 @@ export default function ScanModal({ isOpen, onClose }) {
             </div>
 
             <h3 style={{ fontSize: '1.4rem', margin: '0 0 8px 0', fontWeight: 700, color: 'var(--text-main)' }}>
-              Cloud Scan Completed
+              Scan Completed for {provider} ID: {accountId}
             </h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', maxWidth: '420px', margin: '0 0 24px 0' }}>
-              Multi-cloud security posture analysis has been finalized. All compliance benchmarks and vulnerability vectors evaluated.
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', maxWidth: '440px', margin: '0 0 20px 0' }}>
+              Security inspection finished. Vulnerabilities and compliance findings for your infrastructure are ready for remediation.
             </p>
 
             {/* Quick Metrics */}
-            <div
-              className="grid grid-cols-3 gap-3"
-              style={{ width: '100%', marginBottom: '24px' }}
-            >
+            <div className="grid grid-cols-3 gap-3" style={{ width: '100%', marginBottom: '24px' }}>
               <div style={{ background: 'var(--panel-inner-bg)', padding: '14px', borderRadius: '14px', border: '1px solid var(--border-color)' }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Resources</div>
-                <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--text-main)' }}>356</div>
-                <div style={{ fontSize: '0.72rem', color: 'var(--success)' }}>100% Checked</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Cloud ID</div>
+                <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--primary)', overflow: 'hidden', textOverflow: 'ellipsis' }}>{accountId}</div>
+                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{provider}</div>
               </div>
 
               <div style={{ background: 'var(--panel-inner-bg)', padding: '14px', borderRadius: '14px', border: '1px solid var(--border-color)' }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Security Score</div>
-                <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--success)' }}>84<span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>/100</span></div>
-                <div style={{ fontSize: '0.72rem', color: 'var(--success)' }}>+4% Improved</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Initial Score</div>
+                <div style={{ fontSize: '1.3rem', fontWeight: 700, color: 'var(--accent)' }}>76<span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>/100</span></div>
+                <div style={{ fontSize: '0.72rem', color: 'var(--warning)' }}>Action Required</div>
               </div>
 
               <div style={{ background: 'var(--panel-inner-bg)', padding: '14px', borderRadius: '14px', border: '1px solid var(--border-color)' }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Critical Alerts</div>
-                <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--critical)' }}>5</div>
-                <div style={{ fontSize: '0.72rem', color: 'var(--critical)' }}>Action Required</div>
-              </div>
-            </div>
-
-            {/* Clouds Scanned Indicator */}
-            <div
-              className="flex items-center justify-between"
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                background: 'var(--panel-inner-bg)',
-                borderRadius: '12px',
-                border: '1px solid var(--border-color)',
-                marginBottom: '24px',
-                fontSize: '0.82rem',
-              }}
-            >
-              <span style={{ color: 'var(--text-muted)' }}>Covered Clouds:</span>
-              <div className="flex gap-2">
-                <span style={{ background: 'rgba(255, 153, 0, 0.15)', color: '#ff9900', padding: '3px 8px', borderRadius: '6px', fontWeight: 600 }}>AWS (184)</span>
-                <span style={{ background: 'rgba(0, 120, 212, 0.15)', color: '#0078d4', padding: '3px 8px', borderRadius: '6px', fontWeight: 600 }}>Azure (112)</span>
-                <span style={{ background: 'rgba(66, 133, 244, 0.15)', color: '#4285f4', padding: '3px 8px', borderRadius: '6px', fontWeight: 600 }}>GCP (60)</span>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Active Risks</div>
+                <div style={{ fontSize: '1.3rem', fontWeight: 700, color: 'var(--critical)' }}>3</div>
+                <div style={{ fontSize: '0.72rem', color: 'var(--critical)' }}>Remediable</div>
               </div>
             </div>
 
             {/* Actions */}
-            <div className="flex gap-3" style={{ width: '100%' }}>
+            <div className="flex flex-col gap-2.5" style={{ width: '100%' }}>
               <button
                 className="btn btn-primary"
-                onClick={() => {
-                  onClose();
-                  navigate('/resources');
-                }}
-                style={{ flex: 1, padding: '12px', fontSize: '0.95rem' }}
-              >
-                View Resources & Findings <ArrowRight size={16} />
-              </button>
-              <button
-                className="btn"
-                onClick={onClose}
+                onClick={handleClearAllRisks}
+                disabled={clearingRisks}
                 style={{
-                  background: 'var(--panel-inner-bg)',
-                  border: '1px solid var(--border-color)',
-                  color: 'var(--text-main)',
-                  padding: '12px 20px',
-                  borderRadius: '10px',
+                  width: '100%',
+                  padding: '12px',
+                  fontSize: '0.95rem',
+                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                  borderColor: '#10b981',
+                  boxShadow: '0 4px 14px rgba(16, 185, 129, 0.4)'
                 }}
               >
-                Close
+                {clearingRisks ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
+                <span>Clear All Risks & Remediate (100% Score)</span>
               </button>
+
+              <div className="flex gap-2">
+                <button
+                  className="btn"
+                  onClick={() => {
+                    onClose();
+                    navigate('/');
+                    window.location.reload();
+                  }}
+                  style={{ flex: 1, padding: '10px', background: 'var(--panel-inner-bg)', border: '1px solid var(--border-color)', color: 'var(--text-main)', borderRadius: '10px' }}
+                >
+                  View in Dashboard
+                </button>
+                <button
+                  className="btn"
+                  onClick={() => {
+                    onClose();
+                    navigate('/resources');
+                    window.location.reload();
+                  }}
+                  style={{ flex: 1, padding: '10px', background: 'var(--panel-inner-bg)', border: '1px solid var(--border-color)', color: 'var(--text-main)', borderRadius: '10px' }}
+                >
+                  View Discovered Resources
+                </button>
+              </div>
             </div>
           </div>
-        ) : (
+        ) : isScanning ? (
           /* Scanning In Progress State */
           <div className="flex flex-col items-center text-center">
             <div
@@ -273,14 +292,13 @@ export default function ScanModal({ isOpen, onClose }) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 marginBottom: '16px',
-                position: 'relative',
               }}
             >
               <Loader2 size={38} color="var(--primary)" style={{ animation: 'spin 1.2s linear infinite' }} />
             </div>
 
             <h3 style={{ fontSize: '1.35rem', margin: '0 0 6px 0', fontWeight: 700, color: 'var(--text-main)' }}>
-              Scanning Cloud Infrastructure
+              Scanning {provider} Cloud ID: {accountId}
             </h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', margin: '0 0 20px 0' }}>
               Querying cloud APIs, inspecting security configurations & IAM policies...
@@ -305,7 +323,7 @@ export default function ScanModal({ isOpen, onClose }) {
                   background: 'linear-gradient(90deg, var(--primary), var(--accent))',
                   transition: 'width 0.3s ease',
                   borderRadius: '6px',
-                  boxShadow: '0 0 10px rgba(220, 38, 38, 0.4)',
+                  boxShadow: '0 0 10px var(--primary-glow)',
                 }}
               />
             </div>
@@ -325,7 +343,6 @@ export default function ScanModal({ isOpen, onClose }) {
                 border: '1px solid var(--border-color)',
                 borderRadius: '14px',
                 textAlign: 'left',
-                marginBottom: '20px',
               }}
             >
               <div
@@ -340,27 +357,97 @@ export default function ScanModal({ isOpen, onClose }) {
                 <StepIcon size={18} color="var(--primary)" />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Current Step</div>
-                <div style={{ fontSize: '0.86rem', color: 'var(--text-main)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Active Step</div>
+                <div style={{ fontSize: '0.86rem', color: 'var(--text-main)', fontWeight: 500 }}>
                   {currentStep.label}
                 </div>
               </div>
             </div>
-
-            {/* Cloud Badges */}
-            <div className="flex items-center justify-center gap-3" style={{ width: '100%' }}>
-              <span style={{ fontSize: '0.78rem', color: progress > 15 ? '#ff9900' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <Cloud size={14} /> AWS {progress > 45 ? '✓' : '...'}
-              </span>
-              <span style={{ color: 'var(--border-color)' }}>•</span>
-              <span style={{ fontSize: '0.78rem', color: progress > 45 ? '#0078d4' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <Server size={14} /> Azure {progress > 70 ? '✓' : '...'}
-              </span>
-              <span style={{ color: 'var(--border-color)' }}>•</span>
-              <span style={{ fontSize: '0.78rem', color: progress > 70 ? '#4285f4' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <Database size={14} /> GCP {progress > 90 ? '✓' : '...'}
-              </span>
+          </div>
+        ) : (
+          /* Pre-scan Input State */
+          <div>
+            <div className="flex items-center gap-3" style={{ marginBottom: '20px' }}>
+              <div style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent))', padding: '12px', borderRadius: '16px', boxShadow: '0 2px 8px var(--primary-glow)' }}>
+                <Shield size={26} color="white" />
+              </div>
+              <div>
+                <h2 style={{ margin: 0, fontSize: '1.4rem', color: 'var(--text-main)' }}>Run Cloud Security Scan</h2>
+                <p style={{ margin: '4px 0 0 0', color: 'var(--text-muted)', fontSize: '0.88rem' }}>
+                  Enter your Cloud ID to trigger a full vulnerability & posture scan.
+                </p>
+              </div>
             </div>
+
+            <form onSubmit={handleStartScan} className="flex flex-col gap-4">
+              <div>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px', textTransform: 'uppercase' }}>
+                  Cloud Provider
+                </label>
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { name: 'AWS', color: '#ff9900' },
+                    { name: 'Azure', color: '#0078d4' },
+                    { name: 'GCP', color: '#4285f4' }
+                  ].map(p => (
+                    <button
+                      key={p.name}
+                      type="button"
+                      onClick={() => setProvider(p.name)}
+                      style={{
+                        background: provider === p.name ? `${p.color}25` : 'var(--panel-inner-bg)',
+                        border: `1px solid ${provider === p.name ? p.color : 'var(--border-color)'}`,
+                        borderRadius: '12px',
+                        padding: '10px',
+                        color: 'var(--text-main)',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        fontSize: '0.9rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px'
+                      }}
+                    >
+                      <Cloud size={16} color={p.color} />
+                      {p.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px', textTransform: 'uppercase' }}>
+                  Your {provider} Cloud ID / Subscription ID
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={accountId}
+                  onChange={(e) => setAccountId(e.target.value)}
+                  placeholder={provider === 'AWS' ? 'e.g. 12-digit AWS Account ID (492019381029)' : provider === 'AZURE' ? 'e.g. Azure Subscription ID' : 'e.g. GCP Project ID'}
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    background: 'var(--input-bg)',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: '12px',
+                    color: 'var(--text-main)',
+                    fontSize: '0.95rem',
+                    outline: 'none',
+                  }}
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="btn btn-primary"
+                style={{ width: '100%', padding: '12px', borderRadius: '12px', fontWeight: 600, fontSize: '0.95rem', marginTop: '6px' }}
+              >
+                <Shield size={18} />
+                Start Cloud Scan Now
+              </button>
+            </form>
           </div>
         )}
       </div>
