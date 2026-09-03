@@ -102,6 +102,28 @@ function handleLocalFallback(endpoint, options) {
         name: rawEmail === 'vigneshcloud@gmail.com' ? 'Vignesh Cloud Admin' : 'Security Lead',
         email: rawEmail,
         role: rawEmail === 'vigneshcloud@gmail.com' ? 'admin' : 'user',
+        auth_provider: 'email',
+        is_active: true,
+        created_at: new Date().toISOString().replace('T', ' ').slice(0, 19)
+      }
+    };
+  }
+
+  if (endpoint === '/api/v1/auth/google') {
+    const rawEmail = (body.email || 'user@gmail.com').trim().toLowerCase();
+    const rawName = (body.name || (rawEmail.includes('@') ? rawEmail.split('@')[0] : 'Google User')).trim();
+    const avatar = body.picture || `https://api.dicebear.com/7.x/bottts/svg?seed=${rawEmail}`;
+    
+    return {
+      access_token: `jwt_google_${Date.now()}`,
+      token_type: 'bearer',
+      user: {
+        id: Math.floor(Math.random() * 1000) + 1,
+        name: rawEmail === 'vigneshcloud@gmail.com' ? 'Vignesh (Admin)' : (rawName || 'Google Cloud Engineer'),
+        email: rawEmail,
+        role: rawEmail === 'vigneshcloud@gmail.com' ? 'admin' : 'user',
+        auth_provider: 'google',
+        picture: avatar,
         is_active: true,
         created_at: new Date().toISOString().replace('T', ' ').slice(0, 19)
       }
@@ -119,6 +141,7 @@ function handleLocalFallback(endpoint, options) {
         name: rawName,
         email: rawEmail,
         role: rawEmail === 'vigneshcloud@gmail.com' ? 'admin' : (body.role || 'user'),
+        auth_provider: 'email',
         is_active: true,
         created_at: new Date().toISOString().replace('T', ' ').slice(0, 19)
       }

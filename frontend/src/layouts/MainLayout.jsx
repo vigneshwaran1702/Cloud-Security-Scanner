@@ -9,6 +9,7 @@ import SecurityChatDrawer from '../components/SecurityChatDrawer';
 import CloudAccountVerifierModal from '../components/CloudAccountVerifierModal';
 import ScanModal from '../components/ScanModal';
 import NotificationsPopover from '../components/NotificationsPopover';
+import AuthModal from '../components/AuthModal';
 
 const pageTitles = {
   '/dashboard': 'Overview',
@@ -19,7 +20,7 @@ const pageTitles = {
 };
 
 export default function MainLayout() {
-  const { user, logout, isAdmin } = useAuth();
+  const { user, logout, isAdmin, requireAuth, openAuthModal } = useAuth();
   const { unreadCount } = useNotifications();
   const { isPro, activeTier } = useSubscription();
   const { theme, toggleTheme, isDark } = useTheme();
@@ -214,7 +215,7 @@ export default function MainLayout() {
             {/* Verify Cloud Action */}
             <button
               type="button"
-              onClick={() => setIsVerifierOpen(true)}
+              onClick={() => requireAuth(() => setIsVerifierOpen(true), "Sign in with your Google account or Gmail/password to verify and connect your cloud ID.")}
               className={`header-action-btn ${isVerifierOpen ? 'active' : ''}`}
               title="Verify Cloud Connection & Security Status"
             >
@@ -238,7 +239,7 @@ export default function MainLayout() {
             <button
               type="button"
               className="btn btn-primary"
-              onClick={() => setIsScanning(true)}
+              onClick={() => requireAuth(() => setIsScanning(true), "Sign in with your Google account or Gmail/password to start live cloud security scans.")}
               style={{ padding: '8px 16px', borderRadius: '12px', fontSize: '0.84rem', fontWeight: 600 }}
             >
               <Shield size={16} />
@@ -303,184 +304,228 @@ export default function MainLayout() {
 
             <div className="header-divider" />
             
-            {/* User Profile Dropdown */}
-            <div style={{ position: 'relative' }} ref={userMenuRef}>
+            {/* User Profile or Guest Login Button */}
+            {!user ? (
               <button
                 type="button"
-                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                onClick={() => openAuthModal({ title: 'Sign In to CloudGuard', subtitle: 'Sign in with your Google account or Gmail/password to access full scanning, verification, and Pro features.' })}
+                className="btn btn-primary"
                 style={{
-                  background: isUserMenuOpen ? 'var(--panel-inner-bg)' : 'transparent',
-                  border: isUserMenuOpen ? '1px solid var(--border-color-hover)' : '1px solid transparent',
-                  padding: '4px 8px 4px 4px',
+                  padding: '8px 16px',
                   borderRadius: '12px',
-                  cursor: 'pointer',
+                  fontSize: '0.84rem',
+                  fontWeight: 600,
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px',
-                  transition: 'var(--transition)',
                 }}
-                title="Account Menu"
               >
-                <div style={{
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '50%',
-                  background: 'linear-gradient(135deg, var(--primary), var(--accent))',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 'bold',
-                  color: 'white',
-                  fontSize: '0.8rem',
-                  flexShrink: 0,
-                  boxShadow: '0 2px 8px var(--primary-glow)'
-                }}>
-                  {userInitials}
-                </div>
-                <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column' }}>
-                  <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-main)', lineHeight: 1.2 }}>
-                    {user?.name || 'User'}
-                  </span>
-                  <span style={{ fontSize: '0.68rem', color: 'var(--text-subtle)', lineHeight: 1.2, textTransform: 'capitalize' }}>
-                    {user?.role || 'user'}
-                  </span>
-                </div>
-                <ChevronDown size={14} color="var(--text-muted)" style={{ transform: isUserMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }} />
+                <LogIn size={15} />
+                <span>Sign In / Register</span>
               </button>
-
-              {/* User Dropdown Menu */}
-              {isUserMenuOpen && (
-                <div
-                  className="glass-panel"
+            ) : (
+              <div style={{ position: 'relative' }} ref={userMenuRef}>
+                <button
+                  type="button"
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                   style={{
-                    position: 'absolute',
-                    top: 'calc(100% + 8px)',
-                    right: 0,
-                    width: '240px',
-                    padding: '12px',
-                    borderRadius: '16px',
-                    zIndex: 200,
-                    boxShadow: 'var(--glass-shadow-hover)',
+                    background: isUserMenuOpen ? 'var(--panel-inner-bg)' : 'transparent',
+                    border: isUserMenuOpen ? '1px solid var(--border-color-hover)' : '1px solid transparent',
+                    padding: '4px 8px 4px 4px',
+                    borderRadius: '12px',
+                    cursor: 'pointer',
                     display: 'flex',
-                    flexDirection: 'column',
-                    gap: '6px',
-                    border: '1px solid var(--border-color)',
-                    background: 'var(--panel-bg-solid)',
-                    animation: 'fadeIn 0.15s ease-out'
+                    alignItems: 'center',
+                    gap: '8px',
+                    transition: 'var(--transition)',
                   }}
+                  title="Account Menu"
                 >
-                  {/* Account Header Info */}
-                  <div style={{ padding: '8px 10px 10px', borderBottom: '1px solid var(--border-color)' }}>
-                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-main)' }}>
-                      {user?.name || 'User'}
-                    </div>
-                    <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '2px' }}>
-                      {user?.email || 'user@cloudguard.io'}
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
-                      <span style={{
-                        fontSize: '0.64rem',
-                        padding: '2px 6px',
-                        borderRadius: '6px',
-                        background: 'var(--badge-primary-bg)',
-                        color: 'var(--badge-primary-color)',
-                        fontWeight: 700,
-                        textTransform: 'uppercase'
-                      }}>
-                        {user?.role || 'USER'}
-                      </span>
-                      <span style={{
-                        fontSize: '0.64rem',
-                        padding: '2px 6px',
-                        borderRadius: '6px',
-                        background: isPro ? 'var(--success-bg)' : 'var(--table-header-bg)',
-                        color: isPro ? 'var(--success)' : 'var(--text-subtle)',
-                        border: isPro ? '1px solid var(--success-border)' : '1px solid var(--border-subtle)',
-                        fontWeight: 600,
-                      }}>
-                        {isPro ? 'Pro Defender' : 'Free Tier'}
-                      </span>
-                    </div>
+                  <div style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    background: 'linear-gradient(135deg, var(--primary), var(--accent))',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 'bold',
+                    color: 'white',
+                    fontSize: '0.8rem',
+                    flexShrink: 0,
+                    boxShadow: '0 2px 8px var(--primary-glow)'
+                  }}>
+                    {userInitials}
                   </div>
+                  <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column' }}>
+                    <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-main)', lineHeight: 1.2 }}>
+                      {user?.name || 'User'}
+                    </span>
+                    <span style={{ fontSize: '0.68rem', color: 'var(--text-subtle)', lineHeight: 1.2, textTransform: 'capitalize' }}>
+                      {user?.role || 'user'}
+                    </span>
+                  </div>
+                  <ChevronDown size={14} color="var(--text-muted)" style={{ transform: isUserMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }} />
+                </button>
 
-                  {/* Navigation Links */}
-                  <Link
-                    to="/settings"
-                    onClick={() => setIsUserMenuOpen(false)}
+                {/* User Dropdown Menu */}
+                {isUserMenuOpen && (
+                  <div
+                    className="glass-panel"
                     style={{
+                      position: 'absolute',
+                      top: 'calc(100% + 8px)',
+                      right: 0,
+                      width: '240px',
+                      padding: '12px',
+                      borderRadius: '16px',
+                      zIndex: 200,
+                      boxShadow: 'var(--glass-shadow-hover)',
                       display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      padding: '8px 10px',
-                      borderRadius: '8px',
-                      color: 'var(--text-main)',
-                      textDecoration: 'none',
-                      fontSize: '0.82rem',
-                      fontWeight: 500,
-                      transition: 'var(--transition)'
+                      flexDirection: 'column',
+                      gap: '6px',
+                      border: '1px solid var(--border-color)',
+                      background: 'var(--panel-bg-solid)',
+                      animation: 'fadeIn 0.15s ease-out'
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = 'var(--table-hover)'}
-                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                   >
-                    <Settings size={15} color="var(--text-muted)" />
-                    <span>Account Settings</span>
-                  </Link>
+                    {/* Account Header Info */}
+                    <div style={{ padding: '8px 10px 10px', borderBottom: '1px solid var(--border-color)' }}>
+                      <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                        {user?.name || 'User'}
+                      </div>
+                      <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '2px' }}>
+                        {user?.email || 'user@cloudguard.io'}
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
+                        <span style={{
+                          fontSize: '0.64rem',
+                          padding: '2px 6px',
+                          borderRadius: '6px',
+                          background: 'var(--badge-primary-bg)',
+                          color: 'var(--badge-primary-color)',
+                          fontWeight: 700,
+                          textTransform: 'uppercase'
+                        }}>
+                          {user?.role || 'USER'}
+                        </span>
+                        <span style={{
+                          fontSize: '0.64rem',
+                          padding: '2px 6px',
+                          borderRadius: '6px',
+                          background: isPro ? 'var(--success-bg)' : 'var(--table-header-bg)',
+                          color: isPro ? 'var(--success)' : 'var(--text-subtle)',
+                          border: isPro ? '1px solid var(--success-border)' : '1px solid var(--border-subtle)',
+                          fontWeight: 600,
+                        }}>
+                          {activeTier.toUpperCase()}
+                        </span>
+                      </div>
+                    </div>
 
-                  <Link
-                    to="/subscription"
-                    onClick={() => setIsUserMenuOpen(false)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      padding: '8px 10px',
-                      borderRadius: '8px',
-                      color: 'var(--text-main)',
-                      textDecoration: 'none',
-                      fontSize: '0.82rem',
-                      fontWeight: 500,
-                      transition: 'var(--transition)'
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = 'var(--table-hover)'}
-                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                  >
-                    <Zap size={15} color={isPro ? 'var(--success)' : 'var(--primary)'} />
-                    <span>{isPro ? 'Manage Subscription' : 'Upgrade to Pro'}</span>
-                  </Link>
+                    {/* Menu Options */}
+                    <Link
+                      to="/settings"
+                      onClick={() => setIsUserMenuOpen(false)}
+                      style={{
+                        padding: '8px 10px',
+                        borderRadius: '8px',
+                        color: 'var(--text-main)',
+                        textDecoration: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        fontSize: '0.82rem',
+                        fontWeight: 500,
+                        transition: 'var(--transition)'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = 'var(--panel-inner-bg)'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    >
+                      <User size={15} color="var(--text-muted)" />
+                      <span>Account Settings</span>
+                    </Link>
 
-                  <div style={{ height: '1px', background: 'var(--border-color)', margin: '4px 0' }} />
+                    <Link
+                      to="/subscription"
+                      onClick={() => setIsUserMenuOpen(false)}
+                      style={{
+                        padding: '8px 10px',
+                        borderRadius: '8px',
+                        color: 'var(--text-main)',
+                        textDecoration: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        fontSize: '0.82rem',
+                        fontWeight: 500,
+                        transition: 'var(--transition)'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = 'var(--panel-inner-bg)'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    >
+                      <Zap size={15} color="var(--accent)" />
+                      <span>Subscription Plan</span>
+                    </Link>
 
-                  {/* Logout Action */}
-                  <button
-                    onClick={() => {
-                      setIsUserMenuOpen(false);
-                      logout();
-                    }}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      width: '100%',
-                      padding: '8px 10px',
-                      borderRadius: '8px',
-                      background: 'transparent',
-                      border: 'none',
-                      color: 'var(--critical)',
-                      fontSize: '0.82rem',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                      transition: 'var(--transition)'
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = 'var(--critical-bg)'}
-                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                  >
-                    <LogOut size={15} color="var(--critical)" />
-                    <span>Sign Out</span>
-                  </button>
-                </div>
-              )}
-            </div>
+                    {isAdmin && (
+                      <Link
+                        to="/admin/users"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        style={{
+                          padding: '8px 10px',
+                          borderRadius: '8px',
+                          color: 'var(--primary)',
+                          textDecoration: 'none',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          fontSize: '0.82rem',
+                          fontWeight: 600,
+                          transition: 'var(--transition)'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = 'var(--panel-inner-bg)'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                      >
+                        <Users size={15} color="var(--primary)" />
+                        <span>Admin Governance</span>
+                      </Link>
+                    )}
+
+                    <div style={{ height: '1px', background: 'var(--border-color)', margin: '4px 0' }} />
+
+                    {/* Logout Button */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsUserMenuOpen(false);
+                        logout();
+                      }}
+                      style={{
+                        padding: '8px 10px',
+                        borderRadius: '8px',
+                        color: 'var(--critical)',
+                        background: 'transparent',
+                        border: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        fontSize: '0.82rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        transition: 'var(--transition)'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = 'var(--critical-bg)'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    >
+                      <LogOut size={15} color="var(--critical)" />
+                      <span>Sign Out</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </header>
 
@@ -489,6 +534,9 @@ export default function MainLayout() {
           <Outlet />
         </div>
       </main>
+
+      {/* Universal Auth Modal for Gated Actions & Google Login */}
+      <AuthModal />
 
       {/* Full-Screen Centered Cloud ID Verifier Modal */}
       <CloudAccountVerifierModal
@@ -506,7 +554,7 @@ export default function MainLayout() {
       <SecurityChatDrawer
         isOpen={isChatOpen}
         onClose={() => setIsChatOpen(false)}
-        onOpenCloudVerifier={() => setIsVerifierOpen(true)}
+        onOpenCloudVerifier={() => requireAuth(() => setIsVerifierOpen(true), "Sign in with Google or Gmail/password to verify and connect your cloud ID.")}
       />
     </div>
   );

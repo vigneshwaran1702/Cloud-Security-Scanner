@@ -28,10 +28,12 @@ import {
   Award
 } from 'lucide-react';
 import { useSubscription, PLAN_TIERS } from '../context/SubscriptionContext';
+import { useAuth } from '../context/AuthContext';
 import SubscriptionCheckoutModal from '../components/SubscriptionCheckoutModal';
 
 export default function Subscription() {
   const { currentPlan, activeTier, isPro, isEnterprise, cancelSubscription } = useSubscription();
+  const { requireAuth } = useAuth();
   const [billingCycle, setBillingCycle] = useState('monthly'); // 'monthly' | 'yearly'
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [selectedTier, setSelectedTier] = useState('pro');
@@ -57,8 +59,10 @@ export default function Subscription() {
   ]);
 
   const handleOpenCheckout = (tierId) => {
-    setSelectedTier(tierId);
-    setIsCheckoutOpen(true);
+    requireAuth(() => {
+      setSelectedTier(tierId);
+      setIsCheckoutOpen(true);
+    }, "Sign in with your Google account or Gmail/password to upgrade your subscription plan.");
   };
 
   // Safe Production Simulation
