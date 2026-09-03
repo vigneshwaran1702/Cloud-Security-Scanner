@@ -25,8 +25,14 @@ export default function AuthModal() {
     setLoading(true);
 
     const cleanEmail = email.trim().toLowerCase();
-    if (!cleanEmail) {
+    if (!cleanEmail || !cleanEmail.includes('@')) {
       setError('Please enter a valid email address or Gmail.');
+      setLoading(false);
+      return;
+    }
+
+    if (!password || password.length < 3) {
+      setError('Please enter your password.');
       setLoading(false);
       return;
     }
@@ -35,11 +41,8 @@ export default function AuthModal() {
       if (tab === 'login') {
         await login(cleanEmail, password);
       } else {
-        await register(name.trim() || 'New User', cleanEmail, password);
-        setSuccessMsg('Account created successfully! Logging you in...');
-        setTimeout(async () => {
-          await login(cleanEmail, password);
-        }, 600);
+        const cleanName = name.trim() || cleanEmail.split('@')[0].replace(/[._-]/g, ' ');
+        await register(cleanName, cleanEmail, password);
       }
     } catch (err) {
       setError(err.message || 'Authentication failed. Please check credentials.');
@@ -54,10 +57,12 @@ export default function AuthModal() {
     setGoogleLoading(true);
 
     try {
-      const targetEmail = customEmail || (email.trim().toLowerCase().includes('@gmail.com') ? email.trim().toLowerCase() : 'vigneshcloud@gmail.com');
+      const cleanEmail = email.trim().toLowerCase();
+      const targetEmail = customEmail || (cleanEmail.includes('@') ? cleanEmail : 'vigneshcloud@gmail.com');
+      const targetName = name.trim() || (targetEmail === 'vigneshcloud@gmail.com' ? 'Vignesh Waran' : targetEmail.split('@')[0]);
       await loginWithGoogle({
         email: targetEmail,
-        name: targetEmail === 'vigneshcloud@gmail.com' ? 'Vignesh (Admin)' : (targetEmail.split('@')[0]),
+        name: targetName,
       });
     } catch (err) {
       setError(err.message || 'Google Sign-In failed.');
