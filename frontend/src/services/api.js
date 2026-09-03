@@ -111,7 +111,7 @@ function handleLocalFallback(endpoint, options) {
           id: registeredUser.id,
           name: registeredUser.name,
           email: registeredUser.email,
-          role: registeredUser.role || (registeredUser.email === 'vigneshcloud@gmail.com' ? 'admin' : 'user'),
+          role: registeredUser.role || 'user',
           auth_provider: 'email',
           is_active: true,
           created_at: registeredUser.created_at || new Date().toISOString().replace('T', ' ').slice(0, 19)
@@ -127,11 +127,11 @@ function handleLocalFallback(endpoint, options) {
       .join(' ');
 
     const newAccount = {
-      id: rawEmail === 'vigneshcloud@gmail.com' ? 1 : Math.floor(Math.random() * 9000) + 1000,
-      name: rawEmail === 'vigneshcloud@gmail.com' ? 'Vignesh Waran' : (formattedName || 'Cloud Security Lead'),
+      id: Math.floor(Math.random() * 9000) + 1000,
+      name: formattedName || 'Cloud User',
       email: rawEmail,
       password: rawPassword,
-      role: rawEmail === 'vigneshcloud@gmail.com' ? 'admin' : 'user',
+      role: 'user',
       auth_provider: 'email',
       is_active: true,
       created_at: new Date().toISOString().replace('T', ' ').slice(0, 19)
@@ -162,17 +162,17 @@ function handleLocalFallback(endpoint, options) {
       .split(' ')
       .map(w => w.charAt(0).toUpperCase() + w.slice(1))
       .join(' ');
-    const rawName = (body.name || formattedName || 'Google Cloud User').trim();
+    const rawName = (body.name || formattedName || 'Google User').trim();
     const avatar = body.picture || `https://api.dicebear.com/7.x/bottts/svg?seed=${rawEmail}`;
     
     return {
       access_token: `jwt_google_${Date.now()}`,
       token_type: 'bearer',
       user: {
-        id: rawEmail === 'vigneshcloud@gmail.com' ? 1 : Math.floor(Math.random() * 9000) + 1000,
-        name: rawEmail === 'vigneshcloud@gmail.com' ? 'Vignesh Waran' : rawName,
+        id: Math.floor(Math.random() * 9000) + 1000,
+        name: rawName,
         email: rawEmail,
-        role: rawEmail === 'vigneshcloud@gmail.com' ? 'admin' : 'user',
+        role: 'user',
         auth_provider: 'google',
         picture: avatar,
         is_active: true,
@@ -195,8 +195,8 @@ function handleLocalFallback(endpoint, options) {
     } catch (e) { users = []; }
 
     const existingIndex = users.findIndex(u => u.email.toLowerCase() === rawEmail);
-    const userId = rawEmail === 'vigneshcloud@gmail.com' ? 1 : Math.floor(Math.random() * 9000) + 1000;
-    const userRole = rawEmail === 'vigneshcloud@gmail.com' ? 'admin' : (body.role || 'user');
+    const userId = Math.floor(Math.random() * 9000) + 1000;
+    const userRole = body.role || 'user';
 
     const newUser = {
       id: userId,
