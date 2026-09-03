@@ -118,20 +118,17 @@ export default function AuthModal() {
 
         {/* Modal Header */}
         <div className="flex items-center gap-3" style={{ marginBottom: '20px', paddingRight: '36px' }}>
-          <div
+          <img
+            src="/logo.png"
+            alt="Cloud Security Logo"
             style={{
-              background: 'linear-gradient(135deg, var(--primary), var(--accent))',
-              padding: '12px',
-              borderRadius: '16px',
-              boxShadow: '0 4px 14px var(--primary-glow)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              width: '46px',
+              height: '46px',
+              objectFit: 'contain',
+              borderRadius: '12px',
               flexShrink: 0,
             }}
-          >
-            <Shield size={26} color="white" />
-          </div>
+          />
           <div>
             <h2 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 700, color: 'var(--text-main)' }}>
               {tab === 'login' ? 'Sign In to Cloud Security' : 'Create New Account'}
