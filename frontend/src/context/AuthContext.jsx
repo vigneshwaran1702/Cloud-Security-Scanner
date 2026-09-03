@@ -93,6 +93,18 @@ export function AuthProvider({ children }) {
       body: JSON.stringify({ name, email, password, role }),
     });
 
+    if (data.user && data.access_token) {
+      localStorage.setItem('token', data.access_token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      setToken(data.access_token);
+      setUser(data.user);
+      
+      if (authModal.onSuccess && typeof authModal.onSuccess === 'function') {
+        authModal.onSuccess(data.user);
+      }
+      closeAuthModal();
+    }
+
     return data;
   };
 

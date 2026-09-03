@@ -94,24 +94,63 @@ function handleLocalFallback(endpoint, options) {
     const rawPassword = body.password || '';
     if (!rawEmail || !rawPassword) throw new Error('Please enter both email and password.');
     
-    // Derive a clean, readable name from email if needed
+    let users = [];
+    try {
+      users = JSON.parse(localStorage.getItem('cg_registered_users') || '[]');
+    } catch (e) { users = []; }
+
+    const registeredUser = users.find(u => u.email.toLowerCase() === rawEmail);
+    if (registeredUser) {
+      if (registeredUser.password && registeredUser.password !== rawPassword) {
+        throw new Error('Incorrect password. Please try again.');
+      }
+      return {
+        access_token: `jwt_token_${Date.now()}`,
+        token_type: 'bearer',
+        user: {
+          id: registeredUser.id,
+          name: registeredUser.name,
+          email: registeredUser.email,
+          role: registeredUser.role || (registeredUser.email === 'vigneshcloud@gmail.com' ? 'admin' : 'user'),
+          auth_provider: 'email',
+          is_active: true,
+          created_at: registeredUser.created_at || new Date().toISOString().replace('T', ' ').slice(0, 19)
+        }
+      };
+    }
+
+    // If logging in for the first time without prior register, create the account dynamically
     const emailPrefix = rawEmail.split('@')[0].replace(/[._-]/g, ' ');
     const formattedName = emailPrefix
       .split(' ')
       .map(w => w.charAt(0).toUpperCase() + w.slice(1))
       .join(' ');
 
+    const newAccount = {
+      id: rawEmail === 'vigneshcloud@gmail.com' ? 1 : Math.floor(Math.random() * 9000) + 1000,
+      name: rawEmail === 'vigneshcloud@gmail.com' ? 'Vignesh Waran' : (formattedName || 'Cloud Security Lead'),
+      email: rawEmail,
+      password: rawPassword,
+      role: rawEmail === 'vigneshcloud@gmail.com' ? 'admin' : 'user',
+      auth_provider: 'email',
+      is_active: true,
+      created_at: new Date().toISOString().replace('T', ' ').slice(0, 19)
+    };
+
+    users.push(newAccount);
+    localStorage.setItem('cg_registered_users', JSON.stringify(users));
+
     return {
       access_token: `jwt_token_${Date.now()}`,
       token_type: 'bearer',
       user: {
-        id: rawEmail === 'vigneshcloud@gmail.com' ? 1 : Math.floor(Math.random() * 9000) + 1000,
-        name: rawEmail === 'vigneshcloud@gmail.com' ? 'Vignesh Waran' : (formattedName || 'Cloud Engineer'),
-        email: rawEmail,
-        role: rawEmail === 'vigneshcloud@gmail.com' ? 'admin' : 'user',
+        id: newAccount.id,
+        name: newAccount.name,
+        email: newAccount.email,
+        role: newAccount.role,
         auth_provider: 'email',
         is_active: true,
-        created_at: new Date().toISOString().replace('T', ' ').slice(0, 19)
+        created_at: newAccount.created_at
       }
     };
   }
@@ -123,7 +162,7 @@ function handleLocalFallback(endpoint, options) {
       .split(' ')
       .map(w => w.charAt(0).toUpperCase() + w.slice(1))
       .join(' ');
-    const rawName = (body.name || formattedName || 'Google User').trim();
+    const rawName = (body.name || formattedName || 'Google Cloud User').trim();
     const avatar = body.picture || `https://api.dicebear.com/7.x/bottts/svg?seed=${rawEmail}`;
     
     return {
@@ -144,20 +183,60 @@ function handleLocalFallback(endpoint, options) {
 
   if (endpoint === '/api/v1/auth/register') {
     const rawEmail = (body.email || '').trim().toLowerCase();
-    const rawName = (body.name || 'New User').trim();
+    const rawName = (body.name || 'Cloud User').trim();
+    const rawPassword = body.password || '';
+
+    if (!rawEmail) throw new Error('Email is required for registration.');
+    if (!rawPassword) throw new Error('Password is required.');
+
+    let users = [];
+    try {
+      users = JSON.parse(localStorage.getItem('cg_registered_users') || '[]');
+    } catch (e) { users = []; }
+
+    const existingIndex = users.findIndex(u => u.email.toLowerCase() === rawEmail);
+    const userId = rawEmail === 'vigneshcloud@gmail.com' ? 1 : Math.floor(Math.random() * 9000) + 1000;
+    const userRole = rawEmail === 'vigneshcloud@gmail.com' ? 'admin' : (body.role || 'user');
+
+    const newUser = {
+      id: userId,
+      name: rawName,
+      email: rawEmail,
+      password: rawPassword,
+      role: userRole,
+      auth_provider: 'email',
+      is_active: true,
+      created_at: new Date().toISOString().replace('T', ' ').slice(0, 19)
+    };
+
+    if (existingIndex >= 0) {
+      users[existingIndex] = newUser;
+    } else {
+      users.push(newUser);
+    }
+    localStorage.setItem('cg_registered_users', JSON.stringify(users));
+
     return {
       access_token: `jwt_token_${Date.now()}`,
       token_type: 'bearer',
       user: {
-        id: Math.floor(Math.random() * 9000) + 1000,
-        name: rawName,
-        email: rawEmail,
-        role: rawEmail === 'vigneshcloud@gmail.com' ? 'admin' : (body.role || 'user'),
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role,
         auth_provider: 'email',
         is_active: true,
-        created_at: new Date().toISOString().replace('T', ' ').slice(0, 19)
+        created_at: newUser.created_at
       }
     };
+  }
+
+  if (endpoint === '/api/v1/auth/me') {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      return JSON.parse(savedUser);
+    }
+    throw new Error('Not authenticated');
   }
 
   // Cloud Account Verification
