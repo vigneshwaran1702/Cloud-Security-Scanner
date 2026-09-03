@@ -135,10 +135,10 @@ export default function Subscription() {
         </div>
 
         <h1 style={{ fontSize: '2.8rem', fontWeight: 800, lineHeight: 1.15, marginBottom: '16px', color: 'var(--text-main)' }}>
-          Upgrade to <span className="gradient-text">Pro Cloud Defender</span> for <span style={{ color: 'var(--primary)' }}>$39</span>
+          Choose Your <span className="gradient-text">Cloud Security</span> Plan
         </h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', maxWidth: '780px', margin: '0 auto 28px' }}>
-          Protect production infrastructure automatically, get instant 24/7 AI SecOps help, deep risk contribution analytics, and continuous multi-cloud automated remediation.
+          Free basic protection for all users upon login, with powerful 1-Month, 3-Month, and 1-Year Pro protection tiers.
         </p>
 
         {/* Current Active Plan Status Banner */}
@@ -151,7 +151,7 @@ export default function Subscription() {
             border: isPro ? '1px solid rgba(16, 185, 129, 0.35)' : '1px solid var(--badge-primary-border)',
             padding: '10px 20px',
             borderRadius: '16px',
-            marginBottom: '28px',
+            marginBottom: '32px',
           }}
         >
           <div
@@ -164,8 +164,8 @@ export default function Subscription() {
             }}
           />
           <span style={{ fontSize: '0.9rem', color: 'var(--text-main)' }}>
-            Current Plan: <strong style={{ color: isPro ? 'var(--success)' : 'var(--primary)' }}>{activeTier.name}</strong>
-            {currentPlan.expiresAt && ` (Renews ${new Date(currentPlan.expiresAt).toLocaleDateString()})`}
+            Current Status: <strong style={{ color: isPro ? 'var(--success)' : 'var(--primary)' }}>{activeTier.name}</strong>
+            {currentPlan.expiresAt && ` (Active until ${new Date(currentPlan.expiresAt).toLocaleDateString()})`}
           </span>
           {isPro && (
             <button
@@ -184,140 +184,77 @@ export default function Subscription() {
             </button>
           )}
         </div>
-
-        {/* Billing Cycle Switcher */}
-        <div
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            background: 'var(--panel-inner-bg)',
-            padding: '4px',
-            borderRadius: '14px',
-            border: '1px solid var(--border-color)',
-          }}
-        >
-          <button
-            onClick={() => setBillingCycle('monthly')}
-            style={{
-              background: billingCycle === 'monthly' ? 'var(--primary)' : 'transparent',
-              color: billingCycle === 'monthly' ? '#fff' : 'var(--text-muted)',
-              border: 'none',
-              padding: '8px 20px',
-              borderRadius: '10px',
-              fontSize: '0.88rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-              transition: 'var(--transition)',
-            }}
-          >
-            Monthly Billing
-          </button>
-          <button
-            onClick={() => setBillingCycle('yearly')}
-            style={{
-              background: billingCycle === 'yearly' ? 'var(--primary)' : 'transparent',
-              color: billingCycle === 'yearly' ? '#fff' : 'var(--text-muted)',
-              border: 'none',
-              padding: '8px 20px',
-              borderRadius: '10px',
-              fontSize: '0.88rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-              transition: 'var(--transition)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-            }}
-          >
-            Yearly Billing
-            <span
-              style={{
-                background: 'linear-gradient(135deg, #10b981, #059669)',
-                color: '#fff',
-                fontSize: '0.7rem',
-                padding: '2px 8px',
-                borderRadius: '10px',
-                fontWeight: 700,
-              }}
-            >
-              Save 2 Months
-            </span>
-          </button>
-        </div>
       </div>
 
-      {/* Pricing Cards Grid */}
+      {/* 4 PRICING CARDS GRID */}
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '24px',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '20px',
           marginBottom: '56px',
           alignItems: 'stretch',
         }}
       >
-        {/* Tier 1: Free Starter */}
+        {/* Tier 1: Free Starter ($0) */}
         <div
           className="glass-panel"
           style={{
-            padding: '32px 28px',
+            padding: '28px 22px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            border: currentPlan.tierId === 'free' ? '1px solid var(--primary)' : '1px solid var(--border-color)',
+            border: currentPlan.tierId === 'free' ? '2px solid var(--primary)' : '1px solid var(--border-color)',
             background: 'var(--panel-bg-solid)',
+            borderRadius: '18px',
           }}
         >
           <div>
-            <div className="flex justify-between items-center" style={{ marginBottom: '16px' }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Starter
+            <div className="flex justify-between items-center" style={{ marginBottom: '14px' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Included with Login
               </span>
               {currentPlan.tierId === 'free' && (
-                <span style={{ fontSize: '0.75rem', background: 'var(--badge-primary-bg)', padding: '3px 10px', borderRadius: '12px', color: 'var(--primary)', fontWeight: 700 }}>
-                  Active
+                <span style={{ fontSize: '0.72rem', background: 'var(--badge-primary-bg)', padding: '2px 8px', borderRadius: '10px', color: 'var(--primary)', fontWeight: 700 }}>
+                  Active ✓
                 </span>
               )}
             </div>
 
-            <h3 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '8px' }}>Starter Cloud Shield</h3>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '24px', minHeight: '40px' }}>
-              Essential multi-cloud posture checks and manual vulnerability reviews for developers.
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '6px' }}>Starter Free Tier</h3>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '18px', minHeight: '36px' }}>
+              Every registered user starts with full access to standard vulnerability posture scans.
             </p>
 
-            <div style={{ marginBottom: '24px' }}>
-              <span style={{ fontSize: '2.8rem', fontWeight: 800, color: 'var(--text-main)' }}>$0</span>
-              <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}> / forever</span>
+            <div style={{ marginBottom: '20px' }}>
+              <span style={{ fontSize: '2.4rem', fontWeight: 800, color: 'var(--text-main)' }}>$0</span>
+              <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}> / forever free</span>
             </div>
 
-            <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '20px', marginBottom: '24px' }}>
-              <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '12px' }}>
-                Included in Free:
+            <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '16px', marginBottom: '20px' }}>
+              <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '10px' }}>
+                Included Features:
               </div>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.85rem' }}>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem' }}>
                 <li className="flex items-center gap-2">
-                  <Check size={16} color="var(--success)" />
-                  <span>1 Cloud Account (AWS or Azure)</span>
+                  <Check size={14} color="var(--success)" />
+                  <span>1 Cloud Account (AWS/Azure/GCP)</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check size={16} color="var(--success)" />
-                  <span>Standard Risk Vulnerability Scanning</span>
+                  <Check size={14} color="var(--success)" />
+                  <span>Manual & On-Demand Scans</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check size={16} color="var(--success)" />
-                  <span>Manual Remediation Guides</span>
+                  <Check size={14} color="var(--success)" />
+                  <span>CIS Benchmark Audits</span>
                 </li>
                 <li className="flex items-center gap-2" style={{ color: 'var(--text-muted)', opacity: 0.6 }}>
-                  <CloseIcon size={16} />
+                  <CloseIcon size={14} />
                   <span>No Safe Production Auto-Fixes</span>
                 </li>
                 <li className="flex items-center gap-2" style={{ color: 'var(--text-muted)', opacity: 0.6 }}>
-                  <CloseIcon size={16} />
-                  <span>No 24/7 Instant AI SecOps Hotline</span>
-                </li>
-                <li className="flex items-center gap-2" style={{ color: 'var(--text-muted)', opacity: 0.6 }}>
-                  <CloseIcon size={16} />
-                  <span>No Risk Contribution Simulator</span>
+                  <CloseIcon size={14} />
+                  <span>No 24/7 AI Hotline</span>
                 </li>
               </ul>
             </div>
@@ -329,209 +266,79 @@ export default function Subscription() {
             onClick={() => cancelSubscription()}
             style={{
               width: '100%',
-              padding: '12px',
-              borderRadius: '12px',
+              padding: '10px',
+              borderRadius: '10px',
               background: 'var(--panel-inner-bg)',
               border: '1px solid var(--border-color)',
               color: 'var(--text-main)',
               cursor: currentPlan.tierId === 'free' ? 'default' : 'pointer',
               fontWeight: 600,
+              fontSize: '0.85rem'
             }}
           >
-            {currentPlan.tierId === 'free' ? 'Current Plan' : 'Select Free'}
+            {currentPlan.tierId === 'free' ? 'Active Default Plan' : 'Switch to Free'}
           </button>
         </div>
 
-        {/* Tier 2: $39 Pro Defender (PROMINENT HIGHLIGHT) */}
+        {/* Tier 2: 1 Month Package ($19) */}
         <div
           className="glass-panel"
           style={{
-            padding: '36px 30px',
+            padding: '28px 22px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            border: '2px solid var(--primary)',
-            boxShadow: 'var(--glass-shadow-hover)',
-            position: 'relative',
+            border: currentPlan.tierId === 'monthly' ? '2px solid var(--primary)' : '1px solid var(--border-color)',
             background: 'var(--panel-bg-solid)',
-            transform: 'scale(1.02)',
+            borderRadius: '18px',
           }}
         >
-          {/* Most Popular Badge */}
-          <div
-            style={{
-              position: 'absolute',
-              top: '-14px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              background: 'linear-gradient(135deg, var(--primary), var(--accent))',
-              color: 'white',
-              fontSize: '0.78rem',
-              fontWeight: 800,
-              padding: '4px 18px',
-              borderRadius: '20px',
-              letterSpacing: '0.06em',
-              textTransform: 'uppercase',
-              boxShadow: '0 4px 14px rgba(220, 38, 38, 0.4)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-            }}
-          >
-            <Sparkles size={14} /> RECOMMENDED & MOST POPULAR
-          </div>
-
           <div>
-            <div className="flex justify-between items-center" style={{ marginBottom: '16px' }}>
-              <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Pro Tier
+            <div className="flex justify-between items-center" style={{ marginBottom: '14px' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                1 Month Plan
               </span>
-              {currentPlan.tierId === 'pro' && (
-                <span style={{ fontSize: '0.75rem', background: 'rgba(16, 185, 129, 0.2)', border: '1px solid var(--success)', padding: '3px 10px', borderRadius: '12px', color: 'var(--success)', fontWeight: 700 }}>
-                  Active Plan ✓
+              {currentPlan.tierId === 'monthly' && (
+                <span style={{ fontSize: '0.72rem', background: 'rgba(16, 185, 129, 0.2)', border: '1px solid var(--success)', padding: '2px 8px', borderRadius: '10px', color: 'var(--success)', fontWeight: 700 }}>
+                  Active ✓
                 </span>
               )}
             </div>
 
-            <h3 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '8px' }}>Pro Cloud Defender</h3>
-            <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginBottom: '24px', minHeight: '40px' }}>
-              Autonomous multi-cloud security with automated safe production fixes, 24/7 instant AI SecOps help, and deep risk contribution analytics.
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '6px' }}>1 Month Pro Shield</h3>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '18px', minHeight: '36px' }}>
+              Monthly recurring defense with production auto-fixes, 24/7 AI SecOps, and real-time drift alerts.
             </p>
 
-            <div style={{ marginBottom: '24px' }}>
-              <div className="flex items-baseline gap-1">
-                <span style={{ fontSize: '3.4rem', fontWeight: 900, color: 'var(--text-main)', letterSpacing: '-0.03em' }}>$39</span>
-                <span style={{ color: 'var(--text-muted)', fontSize: '1rem' }}>
-                  /{billingCycle === 'yearly' ? 'mo (billed $390/yr)' : 'month'}
-                </span>
-              </div>
-              <div style={{ fontSize: '0.78rem', color: 'var(--success)', fontWeight: 600, marginTop: '2px' }}>
-                Instant Activation • 30-Day Money-Back Guarantee
-              </div>
+            <div style={{ marginBottom: '20px' }}>
+              <span style={{ fontSize: '2.4rem', fontWeight: 800, color: 'var(--text-main)' }}>$19</span>
+              <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}> / 1 month</span>
             </div>
 
-            <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '20px', marginBottom: '28px' }}>
-              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--primary)', marginBottom: '12px' }}>
+            <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '16px', marginBottom: '20px' }}>
+              <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--primary)', marginBottom: '10px' }}>
                 Everything in Free, plus:
               </div>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.88rem' }}>
-                <li className="flex items-start gap-2.5">
-                  <div style={{ background: 'rgba(16, 185, 129, 0.2)', padding: '2px', borderRadius: '50%', marginTop: '2px' }}>
-                    <Check size={14} color="var(--success)" />
-                  </div>
-                  <div>
-                    <strong style={{ color: 'var(--text-main)' }}>Safe Production Automatically</strong>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Zero-downtime automated fixes with pre-flight dry-run guardrails</div>
-                  </div>
-                </li>
-
-                <li className="flex items-start gap-2.5">
-                  <div style={{ background: 'var(--badge-primary-bg)', padding: '2px', borderRadius: '50%', marginTop: '2px' }}>
-                    <Check size={14} color="var(--primary)" />
-                  </div>
-                  <div>
-                    <strong style={{ color: 'var(--text-main)' }}>24/7 Instant Help AI SecOps Hotline</strong>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Sub-minute incident triage & live AI cloud architect hotline</div>
-                  </div>
-                </li>
-
-                <li className="flex items-start gap-2.5">
-                  <div style={{ background: 'var(--badge-primary-bg)', padding: '2px', borderRadius: '50%', marginTop: '2px' }}>
-                    <Check size={14} color="var(--primary)" />
-                  </div>
-                  <div>
-                    <strong style={{ color: 'var(--text-main)' }}>Advanced Risk Contribution Matrix</strong>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Deep blast-radius mapping & asset vulnerability impact simulator</div>
-                  </div>
-                </li>
-
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem' }}>
                 <li className="flex items-center gap-2">
-                  <Check size={16} color="var(--success)" />
-                  <span>Unlimited Cloud Accounts (AWS, Azure & GCP)</span>
-                </li>
-
-                <li className="flex items-center gap-2">
-                  <Check size={16} color="var(--success)" />
-                  <span>1-Click Compliance Reporting (SOC2, CIS, HIPAA)</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <button
-            className="btn btn-primary"
-            onClick={() => handleOpenCheckout('pro')}
-            style={{
-              width: '100%',
-              padding: '14px',
-              borderRadius: '12px',
-              fontWeight: 700,
-              fontSize: '1rem',
-              cursor: 'pointer',
-            }}
-          >
-            {currentPlan.tierId === 'pro' ? 'Current Plan (Active ✓)' : 'Upgrade to Pro for $39'}
-          </button>
-        </div>
-
-        {/* Tier 3: Enterprise Fortress */}
-        <div
-          className="glass-panel"
-          style={{
-            padding: '32px 28px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            border: currentPlan.tierId === 'enterprise' ? '1px solid var(--primary)' : '1px solid var(--border-color)',
-            background: 'var(--panel-bg-solid)',
-          }}
-        >
-          <div>
-            <div className="flex justify-between items-center" style={{ marginBottom: '16px' }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Enterprise
-              </span>
-              {currentPlan.tierId === 'enterprise' && (
-                <span style={{ fontSize: '0.75rem', background: 'rgba(16, 185, 129, 0.2)', border: '1px solid var(--success)', padding: '3px 10px', borderRadius: '12px', color: 'var(--success)', fontWeight: 700 }}>
-                  Active
-                </span>
-              )}
-            </div>
-
-            <h3 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '8px' }}>Enterprise Fortress</h3>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '24px', minHeight: '40px' }}>
-              Custom security governance, dedicated security architect, SIEM pipelines, and enterprise-grade SLAs.
-            </p>
-
-            <div style={{ marginBottom: '24px' }}>
-              <span style={{ fontSize: '2.8rem', fontWeight: 800, color: 'var(--text-main)' }}>$99</span>
-              <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}> / month</span>
-            </div>
-
-            <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '20px', marginBottom: '24px' }}>
-              <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '12px' }}>
-                Everything in Pro, plus:
-              </div>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.85rem' }}>
-                <li className="flex items-center gap-2">
-                  <Check size={16} color="var(--success)" />
-                  <span>Dedicated Technical Account Manager (TAM)</span>
+                  <Check size={14} color="var(--success)" />
+                  <span>Safe Production Auto-Remediation</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check size={16} color="var(--success)" />
-                  <span>Custom SIEM & Splunk/Datadog Pipelines</span>
+                  <Check size={14} color="var(--success)" />
+                  <span>24/7 AI SecOps Assistant Chatbot</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check size={16} color="var(--success)" />
-                  <span>Multi-Tenant RBAC Governance</span>
+                  <Check size={14} color="var(--success)" />
+                  <span>Real-time Drift & Threat Alerts</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check size={16} color="var(--success)" />
-                  <span>99.99% Production Uptime SLA Guarantee</span>
+                  <Check size={14} color="var(--success)" />
+                  <span>Up to 3 Multi-Cloud Accounts</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check size={16} color="var(--success)" />
-                  <span>Custom Compliance Frameworks</span>
+                  <Check size={14} color="var(--success)" />
+                  <span>1-Click Compliance PDF Reports</span>
                 </li>
               </ul>
             </div>
@@ -539,19 +346,216 @@ export default function Subscription() {
 
           <button
             className="btn"
-            onClick={() => handleOpenCheckout('enterprise')}
+            onClick={() => handleOpenCheckout('monthly')}
+            style={{
+              width: '100%',
+              padding: '10px',
+              borderRadius: '10px',
+              background: 'var(--panel-inner-bg)',
+              border: '1px solid var(--primary)',
+              color: 'var(--primary)',
+              cursor: 'pointer',
+              fontWeight: 700,
+              fontSize: '0.85rem'
+            }}
+          >
+            {currentPlan.tierId === 'monthly' ? 'Current Plan (Active ✓)' : 'Upgrade for $19 / mo'}
+          </button>
+        </div>
+
+        {/* Tier 3: 3 Months Package ($39) - RECOMMENDED & MOST POPULAR */}
+        <div
+          className="glass-panel"
+          style={{
+            padding: '30px 24px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            border: '2px solid #1a73e8',
+            boxShadow: 'var(--glass-shadow-hover)',
+            position: 'relative',
+            background: 'var(--panel-bg-solid)',
+            borderRadius: '20px',
+            transform: 'scale(1.02)',
+          }}
+        >
+          {/* Most Popular Badge */}
+          <div
+            style={{
+              position: 'absolute',
+              top: '-13px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              background: 'linear-gradient(135deg, #1a73e8, #4285F4)',
+              color: 'white',
+              fontSize: '0.72rem',
+              fontWeight: 800,
+              padding: '3px 14px',
+              borderRadius: '20px',
+              letterSpacing: '0.05em',
+              textTransform: 'uppercase',
+              boxShadow: '0 4px 12px rgba(26, 115, 232, 0.4)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            <Sparkles size={13} /> RECOMMENDED • 3 MONTHS ($39)
+          </div>
+
+          <div>
+            <div className="flex justify-between items-center" style={{ marginBottom: '14px', marginTop: '6px' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#1a73e8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Quarterly (3 Months)
+              </span>
+              {currentPlan.tierId === 'quarterly' && (
+                <span style={{ fontSize: '0.72rem', background: 'rgba(16, 185, 129, 0.2)', border: '1px solid var(--success)', padding: '2px 8px', borderRadius: '10px', color: 'var(--success)', fontWeight: 700 }}>
+                  Active Plan ✓
+                </span>
+              )}
+            </div>
+
+            <h3 style={{ fontSize: '1.35rem', fontWeight: 800, marginBottom: '6px' }}>3 Months Pro Defender</h3>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '18px', minHeight: '36px' }}>
+              Best value all-inclusive package with priority auto-fixes, unlimited accounts, and risk contribution analytics.
+            </p>
+
+            <div style={{ marginBottom: '20px' }}>
+              <div className="flex items-baseline gap-1">
+                <span style={{ fontSize: '2.6rem', fontWeight: 900, color: 'var(--text-main)', letterSpacing: '-0.03em' }}>$39</span>
+                <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}> / 3 months ($13/mo)</span>
+              </div>
+              <div style={{ fontSize: '0.72rem', color: 'var(--success)', fontWeight: 700, marginTop: '2px' }}>
+                Save 32% vs monthly plan • Instant Zero-Downtime Activation
+              </div>
+            </div>
+
+            <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '16px', marginBottom: '22px' }}>
+              <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#1a73e8', marginBottom: '10px' }}>
+                Everything in 1-Month, plus:
+              </div>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem' }}>
+                <li className="flex items-center gap-2">
+                  <Check size={14} color="var(--success)" />
+                  <strong>Unlimited Cloud Accounts (AWS, Azure & GCP)</strong>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check size={14} color="var(--success)" />
+                  <span>Priority 24/7 AI SecOps Hotline</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check size={14} color="var(--success)" />
+                  <span>Deep Risk Contribution Matrix & Simulator</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check size={14} color="var(--success)" />
+                  <span>Automated Rollback Safeguards</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <button
+            className="btn btn-primary"
+            onClick={() => handleOpenCheckout('quarterly')}
             style={{
               width: '100%',
               padding: '12px',
-              borderRadius: '12px',
+              borderRadius: '10px',
+              fontWeight: 700,
+              fontSize: '0.92rem',
+              background: '#1a73e8',
+              borderColor: '#1a73e8',
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(26, 115, 232, 0.35)'
+            }}
+          >
+            {currentPlan.tierId === 'quarterly' ? 'Active Plan ✓' : 'Get 3 Months for $39'}
+          </button>
+        </div>
+
+        {/* Tier 4: 1 Year Package ($149) */}
+        <div
+          className="glass-panel"
+          style={{
+            padding: '28px 22px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            border: currentPlan.tierId === 'yearly' ? '2px solid var(--primary)' : '1px solid var(--border-color)',
+            background: 'var(--panel-bg-solid)',
+            borderRadius: '18px',
+          }}
+        >
+          <div>
+            <div className="flex justify-between items-center" style={{ marginBottom: '14px' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--success)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                1 Year Package
+              </span>
+              {currentPlan.tierId === 'yearly' && (
+                <span style={{ fontSize: '0.72rem', background: 'rgba(16, 185, 129, 0.2)', border: '1px solid var(--success)', padding: '2px 8px', borderRadius: '10px', color: 'var(--success)', fontWeight: 700 }}>
+                  Active ✓
+                </span>
+              )}
+            </div>
+
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '6px' }}>1 Year Enterprise Fortress</h3>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '18px', minHeight: '36px' }}>
+              Maximum annual savings with dedicated compliance framework, SIEM exports, and 99.99% uptime SLA.
+            </p>
+
+            <div style={{ marginBottom: '20px' }}>
+              <div className="flex items-baseline gap-1">
+                <span style={{ fontSize: '2.4rem', fontWeight: 800, color: 'var(--text-main)' }}>$149</span>
+                <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}> / 1 year</span>
+              </div>
+              <div style={{ fontSize: '0.72rem', color: 'var(--success)', fontWeight: 700, marginTop: '2px' }}>
+                Only $12.41/mo • Highest Value Savings
+              </div>
+            </div>
+
+            <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '16px', marginBottom: '20px' }}>
+              <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--success)', marginBottom: '10px' }}>
+                Everything in 3-Month, plus:
+              </div>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem' }}>
+                <li className="flex items-center gap-2">
+                  <Check size={14} color="var(--success)" />
+                  <span>Unlimited Cloud Accounts & VPCs</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check size={14} color="var(--success)" />
+                  <span>Custom SIEM & Splunk/Datadog Feeds</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check size={14} color="var(--success)" />
+                  <span>Multi-Tenant Governance & RBAC</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check size={14} color="var(--success)" />
+                  <span>Dedicated Security Architect Support</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <button
+            className="btn"
+            onClick={() => handleOpenCheckout('yearly')}
+            style={{
+              width: '100%',
+              padding: '10px',
+              borderRadius: '10px',
               background: 'var(--panel-inner-bg)',
               border: '1px solid var(--border-color)',
               color: 'var(--text-main)',
               cursor: 'pointer',
-              fontWeight: 600,
+              fontWeight: 700,
+              fontSize: '0.85rem'
             }}
           >
-            {currentPlan.tierId === 'enterprise' ? 'Current Plan' : 'Upgrade to Enterprise ($99)'}
+            {currentPlan.tierId === 'yearly' ? 'Current Plan (Active ✓)' : 'Upgrade for $149 / yr'}
           </button>
         </div>
       </div>

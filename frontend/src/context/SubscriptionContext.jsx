@@ -7,10 +7,11 @@ export const PLAN_TIERS = {
     id: 'free',
     name: 'Starter Cloud Shield',
     price: 0,
-    priceMonthly: 0,
-    priceYearly: 0,
+    priceTotal: 0,
+    period: 'Forever Free',
+    durationMonths: 0,
     badge: 'Free Tier',
-    description: 'Basic vulnerability scanning for personal projects and small sandboxes.',
+    description: 'Essential multi-cloud posture checks and security reviews for every registered user.',
     features: {
       safeProduction: false,
       instantHelp: false,
@@ -20,18 +21,19 @@ export const PLAN_TIERS = {
       complianceReports: false,
       realtimeDrift: false,
       maxAccounts: 1,
-      scanFrequency: 'Manual / 24h',
+      scanFrequency: 'Manual / On-demand',
       supportTier: 'Community'
     }
   },
-  PRO: {
-    id: 'pro',
-    name: 'Pro Cloud Defender',
-    price: 39,
-    priceMonthly: 39,
-    priceYearly: 390, // $32.5/mo
-    badge: 'Most Popular',
-    description: 'Autonomous multi-cloud security with automated safe production fixes, 24/7 instant AI SecOps help, and deep risk contribution analytics.',
+  MONTHLY: {
+    id: 'monthly',
+    name: '1 Month Pro Shield',
+    price: 19,
+    priceTotal: 19,
+    period: '1 Month',
+    durationMonths: 1,
+    badge: 'Monthly Plan',
+    description: 'Full automated CIS compliance, production safe fixes, 24/7 AI SecOps assistant, and real-time drift alerts.',
     features: {
       safeProduction: true,
       instantHelp: true,
@@ -40,19 +42,42 @@ export const PLAN_TIERS = {
       unlimitedCloudAccounts: true,
       complianceReports: true,
       realtimeDrift: true,
-      maxAccounts: 'Unlimited',
+      maxAccounts: 'Multi-Cloud (3 Accounts)',
       scanFrequency: 'Continuous Real-time',
-      supportTier: '24/7 Priority AI SecOps Hotline'
+      supportTier: '24/7 AI SecOps Assistant'
     }
   },
-  ENTERPRISE: {
-    id: 'enterprise',
-    name: 'Enterprise Cloud Fortress',
-    price: 99,
-    priceMonthly: 99,
-    priceYearly: 990,
-    badge: 'Enterprise',
-    description: 'Custom governance, dedicated security architect, custom SIEM pipelines and 99.99% safe production SLA.',
+  QUARTERLY: {
+    id: 'quarterly',
+    name: '3 Months Pro Defender',
+    price: 39,
+    priceTotal: 39,
+    period: '3 Months',
+    durationMonths: 3,
+    badge: 'Most Popular / Best Value',
+    description: '3-Month all-inclusive defense with automated safe production fixes, unlimited accounts, and priority AI SecOps hotline.',
+    features: {
+      safeProduction: true,
+      instantHelp: true,
+      riskContributionMatrix: true,
+      autoRemediation: true,
+      unlimitedCloudAccounts: true,
+      complianceReports: true,
+      realtimeDrift: true,
+      maxAccounts: 'Unlimited Accounts',
+      scanFrequency: 'Continuous Real-time',
+      supportTier: 'Priority 24/7 AI SecOps Hotline'
+    }
+  },
+  YEARLY: {
+    id: 'yearly',
+    name: '1 Year Enterprise Fortress',
+    price: 149,
+    priceTotal: 149,
+    period: '1 Year',
+    durationMonths: 12,
+    badge: 'Maximum Savings',
+    description: 'Comprehensive annual fortress protection with dedicated compliance reporting, SIEM exports, and unlimited cloud assets.',
     features: {
       safeProduction: true,
       instantHelp: true,
@@ -63,10 +88,14 @@ export const PLAN_TIERS = {
       realtimeDrift: true,
       maxAccounts: 'Unlimited + Dedicated VPC',
       scanFrequency: 'Sub-second Continuous',
-      supportTier: 'Dedicated Security Architect + TAM'
+      supportTier: 'Dedicated Security Architect'
     }
   }
 };
+
+// Aliases for backward compatibility
+PLAN_TIERS.PRO = PLAN_TIERS.QUARTERLY;
+PLAN_TIERS.ENTERPRISE = PLAN_TIERS.YEARLY;
 
 export function SubscriptionProvider({ children }) {
   const [currentPlan, setCurrentPlan] = useState(() => {
@@ -114,22 +143,19 @@ export function SubscriptionProvider({ children }) {
   }, [invoices]);
 
   const activeTier = PLAN_TIERS[currentPlan.tierId?.toUpperCase()] || PLAN_TIERS.FREE;
-  const isPro = currentPlan.tierId === 'pro' || currentPlan.tierId === 'enterprise';
-  const isEnterprise = currentPlan.tierId === 'enterprise';
+  const isPro = currentPlan.tierId !== 'free';
+  const isEnterprise = currentPlan.tierId === 'yearly' || currentPlan.tierId === 'enterprise';
 
   const upgradeSubscription = (tierId, billingCycle = 'monthly', paymentDetails = {}) => {
-    const targetPlan = PLAN_TIERS[tierId.toUpperCase()] || PLAN_TIERS.PRO;
+    const targetPlan = PLAN_TIERS[tierId.toUpperCase()] || PLAN_TIERS.QUARTERLY;
     const now = new Date();
     const expiry = new Date();
-    if (billingCycle === 'yearly') {
-      expiry.setFullYear(now.getFullYear() + 1);
-    } else {
-      expiry.setMonth(now.getMonth() + 1);
-    }
+    const monthsToAdd = targetPlan.durationMonths || 1;
+    expiry.setMonth(now.getMonth() + monthsToAdd);
 
     const updatedPlan = {
       tierId: targetPlan.id,
-      billingCycle,
+      billingCycle: targetPlan.period,
       subscribedAt: now.toISOString(),
       expiresAt: expiry.toISOString(),
       autoRenew: true,
@@ -144,7 +170,7 @@ export function SubscriptionProvider({ children }) {
       id: `INV-${Date.now().toString().slice(-6)}`,
       date: now.toISOString().split('T')[0],
       planName: targetPlan.name,
-      amount: billingCycle === 'yearly' ? targetPlan.priceYearly : targetPlan.priceMonthly,
+      amount: targetPlan.price,
       status: 'Paid',
       downloadUrl: '#',
     };
