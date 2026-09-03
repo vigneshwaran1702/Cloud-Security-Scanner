@@ -22,6 +22,8 @@ import {
   Lock,
   Menu,
   Terminal,
+  Bot,
+  MessageSquare,
   HelpCircle,
   LogIn,
   SlidersHorizontal,
@@ -205,80 +207,29 @@ export default function MainLayout() {
           </div>
         </div>
 
-        {/* Center: Google Search Omnibox */}
-        <div className="gcp-search-bar">
-          <Search size={16} color="var(--text-muted)" style={{ marginRight: '10px' }} />
-          <input
-            type="text"
-            placeholder="Search products, resources, CIS security docs (/)"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              outline: 'none',
-              width: '100%',
-              color: 'var(--text-main)',
-              fontSize: '0.85rem'
-            }}
-          />
-        </div>
-
-        {/* Right: Cloud Shell, Verify, Scan, Notifications & Profile */}
-        <div className="flex items-center gap-2">
-          {/* Cloud Shell / AI Terminal */}
+        {/* Right: AI Robot Chat Assistant, Theme Toggle, Notifications & Profile */}
+        <div className="flex items-center gap-2" style={{ marginLeft: 'auto' }}>
+          {/* AI Security Assistant Chatbox (Robot Face) */}
           <button
             type="button"
             onClick={() => setIsChatOpen(!isChatOpen)}
             className="header-icon-btn"
-            title="Activate Cloud Shell & AI Assistant"
-            style={{ width: '36px', height: '36px', borderRadius: '50%' }}
-          >
-            <Terminal size={17} color="#1a73e8" />
-          </button>
-
-          {/* Verify Cloud Button */}
-          <button
-            type="button"
-            onClick={() => requireAuth(() => setIsVerifierOpen(true), "Sign in with your Google account to verify cloud ID.")}
-            className="btn"
+            title="Open AI Security Chatbot Assistant"
             style={{
-              padding: '6px 12px',
-              background: 'var(--panel-inner-bg)',
-              border: '1px solid var(--border-color)',
-              color: 'var(--text-main)',
-              fontSize: '0.82rem',
-              fontWeight: 500,
-              borderRadius: '8px',
+              width: '38px',
+              height: '38px',
+              borderRadius: '50%',
+              background: isChatOpen ? 'rgba(26, 115, 232, 0.15)' : 'transparent',
+              border: isChatOpen ? '1px solid #1a73e8' : '1px solid transparent',
+              color: '#1a73e8',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px'
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'var(--transition)',
             }}
           >
-            <ShieldCheck size={15} color="var(--success)" />
-            <span>Verify ID</span>
-          </button>
-
-          {/* Run Scan Button (Google Blue #1a73e8) */}
-          <button
-            type="button"
-            onClick={() => requireAuth(() => setIsScanning(true), "Sign in with your Google account to run live scans.")}
-            className="btn btn-primary"
-            style={{
-              padding: '6px 14px',
-              background: '#1a73e8',
-              borderColor: '#1a73e8',
-              fontSize: '0.82rem',
-              fontWeight: 600,
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              boxShadow: '0 1px 3px rgba(26, 115, 232, 0.3)'
-            }}
-          >
-            <Shield size={15} />
-            <span>Run Scan</span>
+            <Bot size={20} color="#1a73e8" />
           </button>
 
           {/* Theme Toggle */}
