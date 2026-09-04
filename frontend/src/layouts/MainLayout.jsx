@@ -59,7 +59,7 @@ export default function MainLayout() {
   const location = useLocation();
   const currentPath = location.pathname;
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isPromoClosed, setIsPromoClosed] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
