@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Cloud, Shield, Server, Lock, ExternalLink, ArrowRight, CheckCircle2, BookOpen, Layers, X } from 'lucide-react';
 
 export default function CloudflareLearningModal({ isOpen, onClose }) {
@@ -6,22 +7,26 @@ export default function CloudflareLearningModal({ isOpen, onClose }) {
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div
       style={{
         position: 'fixed',
-        inset: 0,
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
         width: '100vw',
         height: '100vh',
-        background: 'rgba(3, 7, 18, 0.75)',
+        background: 'rgba(3, 7, 18, 0.8)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        zIndex: 3000,
+        zIndex: 99999,
         padding: '24px',
-        animation: 'fadeIn 0.25s ease',
+        animation: 'fadeIn 0.2s ease',
+        overflowY: 'auto',
       }}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
@@ -34,6 +39,7 @@ export default function CloudflareLearningModal({ isOpen, onClose }) {
           maxWidth: '860px',
           maxHeight: '90vh',
           overflowY: 'auto',
+          margin: 'auto',
           padding: '36px',
           borderRadius: '24px',
           position: 'relative',
@@ -191,6 +197,7 @@ export default function CloudflareLearningModal({ isOpen, onClose }) {
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

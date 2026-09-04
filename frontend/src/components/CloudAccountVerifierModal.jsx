@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { apiRequest, getCloudState } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { Cloud, ShieldCheck, CheckCircle2, X, Loader2, RefreshCw, ArrowRight, Lock } from 'lucide-react';
@@ -119,22 +120,25 @@ export default function CloudAccountVerifierModal({ isOpen, onClose }) {
     return 'Enter GCP Project ID (e.g., my-cloud-project-prod)';
   };
 
-  return (
+  return createPortal(
     <div
       style={{
         position: 'fixed',
-        inset: 0,
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
         width: '100vw',
         height: '100vh',
-        background: 'rgba(3, 7, 18, 0.75)',
+        background: 'rgba(3, 7, 18, 0.8)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        zIndex: 2500,
+        zIndex: 99999,
         padding: '20px',
-        animation: 'fadeIn 0.25s ease',
+        animation: 'fadeIn 0.2s ease',
         overflowY: 'auto',
       }}
       onClick={(e) => {
@@ -151,6 +155,7 @@ export default function CloudAccountVerifierModal({ isOpen, onClose }) {
           maxWidth: '560px',
           maxHeight: '90vh',
           overflowY: 'auto',
+          margin: 'auto',
           padding: '32px',
           borderRadius: '24px',
           position: 'relative',
@@ -429,6 +434,7 @@ export default function CloudAccountVerifierModal({ isOpen, onClose }) {
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
