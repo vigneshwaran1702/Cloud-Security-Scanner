@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ShieldAlert, Server, AlertTriangle, CheckCircle, Activity, Box, Loader2, ShieldCheck, Zap, Sparkles, Bot, ArrowRight, Lock, TrendingUp, HelpCircle, X, Cloud, RefreshCw, Check, Shield } from 'lucide-react';
+import { ShieldAlert, Server, AlertTriangle, CheckCircle, Activity, Box, Loader2, ShieldCheck, Zap, Sparkles, Bot, ArrowRight, Lock, TrendingUp, HelpCircle, X, Cloud, RefreshCw, Check, Shield, Settings } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useSubscription } from '../context/SubscriptionContext';
 import { useAuth } from '../context/AuthContext';
@@ -651,27 +651,6 @@ export default function Dashboard() {
                 <ArrowRight size={14} color="var(--text-muted)" />
               </button>
 
-              <button
-                onClick={() => requireAuth(() => setIsScanOpen(true), "Sign in with your Google account or Gmail/password to perform a vulnerability audit.")}
-                className="btn"
-                style={{
-                  width: '100%',
-                  justifyContent: 'space-between',
-                  padding: '11px 16px',
-                  background: 'var(--panel-inner-bg)',
-                  border: '1px solid var(--border-color)',
-                  color: 'var(--text-main)',
-                  fontSize: '0.88rem',
-                  borderRadius: '12px'
-                }}
-              >
-                <span className="flex items-center gap-2">
-                  <Shield size={16} color="var(--primary)" />
-                  Deep Vulnerability Audit
-                </span>
-                <ArrowRight size={14} color="var(--text-muted)" />
-              </button>
-
               <Link
                 to="/resources"
                 className="btn"
@@ -690,6 +669,28 @@ export default function Dashboard() {
                 <span className="flex items-center gap-2">
                   <Server size={16} color="var(--accent)" />
                   Inspect Cloud Resources
+                </span>
+                <ArrowRight size={14} color="var(--text-muted)" />
+              </Link>
+
+              <Link
+                to="/settings"
+                className="btn"
+                style={{
+                  width: '100%',
+                  justifyContent: 'space-between',
+                  padding: '11px 16px',
+                  background: 'var(--panel-inner-bg)',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-main)',
+                  fontSize: '0.88rem',
+                  borderRadius: '12px',
+                  textDecoration: 'none'
+                }}
+              >
+                <span className="flex items-center gap-2">
+                  <Settings size={16} color="var(--primary)" />
+                  Platform & Cloud Key Settings
                 </span>
                 <ArrowRight size={14} color="var(--text-muted)" />
               </Link>
