@@ -27,7 +27,8 @@ import {
   HelpCircle,
   LogIn,
   SlidersHorizontal,
-  FolderGit2
+  FolderGit2,
+  X
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
