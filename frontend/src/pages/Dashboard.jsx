@@ -672,28 +672,6 @@ export default function Dashboard() {
                 </span>
                 <ArrowRight size={14} color="var(--text-muted)" />
               </Link>
-
-              <Link
-                to="/settings"
-                className="btn"
-                style={{
-                  width: '100%',
-                  justifyContent: 'space-between',
-                  padding: '11px 16px',
-                  background: 'var(--panel-inner-bg)',
-                  border: '1px solid var(--border-color)',
-                  color: 'var(--text-main)',
-                  fontSize: '0.88rem',
-                  borderRadius: '12px',
-                  textDecoration: 'none'
-                }}
-              >
-                <span className="flex items-center gap-2">
-                  <Settings size={16} color="var(--primary)" />
-                  Platform & Cloud Key Settings
-                </span>
-                <ArrowRight size={14} color="var(--text-muted)" />
-              </Link>
             </div>
           </div>
 
