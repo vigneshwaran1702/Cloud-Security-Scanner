@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import {
   ShieldCheck,
   X,
@@ -64,7 +65,7 @@ export default function SubscriptionCheckoutModal({ isOpen, onClose, selectedTie
     }, 1200);
   };
 
-  return (
+  return createPortal(
     <div
       style={{
         position: 'fixed',
@@ -72,14 +73,18 @@ export default function SubscriptionCheckoutModal({ isOpen, onClose, selectedTie
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(3, 7, 18, 0.75)',
-        backdropFilter: 'blur(10px)',
-        zIndex: 1000,
+        width: '100vw',
+        height: '100vh',
+        backgroundColor: 'rgba(3, 7, 18, 0.8)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        zIndex: 99999,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         padding: '20px',
-        animation: 'fadeIn 0.25s ease forwards',
+        animation: 'fadeIn 0.2s ease',
+        overflowY: 'auto',
       }}
       onClick={(e) => {
         if (e.target === e.currentTarget && !isProcessing) onClose();
@@ -92,6 +97,7 @@ export default function SubscriptionCheckoutModal({ isOpen, onClose, selectedTie
           maxWidth: '720px',
           maxHeight: '92vh',
           overflowY: 'auto',
+          margin: 'auto',
           padding: '32px',
           borderRadius: '24px',
           border: '1px solid var(--border-color)',
@@ -470,6 +476,7 @@ export default function SubscriptionCheckoutModal({ isOpen, onClose, selectedTie
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

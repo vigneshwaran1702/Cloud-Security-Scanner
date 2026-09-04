@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useAuth } from '../context/AuthContext';
 import { useSubscription } from '../context/SubscriptionContext';
 import { getCloudState } from '../services/api';
@@ -98,8 +99,7 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
               {
                 id: Date.now() + 1,
                 sender: 'bot',
-                type: 'success',
-                text: `✅ Administrator Access Confirmed for ${elevatedUser.name} (${elevatedUser.email}). User Management portal is active.`,
+                text: `🌟 Privilege Escalation Successful! User role updated to Platform Admin (${elevatedUser.email}). Security Master Access Key registered. IAM Governance & Security Controls are now unlocked.`,
                 timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
               }
             ]);
@@ -157,16 +157,17 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
     }, 400);
   };
 
-  return (
+  return createPortal(
     <div
       ref={drawerRef}
       style={{
         position: 'fixed',
-        top: '88px',
-        right: '24px',
+        top: '68px',
+        right: '20px',
         width: '420px',
+        maxWidth: 'calc(100vw - 32px)',
         height: '620px',
-        maxHeight: 'calc(100vh - 110px)',
+        maxHeight: 'calc(100vh - 84px)',
         background: 'var(--panel-bg-solid)',
         backdropFilter: 'blur(16px)',
         border: '1px solid var(--border-color)',
@@ -174,9 +175,9 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
         boxShadow: 'var(--glass-shadow-hover)',
         display: 'flex',
         flexDirection: 'column',
-        zIndex: 2000,
+        zIndex: 99998,
         overflow: 'hidden',
-        animation: 'fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+        animation: 'fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
     >
       {/* Header */}
@@ -405,6 +406,7 @@ export default function SecurityChatDrawer({ isOpen, onClose, onOpenCloudVerifie
           <Send size={16} />
         </button>
       </form>
-    </div>
+    </div>,
+    document.body
   );
 }

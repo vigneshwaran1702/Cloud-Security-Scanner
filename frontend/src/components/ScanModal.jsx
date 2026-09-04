@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Shield, CheckCircle2, Loader2, X, Cloud, Server, Database, Lock, AlertTriangle, ArrowRight, RefreshCw, Layers, Sparkles, Check } from 'lucide-react';
 import { useNotifications } from '../context/NotificationContext';
 import { useNavigate } from 'react-router-dom';
@@ -119,7 +120,7 @@ export default function ScanModal({ isOpen, onClose }) {
   const currentStep = dynamicSteps[currentStepIndex] || dynamicSteps[0];
   const StepIcon = currentStep.icon;
 
-  return (
+  return createPortal(
     <div
       style={{
         position: 'fixed',
@@ -129,15 +130,16 @@ export default function ScanModal({ isOpen, onClose }) {
         bottom: 0,
         width: '100vw',
         height: '100vh',
-        background: 'rgba(3, 7, 18, 0.75)',
+        background: 'rgba(3, 7, 18, 0.8)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        zIndex: 2000,
+        zIndex: 99999,
         padding: '16px',
-        animation: 'fadeIn 0.25s ease',
+        animation: 'fadeIn 0.2s ease',
+        overflowY: 'auto',
       }}
       onClick={(e) => {
         if (e.target === e.currentTarget && !isScanning) {
@@ -451,6 +453,7 @@ export default function ScanModal({ isOpen, onClose }) {
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

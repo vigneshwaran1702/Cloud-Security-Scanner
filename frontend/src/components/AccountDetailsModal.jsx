@@ -1,4 +1,5 @@
 import { Shield, User, Mail, Zap, Lock, LogOut, CheckCircle2, Crown, X, Key, Calendar, Building2 } from 'lucide-react';
+import { createPortal } from 'react-dom';
 import { useAuth } from '../context/AuthContext';
 import { useSubscription } from '../context/SubscriptionContext';
 import { getCloudState } from '../services/api';
@@ -19,22 +20,26 @@ export default function AccountDetailsModal({ isOpen, onClose }) {
     logout();
   };
 
-  return (
+  return createPortal(
     <div
       style={{
         position: 'fixed',
-        inset: 0,
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
         width: '100vw',
         height: '100vh',
-        background: 'rgba(3, 7, 18, 0.75)',
-        backdropFilter: 'blur(10px)',
-        WebkitBackdropFilter: 'blur(10px)',
+        background: 'rgba(3, 7, 18, 0.8)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        zIndex: 3500,
+        zIndex: 99999,
         padding: '20px',
         animation: 'fadeIn 0.2s ease',
+        overflowY: 'auto',
       }}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
@@ -47,6 +52,7 @@ export default function AccountDetailsModal({ isOpen, onClose }) {
           maxWidth: '500px',
           maxHeight: '90vh',
           overflowY: 'auto',
+          margin: 'auto',
           padding: '32px',
           borderRadius: '24px',
           position: 'relative',
@@ -280,6 +286,7 @@ export default function AccountDetailsModal({ isOpen, onClose }) {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
