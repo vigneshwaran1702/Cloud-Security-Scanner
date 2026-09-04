@@ -58,7 +58,7 @@ export default function MainLayout() {
   const location = useLocation();
   const currentPath = location.pathname;
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isPromoClosed, setIsPromoClosed] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -117,20 +117,22 @@ export default function MainLayout() {
         <div className="flex items-center gap-3" style={{ flexShrink: 0, minWidth: 'max-content' }}>
           <button
             type="button"
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            onClick={() => setIsSidebarOpen(prev => !prev)}
             style={{
-              background: 'transparent',
-              border: 'none',
-              color: 'var(--text-muted)',
+              background: isSidebarOpen ? 'rgba(26, 115, 232, 0.12)' : 'transparent',
+              border: isSidebarOpen ? '1px solid rgba(26, 115, 232, 0.3)' : '1px solid transparent',
+              color: isSidebarOpen ? '#1a73e8' : 'var(--text-main)',
               cursor: 'pointer',
-              padding: '6px',
-              borderRadius: '50%',
+              padding: '7px',
+              borderRadius: '8px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               flexShrink: 0,
+              transition: 'all 0.2s ease',
             }}
-            title="Navigation menu"
+            title={isSidebarOpen ? "Collapse navigation menu" : "Expand navigation menu"}
+            aria-label="Toggle navigation menu"
           >
             <Menu size={20} />
           </button>
@@ -393,13 +395,15 @@ export default function MainLayout() {
       </header>
 
       {/* 2. GOOGLE CLOUD CONSOLE BODY LAYOUT */}
-      <div style={{ display: 'flex', flex: 1 }}>
+      <div style={{ display: 'flex', flex: 1, position: 'relative' }}>
         {/* Left Navigation Sidebar */}
         <aside
           className="gcp-sidebar"
           style={{
-            width: isSidebarOpen ? '250px' : '64px',
-            padding: isSidebarOpen ? '16px 0' : '16px 4px',
+            width: isSidebarOpen ? '250px' : '68px',
+            minWidth: isSidebarOpen ? '250px' : '68px',
+            padding: isSidebarOpen ? '16px 0' : '16px 6px',
+            transition: 'width 0.25s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
           }}
         >
           <nav className="flex flex-col gap-1" style={{ flex: 1 }}>
@@ -412,11 +416,17 @@ export default function MainLayout() {
                   to={item.path}
                   className={`gcp-nav-item ${isActive ? 'active' : ''}`}
                   title={!isSidebarOpen ? item.label : undefined}
+                  style={{
+                    justifyContent: isSidebarOpen ? 'flex-start' : 'center',
+                    padding: isSidebarOpen ? '10px 16px' : '10px 0',
+                    marginRight: isSidebarOpen ? '12px' : '0',
+                    borderRadius: isSidebarOpen ? '0 24px 24px 0' : '12px',
+                  }}
                 >
-                  <Icon size={18} color={isActive ? '#1a73e8' : 'currentColor'} style={{ flexShrink: 0 }} />
+                  <Icon size={19} color={isActive ? '#1a73e8' : 'currentColor'} style={{ flexShrink: 0 }} />
                   {isSidebarOpen && (
-                    <div className="flex items-center justify-between" style={{ flex: 1 }}>
-                      <span>{item.label}</span>
+                    <div className="flex items-center justify-between" style={{ flex: 1, minWidth: 0 }}>
+                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.label}</span>
                       {item.badge && (
                         <span style={{
                           fontSize: '0.64rem',
@@ -424,7 +434,9 @@ export default function MainLayout() {
                           padding: '1px 6px',
                           borderRadius: '4px',
                           background: isPro ? 'var(--success-bg)' : 'rgba(26, 115, 232, 0.12)',
-                          color: isPro ? 'var(--success)' : '#1a73e8'
+                          color: isPro ? 'var(--success)' : '#1a73e8',
+                          marginLeft: '8px',
+                          flexShrink: 0
                         }}>
                           {item.badge}
                         </span>
