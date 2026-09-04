@@ -138,7 +138,7 @@ export default function Subscription() {
           Choose Your <span className="gradient-text">Cloud Security</span> Plan
         </h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', maxWidth: '780px', margin: '0 auto 28px' }}>
-          Free basic protection for all users upon login, with powerful 1-Month, 3-Month, and 1-Year Pro protection tiers.
+          Your current package is Free. Upgrade to 1-Month, 3-Month, or 1-Year Pro protection tiers for autonomous safe remediations and 24/7 AI SecOps.
         </p>
 
         {/* Current Active Plan Status Banner */}
@@ -149,7 +149,7 @@ export default function Subscription() {
             gap: '12px',
             background: isPro ? 'rgba(16, 185, 129, 0.12)' : 'var(--badge-primary-bg)',
             border: isPro ? '1px solid rgba(16, 185, 129, 0.35)' : '1px solid var(--badge-primary-border)',
-            padding: '10px 20px',
+            padding: '10px 22px',
             borderRadius: '16px',
             marginBottom: '32px',
           }}
@@ -163,9 +163,17 @@ export default function Subscription() {
               boxShadow: isPro ? '0 0 10px var(--success)' : '0 0 10px var(--primary)',
             }}
           />
-          <span style={{ fontSize: '0.9rem', color: 'var(--text-main)' }}>
-            Current Status: <strong style={{ color: isPro ? 'var(--success)' : 'var(--primary)' }}>{activeTier.name}</strong>
-            {currentPlan.expiresAt && ` (Active until ${new Date(currentPlan.expiresAt).toLocaleDateString()})`}
+          <span style={{ fontSize: '0.92rem', color: 'var(--text-main)' }}>
+            {isPro ? (
+              <>
+                Current Status: <strong style={{ color: 'var(--success)' }}>{activeTier.name}</strong>
+                {currentPlan.expiresAt && ` (Active until ${new Date(currentPlan.expiresAt).toLocaleDateString()})`}
+              </>
+            ) : (
+              <>
+                Your current package is <strong style={{ color: 'var(--primary)' }}>Free</strong>
+              </>
+            )}
           </span>
           {isPro && (
             <button
@@ -186,101 +194,17 @@ export default function Subscription() {
         </div>
       </div>
 
-      {/* 4 PRICING CARDS GRID */}
+      {/* 3 PRICING CARDS GRID */}
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '20px',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+          gap: '24px',
           marginBottom: '56px',
           alignItems: 'stretch',
         }}
       >
-        {/* Tier 1: Free Starter ($0) */}
-        <div
-          className="glass-panel"
-          style={{
-            padding: '28px 22px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            border: currentPlan.tierId === 'free' ? '2px solid var(--primary)' : '1px solid var(--border-color)',
-            background: 'var(--panel-bg-solid)',
-            borderRadius: '18px',
-          }}
-        >
-          <div>
-            <div className="flex justify-between items-center" style={{ marginBottom: '14px' }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Included with Login
-              </span>
-              {currentPlan.tierId === 'free' && (
-                <span style={{ fontSize: '0.72rem', background: 'var(--badge-primary-bg)', padding: '2px 8px', borderRadius: '10px', color: 'var(--primary)', fontWeight: 700 }}>
-                  Active ✓
-                </span>
-              )}
-            </div>
-
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '6px' }}>Starter Free Tier</h3>
-            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '18px', minHeight: '36px' }}>
-              Every registered user starts with full access to standard vulnerability posture scans.
-            </p>
-
-            <div style={{ marginBottom: '20px' }}>
-              <span style={{ fontSize: '2.4rem', fontWeight: 800, color: 'var(--text-main)' }}>$0</span>
-              <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}> / forever free</span>
-            </div>
-
-            <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '16px', marginBottom: '20px' }}>
-              <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '10px' }}>
-                Included Features:
-              </div>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem' }}>
-                <li className="flex items-center gap-2">
-                  <Check size={14} color="var(--success)" />
-                  <span>1 Cloud Account (AWS/Azure/GCP)</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check size={14} color="var(--success)" />
-                  <span>Manual & On-Demand Scans</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check size={14} color="var(--success)" />
-                  <span>CIS Benchmark Audits</span>
-                </li>
-                <li className="flex items-center gap-2" style={{ color: 'var(--text-muted)', opacity: 0.6 }}>
-                  <CloseIcon size={14} />
-                  <span>No Safe Production Auto-Fixes</span>
-                </li>
-                <li className="flex items-center gap-2" style={{ color: 'var(--text-muted)', opacity: 0.6 }}>
-                  <CloseIcon size={14} />
-                  <span>No 24/7 AI Hotline</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <button
-            className="btn"
-            disabled={currentPlan.tierId === 'free'}
-            onClick={() => cancelSubscription()}
-            style={{
-              width: '100%',
-              padding: '10px',
-              borderRadius: '10px',
-              background: 'var(--panel-inner-bg)',
-              border: '1px solid var(--border-color)',
-              color: 'var(--text-main)',
-              cursor: currentPlan.tierId === 'free' ? 'default' : 'pointer',
-              fontWeight: 600,
-              fontSize: '0.85rem'
-            }}
-          >
-            {currentPlan.tierId === 'free' ? 'Active Default Plan' : 'Switch to Free'}
-          </button>
-        </div>
-
-        {/* Tier 2: 1 Month Package ($19) */}
+        {/* Tier 1: 1 Month Package ($19) */}
         <div
           className="glass-panel"
           style={{
@@ -846,9 +770,9 @@ export default function Subscription() {
             <thead>
               <tr style={{ borderBottom: '1px solid var(--border-color)', textAlign: 'left', background: 'var(--panel-inner-bg)' }}>
                 <th style={{ padding: '16px 12px', color: 'var(--text-muted)', fontWeight: 600 }}>Security Feature</th>
-                <th style={{ padding: '16px 12px', color: 'var(--text-muted)', fontWeight: 600 }}>Starter (Free)</th>
+                <th style={{ padding: '16px 12px', color: 'var(--text-muted)', fontWeight: 600 }}>Current Plan (Free)</th>
                 <th style={{ padding: '16px 12px', color: 'var(--primary)', fontWeight: 800 }}>Pro Defender ($39)</th>
-                <th style={{ padding: '16px 12px', color: 'var(--text-muted)', fontWeight: 600 }}>Enterprise ($99)</th>
+                <th style={{ padding: '16px 12px', color: 'var(--text-muted)', fontWeight: 600 }}>Enterprise Fortress ($149)</th>
               </tr>
             </thead>
             <tbody>
