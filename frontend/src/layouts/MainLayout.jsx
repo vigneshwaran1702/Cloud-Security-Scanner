@@ -514,14 +514,17 @@ export default function MainLayout() {
         <main className="gcp-main-container">
           {/* Breadcrumbs */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '20px' }}>
-            <Link to="/dashboard" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Cloud Security Platform</Link>
+            <Link to="/" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Cloud Security Platform</Link>
             <span>›</span>
-            <span style={{ color: 'var(--text-muted)' }}>Security Command Center</span>
+            <Link to="/dashboard" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Command Center</Link>
             <span>›</span>
-            <span style={{ color: '#1a73e8', fontWeight: 600 }}>{breadcrumbMap[currentPath] || 'Overview'}</span>
+            <span style={{ color: 'var(--primary)', fontWeight: 600 }}>{breadcrumbMap[currentPath] || 'Overview'}</span>
           </div>
 
-          <Outlet />
+          {/* Animated Route Container */}
+          <div key={currentPath} className="page-transition-wrapper">
+            <Outlet />
+          </div>
         </main>
       </div>
 

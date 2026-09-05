@@ -68,7 +68,7 @@ export default function Login() {
   };
 
   return (
-    <div style={{
+    <div className="page-transition-wrapper" style={{
       minHeight: '100vh',
       display: 'flex',
       alignItems: 'center',

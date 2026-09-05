@@ -115,7 +115,7 @@ export default function Home() {
   ];
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-color)', color: 'var(--text-main)', display: 'flex', flexDirection: 'column' }}>
+    <div className="page-transition-wrapper" style={{ minHeight: '100vh', background: 'var(--bg-color)', color: 'var(--text-main)', display: 'flex', flexDirection: 'column' }}>
       
       {/* 1. TOP NAVIGATION BAR */}
       <nav style={{
