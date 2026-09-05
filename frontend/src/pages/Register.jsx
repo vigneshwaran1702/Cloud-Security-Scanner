@@ -57,17 +57,11 @@ export default function Register() {
     setLoading(true);
 
     try {
-      await register(cleanName, cleanEmail, password, 'user');
-      setSuccess('Account created successfully! Please sign in with your email and password.');
+      const authResult = await register(cleanName, cleanEmail, password, 'user');
+      setSuccess(`Account registered successfully! Welcome, ${cleanName}. Redirecting to Dashboard...`);
       setTimeout(() => {
-        navigate('/login', {
-          state: {
-            registeredEmail: cleanEmail,
-            registeredMessage: 'Registration successful! Please enter your password to sign in.'
-          },
-          replace: true
-        });
-      }, 1000);
+        navigate('/dashboard', { replace: true });
+      }, 700);
     } catch (err) {
       setError(err.message || 'Registration failed. Please try again or use another email.');
     } finally {
