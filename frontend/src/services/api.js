@@ -163,6 +163,10 @@ function handleLocalFallback(endpoint, options) {
     } catch (e) { users = []; }
 
     const existingIndex = users.findIndex(u => u.email.toLowerCase() === rawEmail);
+    if (existingIndex >= 0) {
+      throw new Error('An account with this email already exists. Please sign in instead.');
+    }
+
     const userId = Math.floor(Math.random() * 9000) + 1000;
     const userRole = body.role || 'user';
 
@@ -177,11 +181,7 @@ function handleLocalFallback(endpoint, options) {
       created_at: new Date().toISOString().replace('T', ' ').slice(0, 19)
     };
 
-    if (existingIndex >= 0) {
-      users[existingIndex] = newUser;
-    } else {
-      users.push(newUser);
-    }
+    users.push(newUser);
     localStorage.setItem('cg_registered_users', JSON.stringify(users));
 
     return {
