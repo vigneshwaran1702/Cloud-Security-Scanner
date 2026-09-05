@@ -1,5 +1,6 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import {
+  Home as HomeIcon,
   Shield,
   LayoutDashboard,
   Cloud,
@@ -44,6 +45,7 @@ import AuthModal from '../components/AuthModal';
 import AccountDetailsModal from '../components/AccountDetailsModal';
 
 const breadcrumbMap = {
+  '/': 'Home Landing Page',
   '/dashboard': 'Security Command Center Overview',
   '/resources': 'Cloud Asset Inventory',
   '/subscription': 'Subscription & Pricing Plans',
@@ -97,6 +99,7 @@ export default function MainLayout() {
   const userInitials = (displayName || 'U').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'US';
 
   const navItems = [
+    { path: '/', label: 'Home', icon: HomeIcon },
     { path: '/dashboard', label: 'Security Command Center', icon: LayoutDashboard },
     { path: '/resources', label: 'Asset Inventory', icon: Layers },
     {
