@@ -81,8 +81,16 @@ export async function supabaseSignUp(email, password, name = '', role = 'user') 
 
   const data = await response.json();
   if (!response.ok) {
-    const errorMsg = data.error_description || data.msg || data.message || 'Supabase registration failed';
-    throw new Error(errorMsg);
+    const rawMsg = data.error_description || data.msg || data.message || 'Supabase registration failed';
+    if (['already', 'registered', 'exists', 'duplicate', 'conflict'].some(k => rawMsg.toLowerCase().includes(k))) {
+      throw new Error('An account with this email already exists. Please sign in instead.');
+    }
+    throw new Error(rawMsg);
+  }
+
+  // Supabase anti-enumeration: if confirm email is enabled and user already exists, identities is empty list []
+  if (data.identities && Array.isArray(data.identities) && data.identities.length === 0) {
+    throw new Error('An account with this email already exists. Please sign in instead.');
   }
 
   const userObj = data.user || data;

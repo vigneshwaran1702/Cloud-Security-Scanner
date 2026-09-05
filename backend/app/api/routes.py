@@ -107,13 +107,16 @@ def auth_register(payload: RegisterRequest):
     if not password:
         raise HTTPException(status_code=400, detail="Password is required.")
 
+    # Check if user already exists in backend registry
+    existing = next((u for u in backend_users if u["email"].lower() == email), None)
+    if existing:
+        raise HTTPException(status_code=400, detail="An account with this email already exists. Please sign in instead.")
+
     # 1. Register with Supabase Auth
     supa_ok, supa_data, supa_err = supabase_sign_up(email, password, name, role)
     if supa_ok:
         user_info = supa_data["user"]
-        existing = next((u for u in backend_users if u["email"].lower() == email), None)
-        if not existing:
-            backend_users.append({**user_info, "password": password})
+        backend_users.append({**user_info, "password": password})
         return {
             "access_token": supa_data["access_token"],
             "token_type": "bearer",
@@ -121,25 +124,14 @@ def auth_register(payload: RegisterRequest):
             "confirmation_required": supa_data.get("confirmation_required", False)
         }
 
-    # If Supabase gave a user already registered or validation error
-    if supa_err and ("already" in supa_err.lower() or "registered" in supa_err.lower()):
-        raise HTTPException(status_code=400, detail=supa_err)
+    # If Supabase gave a user already registered or duplicate error, reject explicitly
+    if supa_err and any(k in supa_err.lower() for k in ["already", "registered", "exists", "duplicate", "conflict"]):
+        raise HTTPException(status_code=400, detail="An account with this email already exists. Please sign in instead.")
 
-    # Local fallback registration
-    existing = next((u for u in backend_users if u["email"].lower() == email), None)
-    if existing:
-        existing["name"] = name
-        existing["password"] = password
-        user_data = {k: v for k, v in existing.items() if k != "password"}
-        return {
-            "access_token": f"jwt_{existing['id']}_token",
-            "token_type": "bearer",
-            "user": user_data
-        }
-
+    # Local fallback registration (only for fresh test accounts)
     new_user = {
         "id": len(backend_users) + 1000,
-        "name": name,
+        "name": name or email.split("@")[0].title(),
         "email": email,
         "password": password,
         "role": role,

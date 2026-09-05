@@ -153,61 +153,58 @@ export function AuthProvider({ children }) {
   const register = async (name, email, password, role = 'user') => {
     const cleanEmail = email.trim().toLowerCase();
     const cleanName = name.trim();
-    let data;
 
-    // Save locally for instant persistence
+    // 1. Check if already exists in local registry
     let users = [];
     try {
       users = JSON.parse(localStorage.getItem('cg_registered_users') || '[]');
     } catch (e) { users = []; }
-    const localId = Math.floor(Math.random() * 9000) + 1000;
-    const existingIdx = users.findIndex(u => u.email.toLowerCase() === cleanEmail);
-    const registeredRecord = {
-      id: localId,
-      name: cleanName,
-      email: cleanEmail,
-      password: password,
-      role: role || 'user',
-      auth_provider: 'supabase',
-      is_active: true,
-      created_at: new Date().toISOString()
-    };
-    if (existingIdx >= 0) {
-      users[existingIdx] = registeredRecord;
-    } else {
-      users.push(registeredRecord);
-    }
-    localStorage.setItem('cg_registered_users', JSON.stringify(users));
 
+    const localExisting = users.find(u => u.email.toLowerCase() === cleanEmail);
+    if (localExisting) {
+      throw new Error('An account with this email already exists. Please sign in instead.');
+    }
+
+    let data;
     try {
-      // 1. Try Backend Registration
+      // 2. Try Backend Registration
       data = await apiRequest('/api/v1/auth/register', {
         method: 'POST',
         body: JSON.stringify({ name: cleanName, email: cleanEmail, password, role }),
       });
     } catch (serverErr) {
-      // 2. Direct Supabase Sign Up
+      const serverMsg = serverErr.message || '';
+      if (['already', 'exists', 'registered', 'duplicate', 'conflict'].some(k => serverMsg.toLowerCase().includes(k))) {
+        throw new Error('An account with this email already exists. Please sign in instead.');
+      }
+
+      // 3. Direct Supabase Sign Up fallback
       try {
         data = await supabaseSignUp(cleanEmail, password, cleanName, role);
       } catch (supaErr) {
-        // If Supabase gave an email error, use locally registered profile
-        data = {
-          access_token: `jwt_${localId}_${Date.now()}`,
-          token_type: 'bearer',
-          user: {
-            id: localId,
-            name: cleanName,
-            email: cleanEmail,
-            role: role || 'user',
-            auth_provider: 'supabase',
-            is_active: true,
-            created_at: new Date().toISOString()
-          }
-        };
+        const supaMsg = supaErr.message || '';
+        if (['already', 'exists', 'registered', 'duplicate', 'conflict'].some(k => supaMsg.toLowerCase().includes(k))) {
+          throw new Error('An account with this email already exists. Please sign in instead.');
+        }
+        throw new Error(supaMsg || serverMsg || 'Registration failed. Please try again.');
       }
     }
 
     if (data && data.user) {
+      const localId = data.user.id || Math.floor(Math.random() * 9000) + 1000;
+      const registeredRecord = {
+        id: localId,
+        name: cleanName,
+        email: cleanEmail,
+        password: password,
+        role: role || 'user',
+        auth_provider: 'supabase',
+        is_active: true,
+        created_at: new Date().toISOString()
+      };
+      users.push(registeredRecord);
+      localStorage.setItem('cg_registered_users', JSON.stringify(users));
+
       const activeToken = data.access_token || `jwt_${localId}_${Date.now()}`;
       localStorage.setItem('token', activeToken);
       localStorage.setItem('user', JSON.stringify(data.user));
