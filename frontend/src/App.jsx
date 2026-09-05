@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import Resources from './pages/Resources';
 import Settings from './pages/Settings';
@@ -21,26 +22,27 @@ function App() {
           <SubscriptionProvider>
             <BrowserRouter>
               <Routes>
-                {/* Public Routes */}
+                {/* Landing & Public Pages */}
+                <Route path="/" element={<Home />} />
+                <Route path="/home" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
 
-                {/* Main Website Routes (Open for browsing) */}
-                <Route path="/" element={<Layout />}>
-                  <Route index element={<Navigate to="/dashboard" replace />} />
-                  <Route path="dashboard" element={<Dashboard />} />
-                  <Route path="resources" element={<Resources />} />
-                  <Route path="subscription" element={<Subscription />} />
-                  <Route path="settings" element={<Settings />} />
+                {/* Main Security Portal Routes */}
+                <Route element={<Layout />}>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/resources" element={<Resources />} />
+                  <Route path="/subscription" element={<Subscription />} />
+                  <Route path="/settings" element={<Settings />} />
 
                   {/* Admin Only Route */}
                   <Route element={<ProtectedRoute requiredRole="admin" />}>
-                    <Route path="admin/users" element={<AdminUsers />} />
+                    <Route path="/admin/users" element={<AdminUsers />} />
                   </Route>
                 </Route>
 
-                {/* Fallback */}
-                <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                {/* Fallback to Home */}
+                <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </BrowserRouter>
           </SubscriptionProvider>
