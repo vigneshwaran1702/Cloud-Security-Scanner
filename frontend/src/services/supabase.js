@@ -35,33 +35,41 @@ export async function supabaseSignUp(email, password, name = '', role = 'user') 
 
   if (error) {
     const rawMsg = error.message || 'Registration failed';
+    
+    // Handle Supabase rate limits
+    if (error.status === 429 || rawMsg.toLowerCase().includes('rate limit') || rawMsg.toLowerCase().includes('security purposes')) {
+      throw new Error('Supabase email limit reached. Please wait 60s or disable "Confirm email" in Supabase Auth Settings.');
+    }
+
+    // Handle duplicate accounts
     if (['already', 'registered', 'exists', 'duplicate', 'conflict'].some(k => rawMsg.toLowerCase().includes(k))) {
       throw new Error('An account with this email already exists. Please sign in instead.');
     }
+
     throw new Error(rawMsg);
   }
 
-  // Anti-enumeration check: if email confirmation is enabled and user already exists
+  // Anti-enumeration check: if email confirmation is enabled and user already exists, Supabase returns empty identities array
   if (data?.user?.identities && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
     throw new Error('An account with this email already exists. Please sign in instead.');
   }
 
   const userObj = data?.user || {};
   const userMeta = userObj?.user_metadata || {};
-  const userId = userObj?.id;
+  const userId = userObj?.id || `user_${Date.now()}`;
 
-  // Insert or update profile in Supabase profiles table
-  if (userId) {
+  // Sync with public.profiles if accessible
+  if (data?.user?.id) {
     try {
       await supabase.from('profiles').upsert({
-        id: userId,
+        id: data.user.id,
         email: cleanEmail,
         name: cleanName,
         role: role || 'user',
         updated_at: new Date().toISOString(),
       });
     } catch (e) {
-      // Non-blocking if table trigger handles it
+      // Handled by database trigger if configured
     }
   }
 
@@ -93,7 +101,14 @@ export async function supabaseSignIn(email, password) {
   });
 
   if (error) {
-    throw new Error(error.message || 'Supabase authentication failed');
+    const rawMsg = error.message || 'Supabase authentication failed';
+    if (rawMsg.toLowerCase().includes('email not confirmed')) {
+      throw new Error('Email not confirmed yet. Please check your inbox or disable "Confirm email" in Supabase Dashboard → Authentication → Providers → Email.');
+    }
+    if (rawMsg.toLowerCase().includes('invalid login credentials')) {
+      throw new Error('Incorrect email or password. Please verify your credentials or register.');
+    }
+    throw new Error(rawMsg);
   }
 
   const userObj = data.user || {};
@@ -119,7 +134,9 @@ export async function supabaseSignIn(email, password) {
  * Sign Out from Supabase Auth
  */
 export async function supabaseSignOut() {
-  await supabase.auth.signOut();
+  try {
+    await supabase.auth.signOut();
+  } catch (e) {}
 }
 
 /**
@@ -148,23 +165,6 @@ export async function supabaseGetUser() {
 }
 
 /**
- * Fetch Profile from Supabase `profiles` table
- */
-export async function supabaseGetProfile(userId) {
-  try {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single();
-    if (error) return null;
-    return data;
-  } catch (e) {
-    return null;
-  }
-}
-
-/**
  * Save / Update Cloud Account in Supabase `cloud_accounts` table
  */
 export async function supabaseSaveCloudAccount(accountData) {
@@ -176,7 +176,6 @@ export async function supabaseSaveCloudAccount(accountData) {
     if (error) throw error;
     return data;
   } catch (e) {
-    console.warn('Supabase cloud_accounts upsert notice:', e.message);
     return null;
   }
 }
@@ -209,7 +208,6 @@ export async function supabaseSaveScan(scanData) {
     if (error) throw error;
     return data;
   } catch (e) {
-    console.warn('Supabase scans insert notice:', e.message);
     return null;
   }
 }
