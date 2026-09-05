@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { apiRequest } from '../services/api';
+import { supabaseSignIn, supabaseSignUp, supabaseGetUser } from '../services/supabase';
 
 const AuthContext = createContext(null);
 
@@ -29,7 +30,7 @@ export function AuthProvider({ children }) {
   const [authModal, setAuthModal] = useState({
     isOpen: false,
     title: 'Sign In Required',
-    subtitle: 'Please sign in with your Google account or Gmail/password to continue.',
+    subtitle: 'Please sign in with your account or Supabase credentials to continue.',
     onSuccess: null,
   });
 
@@ -70,22 +71,35 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async (email, password) => {
-    const data = await apiRequest('/api/v1/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-    });
-
-    localStorage.setItem('token', data.access_token);
-    localStorage.setItem('user', JSON.stringify(data.user));
-    setToken(data.access_token);
-    setUser(data.user);
-    
-    // If there was a pending action after modal auth, trigger it
-    if (authModal.onSuccess && typeof authModal.onSuccess === 'function') {
-      authModal.onSuccess(data.user);
+    let data;
+    try {
+      // 1. Authenticate via Backend API Server (which queries Supabase Auth)
+      data = await apiRequest('/api/v1/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+      });
+    } catch (serverErr) {
+      // If backend is waking up or offline, attempt direct Supabase REST sign-in
+      try {
+        data = await supabaseSignIn(email, password);
+      } catch (supabaseErr) {
+        throw new Error(supabaseErr.message || serverErr.message || 'Login failed.');
+      }
     }
-    closeAuthModal();
-    return data.user;
+
+    if (data && data.access_token) {
+      localStorage.setItem('token', data.access_token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      setToken(data.access_token);
+      setUser(data.user);
+      
+      if (authModal.onSuccess && typeof authModal.onSuccess === 'function') {
+        authModal.onSuccess(data.user);
+      }
+      closeAuthModal();
+      return data.user;
+    }
+    throw new Error('Authentication failed to return valid session.');
   };
 
   const loginWithGoogle = async (googleData = {}) => {
@@ -111,12 +125,22 @@ export function AuthProvider({ children }) {
   };
 
   const register = async (name, email, password, role = 'user') => {
-    const data = await apiRequest('/api/v1/auth/register', {
-      method: 'POST',
-      body: JSON.stringify({ name, email, password, role }),
-    });
+    let data;
+    try {
+      data = await apiRequest('/api/v1/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({ name, email, password, role }),
+      });
+    } catch (serverErr) {
+      // Direct Supabase Sign Up fallback
+      try {
+        data = await supabaseSignUp(email, password, name, role);
+      } catch (supaErr) {
+        throw new Error(supaErr.message || serverErr.message || 'Registration failed.');
+      }
+    }
 
-    if (data.user && data.access_token) {
+    if (data && data.user && data.access_token) {
       localStorage.setItem('token', data.access_token);
       localStorage.setItem('user', JSON.stringify(data.user));
       setToken(data.access_token);

@@ -3,6 +3,11 @@ from typing import Optional, Dict, Any, List
 from pydantic import BaseModel
 import asyncio
 from app.mock_data import store
+from app.auth.supabase_auth import (
+    supabase_sign_in_with_password,
+    supabase_sign_up,
+    supabase_get_user
+)
 
 router = APIRouter(prefix="/api/v1")
 
@@ -31,7 +36,7 @@ class GoogleAuthRequest(BaseModel):
     name: Optional[str] = None
     picture: Optional[str] = None
 
-# In-memory user store for demo/live backend
+# In-memory user store for demo/live backend cache
 backend_users = []
 
 @router.post("/auth/login")
@@ -39,6 +44,22 @@ def auth_login(payload: LoginRequest):
     email = payload.email.strip().lower()
     password = payload.password
 
+    # 1. Attempt authentication with Supabase Auth
+    supa_ok, supa_data, supa_err = supabase_sign_in_with_password(email, password)
+    if supa_ok:
+        user_info = supa_data["user"]
+        # Cache user in backend_users
+        existing = next((u for u in backend_users if u["email"].lower() == email), None)
+        if not existing:
+            backend_users.append({**user_info, "password": password})
+        return {
+            "access_token": supa_data["access_token"],
+            "refresh_token": supa_data.get("refresh_token"),
+            "token_type": "bearer",
+            "user": user_info
+        }
+
+    # If Supabase returned an explicit invalid credential rejection, check local cache or reject
     user = next((u for u in backend_users if u["email"].lower() == email), None)
     if user:
         if user.get("password") and user.get("password") != password:
@@ -50,7 +71,11 @@ def auth_login(payload: LoginRequest):
             "user": user_data
         }
 
-    # Dynamically register user if not found for seamless local dev
+    # If Supabase gave a specific rejection (e.g. invalid login credentials), return it
+    if supa_err and "credentials" in supa_err.lower():
+        raise HTTPException(status_code=401, detail=supa_err)
+
+    # Seamless registration for fresh local test accounts if Supabase wasn't explicitly rejecting
     prefix = email.split("@")[0].replace(".", " ").replace("_", " ").title()
     new_user = {
         "id": len(backend_users) + 1000,
@@ -58,7 +83,7 @@ def auth_login(payload: LoginRequest):
         "email": email,
         "password": password,
         "role": "user",
-        "auth_provider": "email",
+        "auth_provider": "local_fallback",
         "is_active": True,
         "created_at": "2026-09-03 12:00:00"
     }
@@ -73,15 +98,38 @@ def auth_login(payload: LoginRequest):
 @router.post("/auth/register")
 def auth_register(payload: RegisterRequest):
     email = payload.email.strip().lower()
+    name = payload.name.strip()
+    password = payload.password
+    role = payload.role or "user"
+
     if not email:
         raise HTTPException(status_code=400, detail="Email is required.")
-    if not payload.password:
+    if not password:
         raise HTTPException(status_code=400, detail="Password is required.")
 
+    # 1. Register with Supabase Auth
+    supa_ok, supa_data, supa_err = supabase_sign_up(email, password, name, role)
+    if supa_ok:
+        user_info = supa_data["user"]
+        existing = next((u for u in backend_users if u["email"].lower() == email), None)
+        if not existing:
+            backend_users.append({**user_info, "password": password})
+        return {
+            "access_token": supa_data["access_token"],
+            "token_type": "bearer",
+            "user": user_info,
+            "confirmation_required": supa_data.get("confirmation_required", False)
+        }
+
+    # If Supabase gave a user already registered or validation error
+    if supa_err and ("already" in supa_err.lower() or "registered" in supa_err.lower()):
+        raise HTTPException(status_code=400, detail=supa_err)
+
+    # Local fallback registration
     existing = next((u for u in backend_users if u["email"].lower() == email), None)
     if existing:
-        existing["name"] = payload.name
-        existing["password"] = payload.password
+        existing["name"] = name
+        existing["password"] = password
         user_data = {k: v for k, v in existing.items() if k != "password"}
         return {
             "access_token": f"jwt_{existing['id']}_token",
@@ -91,11 +139,11 @@ def auth_register(payload: RegisterRequest):
 
     new_user = {
         "id": len(backend_users) + 1000,
-        "name": payload.name,
+        "name": name,
         "email": email,
-        "password": payload.password,
-        "role": payload.role or "user",
-        "auth_provider": "email",
+        "password": password,
+        "role": role,
+        "auth_provider": "local_fallback",
         "is_active": True,
         "created_at": "2026-09-03 12:00:00"
     }
@@ -145,6 +193,13 @@ def auth_me(authorization: Optional[str] = Header(None)):
     token = authorization.replace("Bearer ", "").strip()
     if not token or token == "null" or token == "undefined":
         raise HTTPException(status_code=401, detail="Invalid token")
+
+    # Verify with Supabase if token looks like a Supabase JWT
+    if len(token) > 50 and "." in token:
+        supa_ok, user_data, _ = supabase_get_user(token)
+        if supa_ok:
+            return user_data
+
     if backend_users:
         user_data = {k: v for k, v in backend_users[0].items() if k != "password"}
         return user_data
