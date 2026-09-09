@@ -14,14 +14,14 @@
     "@vitejs/plugin-react": "^6.1.1",
     "lucide-react": "^0.364.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react-dom": "^19.2.8",
     "react-router-dom": "^7.18.3",
     "recharts": "^2.12.3",
     "vite": "^8.2.2"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
-    "@types/react-dom": "^18.2.22"
+    "@types/react-dom": "^19.2.7"
   },
   "allowScripts": {
     "esbuild": true
