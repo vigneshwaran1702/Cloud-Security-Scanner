@@ -2,12 +2,15 @@ from fastapi import APIRouter, HTTPException, BackgroundTasks, Header
 from typing import Optional, Dict, Any, List
 from pydantic import BaseModel
 import asyncio
+import logging
 from app.mock_data import store
 from app.auth.supabase_auth import (
     supabase_sign_in_with_password,
     supabase_sign_up,
     supabase_get_user
 )
+
+logger = logging.getLogger("app.api")
 
 router = APIRouter(prefix="/api/v1")
 
@@ -36,7 +39,6 @@ class GoogleAuthRequest(BaseModel):
     name: Optional[str] = None
     picture: Optional[str] = None
 
-# In-memory user store for demo/live backend cache
 backend_users = []
 
 @router.post("/auth/login")
@@ -44,11 +46,9 @@ def auth_login(payload: LoginRequest):
     email = payload.email.strip().lower()
     password = payload.password
 
-    # 1. Attempt authentication with Supabase Auth
     supa_ok, supa_data, supa_err = supabase_sign_in_with_password(email, password)
     if supa_ok:
         user_info = supa_data["user"]
-        # Cache user in backend_users
         existing = next((u for u in backend_users if u["email"].lower() == email), None)
         if not existing:
             backend_users.append({**user_info, "password": password})
@@ -59,7 +59,6 @@ def auth_login(payload: LoginRequest):
             "user": user_info
         }
 
-    # If Supabase returned an explicit invalid credential rejection, check local cache or reject
     user = next((u for u in backend_users if u["email"].lower() == email), None)
     if user:
         if user.get("password") and user.get("password") != password:
@@ -71,11 +70,9 @@ def auth_login(payload: LoginRequest):
             "user": user_data
         }
 
-    # If Supabase gave a specific rejection (e.g. invalid login credentials), return it
     if supa_err and "credentials" in supa_err.lower():
         raise HTTPException(status_code=401, detail=supa_err)
 
-    # Seamless registration for fresh local test accounts if Supabase wasn't explicitly rejecting
     prefix = email.split("@")[0].replace(".", " ").replace("_", " ").title()
     new_user = {
         "id": len(backend_users) + 1000,
@@ -107,12 +104,10 @@ def auth_register(payload: RegisterRequest):
     if not password:
         raise HTTPException(status_code=400, detail="Password is required.")
 
-    # Check if user already exists in backend registry
     existing = next((u for u in backend_users if u["email"].lower() == email), None)
     if existing:
         raise HTTPException(status_code=400, detail="An account with this email already exists. Please sign in instead.")
 
-    # 1. Register with Supabase Auth
     supa_ok, supa_data, supa_err = supabase_sign_up(email, password, name, role)
     if supa_ok:
         user_info = supa_data["user"]
@@ -124,11 +119,9 @@ def auth_register(payload: RegisterRequest):
             "confirmation_required": supa_data.get("confirmation_required", False)
         }
 
-    # If Supabase gave a user already registered or duplicate error, reject explicitly
     if supa_err and any(k in supa_err.lower() for k in ["already", "registered", "exists", "duplicate", "conflict"]):
         raise HTTPException(status_code=400, detail="An account with this email already exists. Please sign in instead.")
 
-    # Local fallback registration (only for fresh test accounts)
     new_user = {
         "id": len(backend_users) + 1000,
         "name": name or email.split("@")[0].title(),
@@ -186,7 +179,6 @@ def auth_me(authorization: Optional[str] = Header(None)):
     if not token or token == "null" or token == "undefined":
         raise HTTPException(status_code=401, detail="Invalid token")
 
-    # Verify with Supabase if token looks like a Supabase JWT
     if len(token) > 50 and "." in token:
         supa_ok, user_data, _ = supabase_get_user(token)
         if supa_ok:
@@ -293,7 +285,7 @@ def get_compliance():
 
 @router.get("/settings")
 def get_settings():
-    return {"success": True, "data": store.settings}
+    return {"success": True, "data": store.get_sanitized_settings()}
 
 @router.post("/settings")
 def update_settings(payload: Dict[str, Any]):
@@ -306,4 +298,5 @@ def update_settings(payload: Dict[str, Any]):
     if "general" in payload:
         store.settings["general"].update(payload["general"])
         
-    return {"success": True, "message": "Settings updated successfully", "data": store.settings}
+    logger.info("Cloud and general scanner settings updated")
+    return {"success": True, "message": "Settings updated successfully", "data": store.get_sanitized_settings()}

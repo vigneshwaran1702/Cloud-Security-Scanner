@@ -65,12 +65,29 @@ class SecurityStore:
             }
         }
 
+    def get_sanitized_settings(self) -> Dict[str, Any]:
+        """Returns settings with sensitive credentials and secret keys masked."""
+        from app.utils.sanitizer import mask_secret
+        import copy
+
+        sanitized = copy.deepcopy(self.settings)
+        if sanitized.get("aws", {}).get("secret_access_key"):
+            sanitized["aws"]["secret_access_key"] = mask_secret(sanitized["aws"]["secret_access_key"])
+        if sanitized.get("azure", {}).get("client_secret"):
+            sanitized["azure"]["client_secret"] = mask_secret(sanitized["azure"]["client_secret"])
+        if sanitized.get("general", {}).get("slack_webhook"):
+            webhook = sanitized["general"]["slack_webhook"]
+            if "hooks.slack.com" in webhook:
+                sanitized["general"]["slack_webhook"] = "https://hooks.slack.com/services/********"
+            else:
+                sanitized["general"]["slack_webhook"] = mask_secret(webhook)
+        return sanitized
+
     def verify_account(self, provider: str, account_id: str, region: Optional[str] = None) -> Dict[str, Any]:
         provider = provider.upper()
         clean_id = (account_id or "").strip()
         reg = region or ("us-east-1" if provider == "AWS" else "eastus2" if provider == "AZURE" else "us-central1")
         
-        # Determine resource counts and services based on provider and account ID
         if provider == "AWS":
             services = ["S3 Storage", "EC2 Compute", "IAM Roles", "Security Groups", "KMS"]
             res_count = 142
@@ -84,7 +101,6 @@ class SecurityStore:
             services = ["Multi-Cloud Core", "IAM Security", "Storage", "Compute"]
             res_count = 120
 
-        # Return live verification result
         return {
             "account_id": clean_id,
             "provider": provider,
@@ -106,7 +122,6 @@ class SecurityStore:
         self.active_provider = provider
         reg = region or ("us-east-1" if provider == "AWS" else "eastus2" if provider == "AZURE" else "us-central1")
 
-        # Create tailored resources for user's Cloud ID
         if provider == "AWS":
             self.resources = [
                 {"id": f"res-{clean_id[-4:] if len(clean_id) >= 4 else '01'}-1", "name": f"s3-bucket-{clean_id[-6:] if len(clean_id)>=6 else 'data'}-prod", "type": "S3 Bucket", "cloud": "AWS", "region": reg, "severity": "critical", "status": "Non-compliant", "issue": "Public Read Access Policy Enabled"},
@@ -195,7 +210,7 @@ class SecurityStore:
                     "auto_fixable": True
                 }
             ]
-        else:  # GCP / Other
+        else:
             self.resources = [
                 {"id": f"res-gcp-{clean_id[-4:] if len(clean_id) >= 4 else '01'}-1", "name": f"sql-{clean_id[-6:] if len(clean_id)>=6 else 'db'}-prod", "type": "Cloud SQL", "cloud": "GCP", "region": reg, "severity": "critical", "status": "Non-compliant", "issue": "Default Google-Managed Key (No CMEK)"},
                 {"id": f"res-gcp-{clean_id[-4:] if len(clean_id) >= 4 else '01'}-2", "name": f"bucket-{clean_id[-4:] if len(clean_id)>=4 else '01'}-gcs", "type": "Cloud Storage", "cloud": "GCP", "region": reg, "severity": "high", "status": "Non-compliant", "issue": "Uniform Bucket-Level Access Disabled"},
@@ -232,7 +247,6 @@ class SecurityStore:
                 }
             ]
 
-        # Calculate live stats based on generated issues
         crit_count = len([r for r in self.recommendations if r["severity"] == "critical"])
         high_count = len([r for r in self.recommendations if r["severity"] == "high"])
         total_res = len(self.resources)
@@ -279,27 +293,22 @@ class SecurityStore:
         self.initialize_scan_for_account(provider, account_id)
 
     def clear_all_risks_and_failures(self) -> Dict[str, Any]:
-        """Clears all active risks, remediates all resource failures, and brings security score to 100%."""
         cleared_risks_count = len([r for r in self.recommendations if r.get("status") == "open"])
         cleared_failures_count = len([res for res in self.resources if res.get("status") == "Non-compliant"])
 
-        # Resolve all recommendations
         for rec in self.recommendations:
             rec["status"] = "resolved"
 
-        # Resolve all resources to Compliant
         for res in self.resources:
             res["status"] = "Compliant"
             res["severity"] = "low"
             res["issue"] = "Remediated & Secured via CloudGuard AI"
 
-        # Update compliance
         for comp in self.compliance:
             comp["score"] = 100
             comp["passed"] = comp["total"]
             comp["status"] = "Passed"
 
-        # Update stats to 100% clean
         self.stats["security_score"] = 100
         self.stats["score_change"] = "All risks & failures cleared (100% Protected)"
         self.stats["critical_issues"] = 0
@@ -321,14 +330,12 @@ class SecurityStore:
             if rec["id"] == rec_id:
                 rec["status"] = "resolved"
                 
-                # Update matching resource
                 for res in self.resources:
                     if rec["resource"] in res["name"] or res["name"] in rec["resource"]:
                         res["status"] = "Compliant"
                         res["severity"] = "low"
                         res["issue"] = f"Remediated: {rec['title']} Fixed"
 
-                # Recalculate remaining issues
                 open_crit = len([r for r in self.recommendations if r.get("status") == "open" and r["severity"] == "critical"])
                 open_high = len([r for r in self.recommendations if r.get("status") == "open" and r["severity"] == "high"])
                 

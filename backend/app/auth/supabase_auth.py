@@ -4,6 +4,7 @@ import urllib.request
 import urllib.error
 from typing import Optional, Dict, Any, Tuple
 from app.config import settings
+from app.utils.sanitizer import redact_text
 
 logger = logging.getLogger(__name__)
 
@@ -62,12 +63,12 @@ def supabase_sign_in_with_password(email: str, password: str) -> Tuple[bool, Dic
             error_body = {}
 
         error_msg = error_body.get("error_description") or error_body.get("msg") or error_body.get("message") or f"Supabase auth error (HTTP {e.code})"
-        logger.warning(f"Supabase login HTTP error {e.code}: {error_msg}")
+        logger.warning(f"Supabase login HTTP error {e.code}: {redact_text(error_msg)}")
         return False, {}, error_msg
 
     except Exception as e:
-        logger.error(f"Supabase connection exception: {str(e)}")
-        return False, {}, f"Unable to reach Supabase authentication server: {str(e)}"
+        logger.error(f"Supabase connection exception: {redact_text(str(e))}")
+        return False, {}, f"Unable to reach Supabase authentication server: {redact_text(str(e))}"
 
 def supabase_sign_up(email: str, password: str, name: str, role: str = "user") -> Tuple[bool, Dict[str, Any], Optional[str]]:
     """
@@ -96,7 +97,6 @@ def supabase_sign_up(email: str, password: str, name: str, role: str = "user") -
             user_obj = res_data.get("user") or res_data
             user_meta = user_obj.get("user_metadata", {}) or {}
 
-            # Supabase anti-enumeration check: if email confirmation is enabled and user already exists, identities is empty list []
             identities = res_data.get("identities")
             if identities is not None and isinstance(identities, list) and len(identities) == 0:
                 return False, {}, "An account with this email already exists. Please sign in instead."
@@ -132,12 +132,12 @@ def supabase_sign_up(email: str, password: str, name: str, role: str = "user") -
             error_msg = "An account with this email already exists. Please sign in instead."
         else:
             error_msg = raw_msg
-        logger.warning(f"Supabase signup HTTP error {e.code}: {error_msg}")
+        logger.warning(f"Supabase signup HTTP error {e.code}: {redact_text(error_msg)}")
         return False, {}, error_msg
 
     except Exception as e:
-        logger.error(f"Supabase connection exception: {str(e)}")
-        return False, {}, f"Unable to reach Supabase authentication server: {str(e)}"
+        logger.error(f"Supabase connection exception: {redact_text(str(e))}")
+        return False, {}, f"Unable to reach Supabase authentication server: {redact_text(str(e))}"
 
 def supabase_get_user(access_token: str) -> Tuple[bool, Dict[str, Any], Optional[str]]:
     """
