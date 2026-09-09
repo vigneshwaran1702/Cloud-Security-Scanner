@@ -123,15 +123,18 @@ export default function Login() {
       }}>
         {/* Header Branding */}
         <div className="flex flex-col items-center gap-3 text-center" style={{ marginBottom: '24px' }}>
-          <div style={{
-            background: 'linear-gradient(135deg, var(--primary), var(--accent))',
-            padding: '14px',
-            borderRadius: '18px',
-            boxShadow: '0 8px 24px var(--primary-glow)',
-            display: 'inline-flex'
-          }}>
-            <Shield size={36} color="white" />
-          </div>
+          <img
+            src="/logo.png"
+            alt="CloudGuard Logo"
+            style={{
+              width: '64px',
+              height: '64px',
+              objectFit: 'contain',
+              borderRadius: '16px',
+              boxShadow: '0 8px 24px var(--primary-glow)',
+              display: 'inline-flex'
+            }}
+          />
           <div>
             <h1 className="gradient-text" style={{ fontSize: '1.75rem', fontWeight: 700, margin: 0 }}>
               CloudGuard AI
