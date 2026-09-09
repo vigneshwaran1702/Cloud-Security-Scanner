@@ -130,7 +130,7 @@ export default function AuthModal() {
               width: '46px',
               height: '46px',
               objectFit: 'contain',
-              borderRadius: '12px',
+              filter: 'drop-shadow(0 2px 8px rgba(26, 115, 232, 0.35))',
               flexShrink: 0,
             }}
           />
