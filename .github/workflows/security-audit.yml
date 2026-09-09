@@ -1,0 +1,56 @@
+name: Security & Dependency Audit
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  schedule:
+    # Run every Monday at 05:00 UTC
+    - cron: '0 5 * * 1'
+  workflow_dispatch:
+
+jobs:
+  npm-audit:
+    name: NPM Dependency Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+
+      - name: Audit Frontend Dependencies
+        working-directory: ./frontend
+        run: |
+          npm ci --ignore-scripts
+          npm audit --audit-level=moderate
+
+  pip-audit:
+    name: Python Dependency Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: 'backend/requirements.txt'
+
+      - name: Install pip-audit & dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pip-audit
+          pip install -r backend/requirements.txt
+
+      - name: Run pip-audit on Backend
+        run: |
+          pip-audit -r backend/requirements.txt --strict
