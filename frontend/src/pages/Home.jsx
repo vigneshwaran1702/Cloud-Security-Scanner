@@ -134,17 +134,18 @@ export default function Home() {
       }}>
         {/* Brand Logo */}
         <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none', color: 'inherit' }}>
-          <div style={{
-            background: 'linear-gradient(135deg, var(--primary), var(--accent))',
-            padding: '8px',
-            borderRadius: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 4px 14px var(--primary-glow)'
-          }}>
-            <Shield size={22} color="#ffffff" />
-          </div>
+          <img
+            src="/logo.png"
+            alt="CloudGuard Logo"
+            style={{
+              width: '38px',
+              height: '38px',
+              objectFit: 'contain',
+              borderRadius: '10px',
+              boxShadow: '0 4px 14px var(--primary-glow)',
+              flexShrink: 0
+            }}
+          />
           <div>
             <div style={{ fontWeight: 800, fontSize: '1.15rem', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span className="gradient-text">CloudGuard</span>
@@ -869,16 +870,17 @@ export default function Home() {
           gap: '20px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{
-              background: 'linear-gradient(135deg, var(--primary), var(--accent))',
-              padding: '6px',
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <Shield size={18} color="#ffffff" />
-            </div>
+            <img
+              src="/logo.png"
+              alt="CloudGuard Logo"
+              style={{
+                width: '26px',
+                height: '26px',
+                objectFit: 'contain',
+                borderRadius: '6px',
+                flexShrink: 0
+              }}
+            />
             <span style={{ fontWeight: 700, fontSize: '1rem' }}>CloudGuard AI</span>
             <span style={{ color: 'var(--text-muted)', fontSize: '0.84rem' }}>© 2026 AI Cloud Security Scanner. All rights reserved.</span>
           </div>
