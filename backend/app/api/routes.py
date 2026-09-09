@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, BackgroundTasks, Header
+from fastapi import APIRouter, HTTPException, BackgroundTasks, Header, File, UploadFile
 from typing import Optional, Dict, Any, List
 from pydantic import BaseModel
 import asyncio
@@ -9,6 +9,7 @@ from app.auth.supabase_auth import (
     supabase_sign_up,
     supabase_get_user
 )
+from app.services.import_service import process_scan_upload
 
 logger = logging.getLogger("app.api")
 
@@ -238,6 +239,16 @@ def verify_cloud_account(payload: VerifyAccountRequest):
 @router.get("/scan/status")
 def get_scan_status():
     return {"success": True, "scan_info": store.scan_state}
+
+@router.post("/scan/upload-results")
+async def upload_scan_results(file: UploadFile = File(...)):
+    """Upload and import scan results file with strict path traversal validation."""
+    return await process_scan_upload(file)
+
+@router.post("/scan/import")
+async def import_scan_results(file: UploadFile = File(...)):
+    """Import scan results file with strict path traversal validation."""
+    return await process_scan_upload(file)
 
 @router.get("/resources")
 def get_resources(cloud: Optional[str] = None, severity: Optional[str] = None, search: Optional[str] = None):

@@ -416,4 +416,37 @@ async function handleSupabaseCloudOperations(endpoint, options) {
   return { success: true };
 }
 
+export async function uploadScanFile(file) {
+  const url = `${API_BASE_URL}/api/v1/scan/upload-results`;
+  const formData = new FormData();
+  formData.append('file', file);
+
+  let token = null;
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    token = session?.access_token || null;
+  } catch (e) {}
+
+  const headers = {
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+  };
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers,
+    body: formData,
+  });
+
+  if (!response.ok) {
+    let errorMsg = `Upload failed (${response.status})`;
+    try {
+      const errData = await response.json();
+      if (errData.detail) errorMsg = typeof errData.detail === 'string' ? errData.detail : JSON.stringify(errData.detail);
+    } catch (e) {}
+    throw new Error(errorMsg);
+  }
+
+  return await response.json();
+}
+
 export { API_BASE_URL };
