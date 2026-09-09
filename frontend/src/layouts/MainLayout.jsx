@@ -161,7 +161,7 @@ export default function MainLayout() {
                 width: '30px',
                 height: '30px',
                 objectFit: 'contain',
-                borderRadius: '6px',
+                filter: 'drop-shadow(0 1px 4px rgba(26, 115, 232, 0.35))',
                 flexShrink: 0
               }}
             />

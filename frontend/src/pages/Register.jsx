@@ -147,11 +147,10 @@ export default function Register() {
             src="/logo.png"
             alt="CloudGuard Logo"
             style={{
-              width: '64px',
-              height: '64px',
+              width: '72px',
+              height: '72px',
               objectFit: 'contain',
-              borderRadius: '16px',
-              boxShadow: '0 8px 24px var(--primary-glow)',
+              filter: 'drop-shadow(0 6px 20px var(--primary-glow))',
               display: 'inline-flex'
             }}
           />

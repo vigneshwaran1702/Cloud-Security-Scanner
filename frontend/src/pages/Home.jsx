@@ -138,12 +138,12 @@ export default function Home() {
             src="/logo.png"
             alt="CloudGuard Logo"
             style={{
-              width: '38px',
-              height: '38px',
+              width: '40px',
+              height: '40px',
               objectFit: 'contain',
-              borderRadius: '10px',
-              boxShadow: '0 4px 14px var(--primary-glow)',
-              flexShrink: 0
+              filter: 'drop-shadow(0 2px 8px var(--primary-glow))',
+              flexShrink: 0,
+              transition: 'transform 0.2s ease',
             }}
           />
           <div>
@@ -874,10 +874,10 @@ export default function Home() {
               src="/logo.png"
               alt="CloudGuard Logo"
               style={{
-                width: '26px',
-                height: '26px',
+                width: '28px',
+                height: '28px',
                 objectFit: 'contain',
-                borderRadius: '6px',
+                filter: 'drop-shadow(0 1px 4px var(--primary-glow))',
                 flexShrink: 0
               }}
             />
