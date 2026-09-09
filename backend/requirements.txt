@@ -15,4 +15,4 @@ azure-mgmt-network>=25.3.0
 azure-identity>=1.15.0
 openai>=1.14.2
 python-dotenv>=1.0.1
-cryptography>=42.0.5
+cryptography>=50.0.1
