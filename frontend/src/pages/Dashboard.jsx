@@ -377,21 +377,22 @@ export default function Dashboard() {
               onClick={handleRemoveCloudId}
               disabled={removingId}
               className="btn"
-              title="Remove and disconnect Active Cloud ID"
+              title="Remove Cloud ID"
+              aria-label="Remove Cloud ID"
               style={{
+                width: '28px',
                 height: '28px',
-                padding: '0 8px',
+                padding: 0,
                 background: 'rgba(239, 68, 68, 0.08)',
                 border: '1px solid rgba(239, 68, 68, 0.25)',
                 color: 'var(--critical, #ef4444)',
-                fontSize: '0.72rem',
-                fontWeight: 600,
                 borderRadius: '6px',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '4px',
+                justifyContent: 'center',
                 cursor: removingId ? 'not-allowed' : 'pointer',
                 transition: 'all 0.2s ease',
+                flexShrink: 0
               }}
               onMouseEnter={(e) => {
                 if (!removingId) {
@@ -406,8 +407,7 @@ export default function Dashboard() {
                 }
               }}
             >
-              {removingId ? <Loader2 size={11} className="animate-spin" /> : <Trash2 size={11} />}
-              Remove
+              {removingId ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
             </button>
           </div>
         </div>
