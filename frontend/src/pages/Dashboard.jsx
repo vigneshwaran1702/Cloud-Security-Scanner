@@ -321,19 +321,20 @@ export default function Dashboard() {
                 disabled={clearingAll}
                 className="btn btn-primary"
                 style={{
-                  padding: '6px 12px',
-                  fontSize: '0.78rem',
+                  height: '28px',
+                  padding: '0 10px',
+                  fontSize: '0.75rem',
                   fontWeight: 700,
                   background: 'linear-gradient(135deg, #10b981, #059669)',
                   borderColor: '#10b981',
-                  borderRadius: '8px',
+                  borderRadius: '6px',
                   boxShadow: '0 2px 8px rgba(16, 185, 129, 0.25)',
-                  display: 'flex',
+                  display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '5px'
+                  gap: '4px'
                 }}
               >
-                {clearingAll ? <Loader2 size={13} className="animate-spin" /> : <Sparkles size={13} />}
+                {clearingAll ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}
                 Clear All Risks & Failures
               </button>
             )}
@@ -341,29 +342,33 @@ export default function Dashboard() {
               onClick={() => requireAuth(() => setIsScanOpen(true), "Sign in with your Google account or Gmail/password to rescan cloud infrastructure.")}
               className="btn"
               style={{
-                padding: '6px 10px',
+                height: '28px',
+                padding: '0 8px',
                 background: 'var(--panel-inner-bg)',
                 border: '1px solid var(--border-color)',
                 color: 'var(--text-main)',
-                fontSize: '0.78rem',
-                borderRadius: '8px',
-                display: 'flex',
+                fontSize: '0.74rem',
+                borderRadius: '6px',
+                display: 'inline-flex',
                 alignItems: 'center',
-                gap: '5px'
+                gap: '4px'
               }}
             >
-              <RefreshCw size={13} /> Rescan
+              <RefreshCw size={12} /> Rescan
             </button>
             <button
               onClick={() => requireAuth(() => setIsVerifierOpen(true), "Sign in with your Google account or Gmail/password to switch cloud accounts.")}
               className="btn"
               style={{
-                padding: '6px 10px',
+                height: '28px',
+                padding: '0 8px',
                 background: 'var(--panel-inner-bg)',
                 border: '1px solid var(--border-color)',
                 color: 'var(--text-muted)',
-                fontSize: '0.78rem',
-                borderRadius: '8px'
+                fontSize: '0.74rem',
+                borderRadius: '6px',
+                display: 'inline-flex',
+                alignItems: 'center'
               }}
             >
               Change ID
@@ -374,15 +379,17 @@ export default function Dashboard() {
               className="btn"
               title="Remove and disconnect Active Cloud ID"
               style={{
-                padding: '6px 10px',
+                height: '28px',
+                padding: '0 8px',
                 background: 'rgba(239, 68, 68, 0.08)',
                 border: '1px solid rgba(239, 68, 68, 0.25)',
                 color: 'var(--critical, #ef4444)',
-                fontSize: '0.78rem',
-                borderRadius: '8px',
-                display: 'flex',
+                fontSize: '0.72rem',
+                fontWeight: 600,
+                borderRadius: '6px',
+                display: 'inline-flex',
                 alignItems: 'center',
-                gap: '5px',
+                gap: '4px',
                 cursor: removingId ? 'not-allowed' : 'pointer',
                 transition: 'all 0.2s ease',
               }}
@@ -399,8 +406,8 @@ export default function Dashboard() {
                 }
               }}
             >
-              {removingId ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
-              Remove ID
+              {removingId ? <Loader2 size={11} className="animate-spin" /> : <Trash2 size={11} />}
+              Remove
             </button>
           </div>
         </div>
