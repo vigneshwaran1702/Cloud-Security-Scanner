@@ -314,22 +314,26 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             {!isAllClear && (
               <button
                 onClick={handleClearAllRisks}
                 disabled={clearingAll}
                 className="btn btn-primary"
                 style={{
-                  padding: '9px 18px',
-                  fontSize: '0.85rem',
+                  padding: '6px 12px',
+                  fontSize: '0.78rem',
                   fontWeight: 700,
                   background: 'linear-gradient(135deg, #10b981, #059669)',
                   borderColor: '#10b981',
-                  boxShadow: '0 2px 10px rgba(16, 185, 129, 0.3)'
+                  borderRadius: '8px',
+                  boxShadow: '0 2px 8px rgba(16, 185, 129, 0.25)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px'
                 }}
               >
-                {clearingAll ? <Loader2 size={15} className="animate-spin" /> : <Sparkles size={15} />}
+                {clearingAll ? <Loader2 size={13} className="animate-spin" /> : <Sparkles size={13} />}
                 Clear All Risks & Failures
               </button>
             )}
@@ -337,26 +341,29 @@ export default function Dashboard() {
               onClick={() => requireAuth(() => setIsScanOpen(true), "Sign in with your Google account or Gmail/password to rescan cloud infrastructure.")}
               className="btn"
               style={{
-                padding: '9px 14px',
+                padding: '6px 10px',
                 background: 'var(--panel-inner-bg)',
                 border: '1px solid var(--border-color)',
                 color: 'var(--text-main)',
-                fontSize: '0.85rem',
-                borderRadius: '10px'
+                fontSize: '0.78rem',
+                borderRadius: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px'
               }}
             >
-              <RefreshCw size={14} /> Rescan
+              <RefreshCw size={13} /> Rescan
             </button>
             <button
               onClick={() => requireAuth(() => setIsVerifierOpen(true), "Sign in with your Google account or Gmail/password to switch cloud accounts.")}
               className="btn"
               style={{
-                padding: '9px 14px',
+                padding: '6px 10px',
                 background: 'var(--panel-inner-bg)',
                 border: '1px solid var(--border-color)',
                 color: 'var(--text-muted)',
-                fontSize: '0.85rem',
-                borderRadius: '10px'
+                fontSize: '0.78rem',
+                borderRadius: '8px'
               }}
             >
               Change ID
@@ -367,15 +374,15 @@ export default function Dashboard() {
               className="btn"
               title="Remove and disconnect Active Cloud ID"
               style={{
-                padding: '9px 14px',
+                padding: '6px 10px',
                 background: 'rgba(239, 68, 68, 0.08)',
                 border: '1px solid rgba(239, 68, 68, 0.25)',
                 color: 'var(--critical, #ef4444)',
-                fontSize: '0.85rem',
-                borderRadius: '10px',
+                fontSize: '0.78rem',
+                borderRadius: '8px',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '6px',
+                gap: '5px',
                 cursor: removingId ? 'not-allowed' : 'pointer',
                 transition: 'all 0.2s ease',
               }}
@@ -392,7 +399,7 @@ export default function Dashboard() {
                 }
               }}
             >
-              {removingId ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+              {removingId ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
               Remove ID
             </button>
           </div>
