@@ -130,6 +130,20 @@ async function handleSupabaseCloudOperations(endpoint, options) {
     };
   }
 
+  // 1b. Cloud Account Removal / Disconnect
+  if (endpoint === '/api/v1/cloud/remove-account') {
+    state.activeCloudId = null;
+    state.stats = null;
+    state.resources = [];
+    state.recommendations = [];
+    saveCloudState(state);
+
+    return {
+      success: true,
+      message: 'Cloud ID disconnected and reset successfully.'
+    };
+  }
+
   // 2. Scan Execution -> Sync to Supabase
   if (endpoint === '/api/v1/scan/start') {
     const provider = (body.provider || state.activeProvider || 'AWS').toUpperCase();
