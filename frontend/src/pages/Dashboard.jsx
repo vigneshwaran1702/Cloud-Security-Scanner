@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ShieldAlert, Server, AlertTriangle, CheckCircle, Activity, Box, Loader2, ShieldCheck, Zap, Sparkles, Bot, ArrowRight, Lock, TrendingUp, HelpCircle, X, Cloud, RefreshCw, Check, Shield, Settings } from 'lucide-react';
+import { ShieldAlert, Server, AlertTriangle, CheckCircle, Activity, Box, Loader2, ShieldCheck, Zap, Sparkles, Bot, ArrowRight, Lock, TrendingUp, HelpCircle, X, Cloud, RefreshCw, Check, Shield, Settings, Trash2 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useSubscription } from '../context/SubscriptionContext';
 import { useAuth } from '../context/AuthContext';
 import SubscriptionCheckoutModal from '../components/SubscriptionCheckoutModal';
 import CloudAccountVerifierModal from '../components/CloudAccountVerifierModal';
 import ScanModal from '../components/ScanModal';
-import { apiRequest, getCloudState } from '../services/api';
+import { apiRequest, getCloudState, saveCloudState } from '../services/api';
 
 const severityStyles = {
   critical: {
@@ -34,6 +34,7 @@ export default function Dashboard() {
   const [recommendations, setRecommendations] = useState([]);
   const [fixingId, setFixingId] = useState(null);
   const [clearingAll, setClearingAll] = useState(false);
+  const [removingId, setRemovingId] = useState(false);
   const [chartData, setChartData] = useState([]);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isVerifierOpen, setIsVerifierOpen] = useState(false);
@@ -157,6 +158,34 @@ export default function Dashboard() {
         setClearingAll(false);
       }
     }, "Sign in with Google or Gmail/password to clear and remediate all cloud risks.");
+  };
+
+  const handleRemoveCloudId = () => {
+    requireAuth(async () => {
+      setRemovingId(true);
+      try {
+        await apiRequest('/api/v1/cloud/remove-account', { method: 'POST' });
+      } catch (err) {
+        console.error(err);
+      }
+      const state = getCloudState();
+      state.activeCloudId = null;
+      state.stats = null;
+      state.resources = [];
+      state.recommendations = [];
+      saveCloudState(state);
+
+      setCloudState({ ...state, activeCloudId: null });
+      setStats(null);
+      setRecommendations([]);
+      setChartData([]);
+      setRemovingId(false);
+      setSafeRemediationToast({
+        title: 'Cloud ID Removed',
+        detail: 'Cloud infrastructure ID has been disconnected and cleared.'
+      });
+      setTimeout(() => setSafeRemediationToast(null), 4000);
+    }, "Sign in with your Google account or Gmail/password to manage or remove cloud infrastructure.");
   };
 
   const activeCloudId = cloudState.activeCloudId || stats?.active_cloud_id;
@@ -331,6 +360,40 @@ export default function Dashboard() {
               }}
             >
               Change ID
+            </button>
+            <button
+              onClick={handleRemoveCloudId}
+              disabled={removingId}
+              className="btn"
+              title="Remove and disconnect Active Cloud ID"
+              style={{
+                padding: '9px 14px',
+                background: 'rgba(239, 68, 68, 0.08)',
+                border: '1px solid rgba(239, 68, 68, 0.25)',
+                color: 'var(--critical, #ef4444)',
+                fontSize: '0.85rem',
+                borderRadius: '10px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                cursor: removingId ? 'not-allowed' : 'pointer',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                if (!removingId) {
+                  e.currentTarget.style.background = 'rgba(239, 68, 68, 0.18)';
+                  e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.45)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!removingId) {
+                  e.currentTarget.style.background = 'rgba(239, 68, 68, 0.08)';
+                  e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.25)';
+                }
+              }}
+            >
+              {removingId ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+              Remove ID
             </button>
           </div>
         </div>

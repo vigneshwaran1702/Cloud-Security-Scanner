@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { apiRequest, getCloudState } from '../services/api';
+import { apiRequest, getCloudState, saveCloudState } from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import { Cloud, ShieldCheck, CheckCircle2, X, Loader2, RefreshCw, ArrowRight, Lock } from 'lucide-react';
+import { Cloud, ShieldCheck, CheckCircle2, X, Loader2, RefreshCw, ArrowRight, Lock, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function CloudAccountVerifierModal({ isOpen, onClose }) {
@@ -109,6 +109,27 @@ export default function CloudAccountVerifierModal({ isOpen, onClose }) {
       window.location.reload();
     } catch (err) {
       setError('Failed to clear risks: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRemoveAccount = async () => {
+    try {
+      setLoading(true);
+      await apiRequest('/api/v1/cloud/remove-account', { method: 'POST' });
+      const state = getCloudState();
+      state.activeCloudId = null;
+      state.stats = null;
+      state.resources = [];
+      state.recommendations = [];
+      saveCloudState(state);
+      setAccountId('');
+      setResult(null);
+      onClose();
+      window.location.reload();
+    } catch (err) {
+      setError('Failed to remove Cloud ID: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -321,34 +342,60 @@ export default function CloudAccountVerifierModal({ isOpen, onClose }) {
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="btn btn-primary"
-            style={{
-              width: '100%',
-              padding: '12px',
-              borderRadius: '12px',
-              fontWeight: 600,
-              fontSize: '0.95rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-            }}
-          >
-            {loading ? (
-              <>
-                <Loader2 size={18} style={{ animation: 'spin 1s linear infinite' }} />
-                Verifying Cloud Account...
-              </>
-            ) : (
-              <>
-                <RefreshCw size={18} />
-                Verify & Inspect Security Status
-              </>
+          <div className="flex gap-3">
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn btn-primary"
+              style={{
+                flex: 1,
+                padding: '12px',
+                borderRadius: '12px',
+                fontWeight: 600,
+                fontSize: '0.95rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+              }}
+            >
+              {loading ? (
+                <>
+                  <Loader2 size={18} style={{ animation: 'spin 1s linear infinite' }} />
+                  Verifying Cloud Account...
+                </>
+              ) : (
+                <>
+                  <RefreshCw size={18} />
+                  Verify & Inspect Security Status
+                </>
+              )}
+            </button>
+            {getCloudState().activeCloudId && (
+              <button
+                type="button"
+                onClick={handleRemoveAccount}
+                disabled={loading}
+                className="btn"
+                title="Disconnect & Remove Active Cloud ID"
+                style={{
+                  padding: '12px 18px',
+                  borderRadius: '12px',
+                  fontWeight: 600,
+                  fontSize: '0.92rem',
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  color: 'var(--critical, #ef4444)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+              >
+                <Trash2 size={16} />
+                Remove
+              </button>
             )}
-          </button>
+          </div>
         </form>
 
         {error && (

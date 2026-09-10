@@ -236,6 +236,15 @@ def verify_cloud_account(payload: VerifyAccountRequest):
         "account_status": result
     }
 
+@router.post("/cloud/remove-account")
+def remove_cloud_account():
+    store.reset_data()
+    return {
+        "success": True,
+        "message": "Active Cloud ID removed and disconnected successfully",
+        "stats": store.stats
+    }
+
 @router.get("/scan/status")
 def get_scan_status():
     return {"success": True, "scan_info": store.scan_state}
