@@ -179,18 +179,58 @@ export function SubscriptionProvider({ children }) {
       }
     };
 
+    const purchaseTime = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    const purchaseDate = now.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+
+    let methodLabel = 'Credit Card';
+    if (paymentDetails.type === 'upi') {
+      methodLabel = `UPI (VPA: ${paymentDetails.upiId || 'VPA'})`;
+    } else if (paymentDetails.type === 'crypto') {
+      methodLabel = `Crypto (${paymentDetails.network ? paymentDetails.network.replace('_', ' ') : 'USDT'})`;
+    } else if (paymentDetails.brand) {
+      methodLabel = `${paymentDetails.brand} Card (ending in ${paymentDetails.last4 || '4242'})`;
+    }
+
     const newInvoice = {
       id: invoiceId,
       transactionId,
+      websiteName: 'CloudGuard AI - Cloud Security Scanner',
+      websiteUrl: 'https://cloudguard-secops.ai',
+      companyName: 'CloudGuard SecOps Technologies Ltd.',
       date: now.toISOString().split('T')[0],
       createdAt: now.toISOString(),
+      purchaseTimestamp: `${purchaseDate} at ${purchaseTime}`,
+      formattedDate: purchaseDate,
+      formattedTime: purchaseTime,
       planId: targetPlan.id,
       planName: targetPlan.name,
+      planPeriod: targetPlan.period,
+      planDescription: targetPlan.description || 'Full automated CIS compliance, production safe fixes, and 24/7 AI SecOps assistant.',
+      planFeatures: [
+        'Safe Production Zero-Downtime Auto-Remediation',
+        '24/7 Instant AI SecOps Assistant',
+        'Real-time Infrastructure Drift Alerts',
+        'Multi-Cloud Account Connections',
+        '1-Click Automated Compliance PDF Reports'
+      ],
       amount: paymentDetails.amount || targetPlan.price,
       currency: 'USD',
-      status: 'Paid',
+      status: 'Paid & Active',
       paymentMethodType: paymentDetails.type || 'card',
-      paymentReference: paymentDetails.utr || paymentDetails.txHash || (paymentDetails.last4 ? `Card ending in ${paymentDetails.last4}` : transactionId),
+      paymentMethodLabel: methodLabel,
+      paymentReference: paymentDetails.utr
+        ? `UTR: ${paymentDetails.utr}`
+        : paymentDetails.txHash
+        ? `TxHash: ${paymentDetails.txHash}`
+        : paymentDetails.last4
+        ? `Card ending in ${paymentDetails.last4}`
+        : transactionId,
+      cardHolder: paymentDetails.cardHolder || 'Authorized User',
+      upiId: paymentDetails.upiId || null,
+      utr: paymentDetails.utr || null,
+      walletAddress: paymentDetails.walletAddress || null,
+      network: paymentDetails.network || null,
+      txHash: paymentDetails.txHash || null,
       downloadUrl: '#',
     };
 
