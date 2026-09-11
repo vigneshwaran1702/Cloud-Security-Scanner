@@ -15,9 +15,15 @@ import {
   Zap,
   ArrowLeft,
   Settings as SettingsIcon,
-  Search
+  Search,
+  Check,
+  Smartphone,
+  Layers,
+  ChevronLeft
 } from 'lucide-react';
 import { getCloudState, saveCloudState } from '../services/api';
+import { useSubscription } from '../context/SubscriptionContext';
+import { useTheme, ACCENT_PALETTES } from '../context/ThemeContext';
 import SubscriptionSettingsTab from './settings/SubscriptionSettingsTab';
 import ThemeSettingsTab from './settings/ThemeSettingsTab';
 import CloudSettingsTab from './settings/CloudSettingsTab';
@@ -52,57 +58,60 @@ const initialSettings = {
   },
 };
 
-const TABS = [
+const SETTINGS_SECTIONS = [
   {
     id: 'subscription',
     label: 'Subscription & Details',
     shortLabel: 'Subscription',
     icon: CreditCard,
-    badge: 'Pro / Tier',
     description: 'Active tier, billing history, payment methods & receipts',
+    color: '#6366f1',
   },
   {
     id: 'theme',
     label: 'Theme & Color Settings',
     shortLabel: 'Theme & Colors',
     icon: Palette,
-    badge: null,
     description: 'Cyber Dark / Executive Light modes & neon accent palettes',
+    color: '#06b6d4',
   },
   {
     id: 'cloud',
     label: 'Connected Cloud Accounts',
     shortLabel: 'Cloud Accounts',
     icon: Cloud,
-    badge: 'AWS / Azure / GCP',
     description: 'Multi-cloud IAM credentials & live connection status',
+    color: '#ff9900',
   },
   {
     id: 'general',
     label: 'General Scanner Configuration',
     shortLabel: 'Scanner Config',
     icon: Shield,
-    badge: null,
     description: 'Scan frequency, minimum severity & safe auto-remediation',
+    color: '#10b981',
   },
   {
     id: 'notifications',
     label: 'Notification Channels',
     shortLabel: 'Notifications',
     icon: Bell,
-    badge: null,
     description: 'Email digests, Slack webhooks & incident triggers',
+    color: '#f59e0b',
   },
 ];
 
 export default function Settings() {
-  const params = useParams();
+  const { section } = useParams();
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
-  // Determine active tab from URL params (:section) or query params (?tab=) or fallback to 'subscription'
-  const routeSection = params.section || searchParams.get('tab') || 'subscription';
-  const activeTabId = TABS.some(t => t.id === routeSection) ? routeSection : 'subscription';
+  const { activeTier, isPro, invoices } = useSubscription();
+  const { theme, accent } = useTheme();
+
+  // If URL has /settings/:section or ?tab=, show that sub-page; otherwise show the Main Hub Directory
+  const activeSectionId = section || searchParams.get('tab');
+  const isSubPage = Boolean(activeSectionId && SETTINGS_SECTIONS.some(s => s.id === activeSectionId));
 
   const [settings, setSettings] = useState(() => {
     try {
@@ -137,12 +146,15 @@ export default function Settings() {
     }));
   };
 
-  const handleSelectTab = (tabId) => {
-    navigate(`/settings/${tabId}`);
+  const handleOpenSection = (sectionId) => {
+    navigate(`/settings/${sectionId}`);
+  };
+
+  const handleBackToHub = () => {
+    navigate('/settings');
   };
 
   const handleSaveAll = () => {
-    // If user configured cloud account id, sync to cloud state
     const activeId = settings.aws.account_id || settings.azure.subscription_id || settings.gcp.project_id;
     const activeProv = settings.aws.account_id ? 'AWS' : settings.azure.subscription_id ? 'AZURE' : settings.gcp.project_id ? 'GCP' : null;
     if (activeId) {
@@ -162,256 +174,442 @@ export default function Settings() {
     setTimeout(() => setSaved(false), 2500);
   };
 
-  const currentTabObj = TABS.find(t => t.id === activeTabId) || TABS[0];
-  const filteredTabs = TABS.filter(t =>
-    t.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    t.description.toLowerCase().includes(searchQuery.toLowerCase())
+  const currentSectionObj = SETTINGS_SECTIONS.find(s => s.id === activeSectionId) || SETTINGS_SECTIONS[0];
+  const filteredSections = SETTINGS_SECTIONS.filter(s =>
+    s.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    s.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const getSectionStatusBadge = (secId) => {
+    if (secId === 'subscription') {
+      return {
+        text: isPro ? `${activeTier.badge} ✓` : 'Starter (Free)',
+        color: isPro ? 'var(--success)' : 'var(--primary)',
+        bg: isPro ? 'var(--success-bg)' : 'var(--badge-primary-bg)',
+      };
+    }
+    if (secId === 'theme') {
+      return {
+        text: theme === 'dark' ? 'Cyber Dark' : 'Executive Light',
+        color: 'var(--accent)',
+        bg: 'rgba(6, 182, 212, 0.12)',
+      };
+    }
+    if (secId === 'cloud') {
+      const activeCount = (settings.aws.enabled ? 1 : 0) + (settings.azure.enabled ? 1 : 0) + (settings.gcp.enabled ? 1 : 0);
+      return {
+        text: activeCount > 0 ? `${activeCount} Cloud Connected` : 'Disconnected',
+        color: activeCount > 0 ? '#ff9900' : 'var(--text-muted)',
+        bg: activeCount > 0 ? 'rgba(255, 153, 0, 0.12)' : 'var(--panel-inner-bg)',
+      };
+    }
+    if (secId === 'general') {
+      return {
+        text: settings.general.auto_remediation ? 'Safe Auto-Fix ON' : 'Scan Only',
+        color: 'var(--success)',
+        bg: 'var(--success-bg)',
+      };
+    }
+    if (secId === 'notifications') {
+      return {
+        text: settings.general.email_notifications ? 'Email Alert Active' : 'Muted',
+        color: 'var(--primary)',
+        bg: 'var(--badge-primary-bg)',
+      };
+    }
+    return null;
+  };
+
   return (
-    <div className="flex flex-col gap-6 animate-fade-in" style={{ maxWidth: '1280px', margin: '0 auto', paddingBottom: '40px' }}>
+    <div className="flex flex-col gap-6 animate-fade-in" style={{ maxWidth: '1180px', margin: '0 auto', paddingBottom: '48px' }}>
       
-      {/* 1. TOP HEADER & BREADCRUMB BAR */}
-      <div className="flex justify-between items-center flex-wrap gap-4 pb-2 border-b" style={{ borderColor: 'var(--border-color)' }}>
-        <div>
-          <div className="flex items-center gap-2" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '4px' }}>
-            <Link to="/dashboard" style={{ color: 'var(--text-muted)', textDecoration: 'none' }} className="hover:underline">
-              Dashboard
-            </Link>
-            <ChevronRight size={14} />
-            <span style={{ color: 'var(--primary)', fontWeight: 600 }}>Platform Settings</span>
-            <ChevronRight size={14} />
-            <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>{currentTabObj.shortLabel}</span>
+      {/* ========================================================================= */}
+      {/* 1. FIRST OPENING PAGE: SETTINGS HUB DIRECTORY (when at /settings)       */}
+      {/* ========================================================================= */}
+      {!isSubPage ? (
+        <div className="flex flex-col gap-6 animate-fade-in">
+          
+          {/* Header & Save Bar */}
+          <div className="flex justify-between items-center flex-wrap gap-4 pb-3 border-b" style={{ borderColor: 'var(--border-color)' }}>
+            <div>
+              <div className="flex items-center gap-2" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '4px' }}>
+                <Link to="/dashboard" style={{ color: 'var(--text-muted)', textDecoration: 'none' }} className="hover:underline">
+                  Dashboard
+                </Link>
+                <ChevronRight size={14} />
+                <span style={{ color: 'var(--primary)', fontWeight: 600 }}>Platform Settings</span>
+              </div>
+
+              <h2 style={{ fontSize: '1.75rem', margin: 0, fontWeight: 800, letterSpacing: '-0.02em' }} className="flex items-center gap-3">
+                <div style={{ padding: '8px', borderRadius: '12px', background: 'var(--badge-primary-bg)', color: 'var(--primary)', display: 'flex' }}>
+                  <SettingsIcon size={24} />
+                </div>
+                Settings & Platform Configuration
+              </h2>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: '4px 0 0' }}>
+                Select a settings category below to manage subscriptions, themes, connected clouds, scanner cadence, and alerts.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }} className="hidden sm:inline-flex items-center gap-1.5">
+                <Clock size={14} />
+                <span>Saved: {lastSavedTime}</span>
+              </span>
+
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleSaveAll}
+                style={{
+                  padding: '10px 22px',
+                  fontSize: '0.9rem',
+                  fontWeight: 700,
+                  borderRadius: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  boxShadow: '0 4px 14px var(--primary-glow)',
+                }}
+              >
+                {saved ? <CheckCircle2 size={18} /> : <Save size={18} />}
+                {saved ? 'All Settings Saved ✓' : 'Save All Settings'}
+              </button>
+            </div>
           </div>
 
-          <h2 style={{ fontSize: '1.65rem', margin: 0, fontWeight: 800, letterSpacing: '-0.02em' }} className="flex items-center gap-2.5">
-            <SettingsIcon size={26} color="var(--primary)" />
-            Settings & Platform Configuration
-          </h2>
-        </div>
-
-        {/* Global Save Button with Status Feedback */}
-        <div className="flex items-center gap-3">
-          <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }} className="hidden sm:inline-flex items-center gap-1.5">
-            <Clock size={14} />
-            <span>Saved: {lastSavedTime}</span>
-          </span>
-
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={handleSaveAll}
-            style={{
-              padding: '10px 22px',
-              fontSize: '0.9rem',
-              fontWeight: 700,
-              borderRadius: '12px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              boxShadow: '0 4px 14px var(--primary-glow)',
-            }}
-          >
-            {saved ? <CheckCircle2 size={18} /> : <Save size={18} />}
-            {saved ? 'All Changes Saved ✓' : 'Save All Settings'}
-          </button>
-        </div>
-      </div>
-
-      {/* 2. MAIN SETTINGS TWO-COLUMN / SUB-PAGE LAYOUT */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        
-        {/* LEFT SUB-NAVIGATION SIDEBAR (4 cols on lg) */}
-        <div className="lg:col-span-4 flex flex-col gap-3">
-          
-          {/* Search / Filter in Settings */}
+          {/* Search Filter input */}
           <div
             style={{
               position: 'relative',
               background: 'var(--panel-inner-bg)',
-              borderRadius: '12px',
+              borderRadius: '14px',
               border: '1px solid var(--border-color)',
-              padding: '6px 12px',
+              padding: '10px 16px',
             }}
-            className="flex items-center gap-2"
+            className="flex items-center gap-3"
           >
-            <Search size={16} color="var(--text-muted)" />
+            <Search size={18} color="var(--text-muted)" />
             <input
               type="text"
-              placeholder="Search settings sections..."
+              placeholder="Search settings sections (e.g., subscription, theme, aws, notifications)..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               style={{
                 background: 'transparent',
                 border: 'none',
                 color: 'var(--text-main)',
-                fontSize: '0.85rem',
+                fontSize: '0.92rem',
                 outline: 'none',
                 width: '100%',
               }}
             />
           </div>
 
-          {/* Navigation Tab Links */}
+          {/* Main List of Settings Options Cards (Matching user screenshot design) */}
           <div
             className="glass-panel"
             style={{
-              padding: '10px',
+              padding: '12px',
               display: 'flex',
               flexDirection: 'column',
-              gap: '6px',
+              gap: '8px',
             }}
           >
-            {filteredTabs.map((tab) => {
-              const TabIcon = tab.icon;
-              const isActive = activeTabId === tab.id;
+            {filteredSections.map((sec) => {
+              const SecIcon = sec.icon;
+              const badgeInfo = getSectionStatusBadge(sec.id);
 
               return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => handleSelectTab(tab.id)}
+                <div
+                  key={sec.id}
+                  onClick={() => handleOpenSection(sec.id)}
                   style={{
-                    background: isActive ? 'var(--sidebar-active-bg)' : 'transparent',
-                    border: isActive ? '1px solid var(--sidebar-active-border)' : '1px solid transparent',
-                    color: isActive ? 'var(--text-main)' : 'var(--text-muted)',
-                    boxShadow: isActive ? '0 4px 16px var(--primary-glow)' : 'none',
-                    padding: '14px 16px',
-                    borderRadius: '14px',
-                    textAlign: 'left',
+                    background: 'var(--panel-inner-bg)',
+                    border: '1px solid var(--border-color)',
+                    padding: '18px 22px',
+                    borderRadius: '16px',
                     cursor: 'pointer',
-                    transition: 'var(--transition)',
+                    transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    width: '100%',
-                    position: 'relative',
+                    gap: '16px',
                   }}
-                  className="hover:bg-panel-inner"
+                  className="hover:border-primary hover:shadow-lg hover:translate-x-1"
                 >
-                  <div className="flex items-center gap-3.5" style={{ minWidth: 0 }}>
+                  <div className="flex items-center gap-4" style={{ minWidth: 0 }}>
                     <div
                       style={{
-                        padding: '9px',
-                        borderRadius: '10px',
-                        background: isActive ? 'var(--primary)' : 'var(--panel-inner-bg)',
-                        color: isActive ? '#ffffff' : 'var(--text-muted)',
+                        padding: '12px',
+                        borderRadius: '14px',
+                        background: 'var(--badge-primary-bg)',
+                        color: sec.color || 'var(--primary)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         flexShrink: 0,
-                        transition: 'all 0.2s ease',
                       }}
                     >
-                      <TabIcon size={18} />
+                      <SecIcon size={24} />
                     </div>
 
                     <div style={{ minWidth: 0 }}>
-                      <div className="flex items-center gap-2">
-                        <span style={{ fontSize: '0.92rem', fontWeight: isActive ? 800 : 600, color: isActive ? 'var(--text-main)' : 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                          {tab.label}
-                        </span>
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <h3 style={{ fontSize: '1.1rem', margin: 0, fontWeight: 700, color: 'var(--text-main)' }}>
+                          {sec.label}
+                        </h3>
+                        {badgeInfo && (
+                          <span
+                            style={{
+                              fontSize: '0.72rem',
+                              fontWeight: 800,
+                              padding: '3px 9px',
+                              borderRadius: '8px',
+                              background: badgeInfo.bg,
+                              color: badgeInfo.color,
+                            }}
+                          >
+                            {badgeInfo.text}
+                          </span>
+                        )}
                       </div>
-                      <p style={{ fontSize: '0.73rem', color: 'var(--text-muted)', margin: '2px 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {tab.description}
+                      <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: '4px 0 0' }}>
+                        {sec.description}
                       </p>
                     </div>
                   </div>
 
-                  <ChevronRight
-                    size={16}
-                    color={isActive ? 'var(--primary)' : 'var(--text-subtle)'}
-                    style={{
-                      transform: isActive ? 'translateX(2px)' : 'none',
-                      transition: 'transform 0.2s ease',
-                      flexShrink: 0,
-                      marginLeft: '6px',
-                    }}
-                  />
+                  <div className="flex items-center gap-3 flex-shrink-0">
+                    <span style={{ fontSize: '0.82rem', color: 'var(--primary)', fontWeight: 700 }} className="hidden sm:inline">
+                      Open Settings
+                    </span>
+                    <div
+                      style={{
+                        padding: '8px',
+                        borderRadius: '10px',
+                        background: 'var(--panel-bg-solid)',
+                        border: '1px solid var(--border-color)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'var(--text-muted)',
+                      }}
+                    >
+                      <ChevronRight size={18} />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Bottom Quick Help Card */}
+          <div
+            className="glass-panel"
+            style={{
+              padding: '20px 24px',
+              border: '1px solid var(--border-color)',
+              background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(6, 182, 212, 0.05))',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '16px',
+            }}
+          >
+            <div className="flex items-center gap-3.5">
+              <div style={{ padding: '10px', borderRadius: '12px', background: 'var(--badge-primary-bg)', color: 'var(--primary)' }}>
+                <Sparkles size={22} />
+              </div>
+              <div>
+                <h4 style={{ fontSize: '1rem', margin: 0, fontWeight: 700 }}>24/7 AI Cloud SecOps Assistant</h4>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: '2px 0 0' }}>
+                  Need automated help fixing open security groups, IAM roles, or configuring webhooks?
+                </p>
+              </div>
+            </div>
+
+            <Link
+              to="/subscription"
+              className="btn btn-primary"
+              style={{
+                padding: '8px 18px',
+                borderRadius: '10px',
+                fontSize: '0.85rem',
+                fontWeight: 700,
+                textDecoration: 'none',
+              }}
+            >
+              Open SecOps Assistant
+            </Link>
+          </div>
+
+        </div>
+      ) : (
+        /* ========================================================================= */
+        /* 2. SECOND PAGE: DEDICATED SETTINGS SECTION PAGE (e.g. /settings/theme)    */
+        /* ========================================================================= */
+        <div className="flex flex-col gap-6 animate-fade-in">
+          
+          {/* Header with "Back to All Settings" button */}
+          <div className="flex justify-between items-center flex-wrap gap-4 pb-3 border-b" style={{ borderColor: 'var(--border-color)' }}>
+            <div>
+              {/* Back Button & Breadcrumbs */}
+              <div className="flex items-center gap-2" style={{ fontSize: '0.82rem', marginBottom: '8px' }}>
+                <button
+                  type="button"
+                  onClick={handleBackToHub}
+                  style={{
+                    background: 'var(--panel-inner-bg)',
+                    border: '1px solid var(--border-color)',
+                    color: 'var(--primary)',
+                    padding: '5px 12px',
+                    borderRadius: '8px',
+                    fontSize: '0.8rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    transition: 'var(--transition)',
+                  }}
+                  className="hover:border-primary"
+                >
+                  <ArrowLeft size={14} /> Back to All Settings
+                </button>
+                <span style={{ color: 'var(--text-subtle)' }}>/</span>
+                <span style={{ color: 'var(--text-muted)' }}>Platform Settings</span>
+                <span style={{ color: 'var(--text-subtle)' }}>/</span>
+                <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>{currentSectionObj.label}</span>
+              </div>
+
+              <h2 style={{ fontSize: '1.65rem', margin: 0, fontWeight: 800, letterSpacing: '-0.02em' }} className="flex items-center gap-3">
+                <div style={{ padding: '8px', borderRadius: '12px', background: 'var(--badge-primary-bg)', color: currentSectionObj.color || 'var(--primary)', display: 'flex' }}>
+                  <currentSectionObj.icon size={22} />
+                </div>
+                {currentSectionObj.label}
+              </h2>
+            </div>
+
+            {/* Save Button */}
+            <div className="flex items-center gap-3">
+              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }} className="hidden sm:inline-flex items-center gap-1.5">
+                <Clock size={14} />
+                <span>Saved: {lastSavedTime}</span>
+              </span>
+
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleSaveAll}
+                style={{
+                  padding: '10px 22px',
+                  fontSize: '0.9rem',
+                  fontWeight: 700,
+                  borderRadius: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                {saved ? <CheckCircle2 size={18} /> : <Save size={18} />}
+                {saved ? 'Saved ✓' : 'Save Changes'}
+              </button>
+            </div>
+          </div>
+
+          {/* Quick Top Category Switcher Bar */}
+          <div
+            className="flex items-center gap-2 overflow-x-auto pb-1"
+            style={{
+              scrollbarWidth: 'none',
+            }}
+          >
+            {SETTINGS_SECTIONS.map((sec) => {
+              const SecIcon = sec.icon;
+              const isSelected = sec.id === activeSectionId;
+              return (
+                <button
+                  key={sec.id}
+                  type="button"
+                  onClick={() => handleOpenSection(sec.id)}
+                  style={{
+                    background: isSelected ? 'var(--primary)' : 'var(--panel-inner-bg)',
+                    color: isSelected ? '#ffffff' : 'var(--text-muted)',
+                    border: isSelected ? '1px solid var(--primary)' : '1px solid var(--border-color)',
+                    padding: '8px 16px',
+                    borderRadius: '12px',
+                    fontSize: '0.85rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    whiteSpace: 'nowrap',
+                    transition: 'var(--transition)',
+                  }}
+                >
+                  <SecIcon size={16} />
+                  {sec.shortLabel}
                 </button>
               );
             })}
           </div>
 
-          {/* Quick Support / SecOps Help Card */}
-          <div
-            className="glass-panel"
-            style={{
-              padding: '18px',
-              border: '1px solid var(--border-color)',
-              background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(6, 182, 212, 0.05))',
-            }}
-          >
-            <div className="flex items-center gap-2.5" style={{ marginBottom: '8px' }}>
-              <Sparkles size={18} color="var(--primary)" />
-              <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-main)' }}>
-                CloudGuard SecOps AI
-              </span>
-            </div>
-            <p style={{ fontSize: '0.76rem', color: 'var(--text-muted)', margin: '0 0 12px', lineHeight: 1.4 }}>
-              Need assistance provisioning IAM roles or configuring automated webhook alerts?
-            </p>
-            <Link
-              to="/subscription"
-              style={{
-                fontSize: '0.75rem',
-                color: 'var(--primary)',
-                fontWeight: 700,
-                textDecoration: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px',
-              }}
-            >
-              Open 24/7 SecOps Assistant <ChevronRight size={13} />
-            </Link>
+          {/* Render the Active Sub-Page Component */}
+          <div className="flex flex-col gap-6 animate-fade-in">
+            {activeSectionId === 'subscription' && (
+              <SubscriptionSettingsTab />
+            )}
+
+            {activeSectionId === 'theme' && (
+              <ThemeSettingsTab />
+            )}
+
+            {activeSectionId === 'cloud' && (
+              <CloudSettingsTab
+                settings={settings}
+                updateCloud={updateCloud}
+                setSettings={setSettings}
+              />
+            )}
+
+            {activeSectionId === 'general' && (
+              <ScannerSettingsTab
+                settings={settings}
+                updateGeneral={updateGeneral}
+              />
+            )}
+
+            {activeSectionId === 'notifications' && (
+              <NotificationSettingsTab
+                settings={settings}
+                updateGeneral={updateGeneral}
+              />
+            )}
           </div>
-        </div>
 
-        {/* RIGHT MAIN SUB-PAGE CONTENT (8 cols on lg) */}
-        <div className="lg:col-span-8 flex flex-col gap-6">
-          
-          {/* TAB 1: SUBSCRIPTION & DETAILS */}
-          {activeTabId === 'subscription' && (
-            <SubscriptionSettingsTab />
-          )}
-
-          {/* TAB 2: THEME & COLOR SETTINGS */}
-          {activeTabId === 'theme' && (
-            <ThemeSettingsTab />
-          )}
-
-          {/* TAB 3: CONNECTED CLOUD ACCOUNTS */}
-          {activeTabId === 'cloud' && (
-            <CloudSettingsTab
-              settings={settings}
-              updateCloud={updateCloud}
-              setSettings={setSettings}
-            />
-          )}
-
-          {/* TAB 4: GENERAL SCANNER CONFIGURATION */}
-          {activeTabId === 'general' && (
-            <ScannerSettingsTab
-              settings={settings}
-              updateGeneral={updateGeneral}
-            />
-          )}
-
-          {/* TAB 5: NOTIFICATIONS */}
-          {activeTabId === 'notifications' && (
-            <NotificationSettingsTab
-              settings={settings}
-              updateGeneral={updateGeneral}
-            />
-          )}
-
-          {/* Bottom Save Bar on mobile / bottom of section */}
+          {/* Bottom Save & Back navigation */}
           <div className="flex justify-between items-center pt-4 border-t" style={{ borderColor: 'var(--border-subtle)' }}>
-            <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-              <Clock size={13} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '5px' }} />
-              Last saved: {lastSavedTime}
-            </span>
+            <button
+              type="button"
+              onClick={handleBackToHub}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--text-muted)',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+              }}
+              className="hover:text-primary"
+            >
+              <ArrowLeft size={16} /> Back to All Settings
+            </button>
 
             <button
               type="button"
@@ -419,13 +617,12 @@ export default function Settings() {
               onClick={handleSaveAll}
               style={{ padding: '10px 24px', fontSize: '0.88rem', fontWeight: 700, borderRadius: '10px' }}
             >
-              {saved ? 'Saved ✓' : 'Save Changes'}
+              {saved ? 'Saved ✓' : 'Save Settings'}
             </button>
           </div>
 
         </div>
-
-      </div>
+      )}
 
     </div>
   );
