@@ -195,7 +195,6 @@ export function SubscriptionProvider({ children }) {
       id: invoiceId,
       transactionId,
       websiteName: 'CloudGuard AI - Cloud Security Scanner',
-      websiteUrl: 'https://cloudguard-secops.ai',
       companyName: 'CloudGuard SecOps Technologies Ltd.',
       date: now.toISOString().split('T')[0],
       createdAt: now.toISOString(),

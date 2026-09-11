@@ -12,7 +12,6 @@ import {
   FileText,
   Zap,
   Lock,
-  Globe,
   Award
 } from 'lucide-react';
 
@@ -20,7 +19,6 @@ export default function ReceiptModal({ isOpen, onClose, invoice }) {
   if (!isOpen || !invoice) return null;
 
   const websiteName = invoice.websiteName || 'CloudGuard AI — Cloud Security Scanner';
-  const websiteUrl = invoice.websiteUrl || 'https://cloudguard-secops.ai';
   const companyName = invoice.companyName || 'CloudGuard SecOps Technologies Ltd.';
   const planName = invoice.planName || 'Pro Security Shield';
   const amount = invoice.amount || 39;
@@ -139,7 +137,7 @@ export default function ReceiptModal({ isOpen, onClose, invoice }) {
               </span>
             </div>
             <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-              {companyName} • <span style={{ color: 'var(--primary)' }}>{websiteUrl}</span>
+              {companyName}
             </div>
           </div>
 
