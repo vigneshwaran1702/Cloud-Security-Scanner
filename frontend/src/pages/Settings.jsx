@@ -381,9 +381,6 @@ export default function Settings() {
                   </div>
 
                   <div className="flex items-center gap-3 flex-shrink-0">
-                    <span style={{ fontSize: '0.82rem', color: 'var(--primary)', fontWeight: 700 }} className="hidden sm:inline">
-                      Open Settings
-                    </span>
                     <div
                       style={{
                         padding: '8px',
