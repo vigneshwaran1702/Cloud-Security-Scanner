@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Cloud, Shield, Key, Bell, Clock, AlertTriangle, Save, ToggleLeft, ToggleRight, Mail, MessageSquare, Zap, CreditCard, Sparkles, ArrowRight, ShieldCheck, Sun, Moon, Palette, Check } from 'lucide-react';
+import { Cloud, Shield, Key, Bell, Clock, AlertTriangle, Save, ToggleLeft, ToggleRight, Mail, MessageSquare, Zap, CreditCard, Sparkles, ArrowRight, ShieldCheck, Sun, Moon, Palette, Check, Receipt, Eye, Printer, Calendar, Smartphone, Coins } from 'lucide-react';
 import { useSubscription } from '../context/SubscriptionContext';
 import { useTheme, ACCENT_PALETTES } from '../context/ThemeContext';
 import { getCloudState, saveCloudState } from '../services/api';
+import ReceiptModal from '../components/ReceiptModal';
 
 const initialSettings = {
   aws: {
@@ -112,6 +113,13 @@ export default function Settings() {
   const { theme, setTheme, accent, setAccent, isDark } = useTheme();
   const [settings, setSettings] = useState(initialSettings);
   const [saved, setSaved] = useState(false);
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
+  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+
+  const handleOpenReceipt = (inv) => {
+    setSelectedInvoice(inv);
+    setIsReceiptModalOpen(true);
+  };
 
   const updateCloud = (cloud, field, value) => {
     setSettings(prev => ({
@@ -420,15 +428,89 @@ export default function Settings() {
         </div>
 
         {invoices.length > 0 && (
-          <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '12px' }}>
-            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600, marginBottom: '8px' }}>Recent Billing Invoices</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              {invoices.map(inv => (
-                <div key={inv.id} className="flex justify-between items-center" style={{ fontSize: '0.8rem', background: 'var(--panel-inner-bg)', padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
-                  <span>{inv.id} • {inv.date} ({inv.planName})</span>
-                  <span style={{ color: 'var(--success)', fontWeight: 700 }}>${inv.amount} Paid ✓</span>
-                </div>
-              ))}
+          <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '16px', marginTop: '16px' }}>
+            <div className="flex justify-between items-center" style={{ marginBottom: '12px' }}>
+              <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
+                Verified Invoices & Purchase Receipts
+              </div>
+              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                Website: <strong>CloudGuard AI</strong>
+              </span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {invoices.map(inv => {
+                const websiteName = inv.websiteName || 'CloudGuard AI — Cloud Security Scanner';
+                const planName = inv.planName || 'Pro Security Shield';
+                const amount = inv.amount || 39;
+                const dateStr = inv.purchaseTimestamp || (inv.formattedDate ? `${inv.formattedDate} at ${inv.formattedTime || '12:00 PM'}` : `${inv.date}`);
+                const isUpi = inv.paymentMethodType === 'upi' || inv.upiId || (inv.paymentReference && inv.paymentReference.startsWith('UTR'));
+                const isCrypto = inv.paymentMethodType === 'crypto' || inv.txHash || (inv.paymentReference && inv.paymentReference.startsWith('TxHash'));
+                
+                let methodDisplay = inv.paymentMethodLabel;
+                if (!methodDisplay) {
+                  if (isUpi) methodDisplay = `UPI (${inv.upiId ? `VPA: ${inv.upiId}` : inv.paymentReference || 'UPI Transfer'})`;
+                  else if (isCrypto) methodDisplay = `Crypto (${inv.network ? inv.network.replace('_', ' ') : 'USDT'})`;
+                  else methodDisplay = inv.paymentReference ? `Card (${inv.paymentReference})` : 'Credit Card';
+                }
+
+                return (
+                  <div
+                    key={inv.id}
+                    style={{
+                      background: 'var(--panel-inner-bg)',
+                      padding: '14px 16px',
+                      borderRadius: '12px',
+                      border: '1px solid var(--border-color)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px',
+                    }}
+                  >
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <span style={{ fontSize: '0.72rem', background: 'var(--badge-primary-bg)', color: 'var(--primary)', padding: '2px 6px', borderRadius: '6px', fontWeight: 800 }}>
+                          {websiteName}
+                        </span>
+                        <span style={{ fontWeight: 800, color: 'var(--text-main)', fontSize: '0.88rem' }}>
+                          {inv.id} — {planName}
+                        </span>
+                      </div>
+                      <span style={{ color: 'var(--success)', fontWeight: 800, fontSize: '0.88rem' }}>
+                        ${amount}.00 USD Paid ✓
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center" style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                      <div className="flex items-center gap-1.5">
+                        {isUpi ? <Smartphone size={13} color="#097939" /> : isCrypto ? <Coins size={13} color="#f59e0b" /> : <CreditCard size={13} color="var(--primary)" />}
+                        <span>Method: <strong>{methodDisplay}</strong></span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Calendar size={13} />
+                        <span>Purchased: {dateStr}</span>
+                      </div>
+                      <button
+                        onClick={() => handleOpenReceipt(inv)}
+                        style={{
+                          background: 'var(--badge-primary-bg)',
+                          border: '1px solid var(--badge-primary-border)',
+                          color: 'var(--primary)',
+                          padding: '4px 10px',
+                          borderRadius: '6px',
+                          fontSize: '0.72rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                        }}
+                      >
+                        <Receipt size={13} /> Receipt Details
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
@@ -567,6 +649,13 @@ export default function Settings() {
           {saved ? 'Saved ✓' : 'Save Settings'}
         </button>
       </div>
+
+      {/* Full Printable Receipt Modal */}
+      <ReceiptModal
+        isOpen={isReceiptModalOpen}
+        onClose={() => setIsReceiptModalOpen(false)}
+        invoice={selectedInvoice}
+      />
     </div>
   );
 }

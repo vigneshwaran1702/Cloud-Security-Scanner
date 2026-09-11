@@ -9,11 +9,17 @@ import {
   FileText,
   Printer,
   ShieldCheck,
-  Receipt
+  Receipt,
+  Eye,
+  CreditCard,
+  Smartphone,
+  Coins,
+  Calendar
 } from 'lucide-react';
 import { useSubscription, PLAN_TIERS } from '../context/SubscriptionContext';
 import { useAuth } from '../context/AuthContext';
 import SubscriptionCheckoutModal from '../components/SubscriptionCheckoutModal';
+import ReceiptModal from '../components/ReceiptModal';
 
 export default function Subscription() {
   const { currentPlan, activeTier, isPro, isEnterprise, cancelSubscription, invoices } = useSubscription();
@@ -21,6 +27,13 @@ export default function Subscription() {
   const [billingCycle, setBillingCycle] = useState('monthly'); // 'monthly' | 'yearly'
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [selectedTier, setSelectedTier] = useState('pro');
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
+  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+
+  const handleOpenReceipt = (inv) => {
+    setSelectedInvoice(inv);
+    setIsReceiptModalOpen(true);
+  };
 
   const handleOpenCheckout = (tierId) => {
     requireAuth(() => {
@@ -480,58 +493,168 @@ export default function Subscription() {
         </div>
       </div>
 
-      {/* Invoice & Payment Receipts History (if available) */}
+      {/* Invoice & Payment Receipts History (Comprehensive) */}
       {invoices && invoices.length > 0 && (
         <div className="glass-panel" style={{ padding: '28px', borderRadius: '20px', marginBottom: '40px' }}>
-          <div className="flex items-center gap-2" style={{ marginBottom: '18px', color: 'var(--primary)' }}>
-            <Receipt size={22} />
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0 }}>Payment Receipts & Invoices</h3>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {invoices.map((inv) => (
-              <div
-                key={inv.id}
-                className="flex justify-between items-center"
-                style={{
-                  background: 'var(--panel-inner-bg)',
-                  padding: '14px 18px',
-                  borderRadius: '12px',
-                  border: '1px solid var(--border-color)',
-                }}
-              >
-                <div>
-                  <div style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: '0.92rem' }}>
-                    {inv.id} — {inv.planName}
-                  </div>
-                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-                    Date: {inv.date} • Ref: <span style={{ fontFamily: 'monospace' }}>{inv.paymentReference || inv.transactionId || 'Confirmed'}</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span style={{ color: 'var(--success)', fontWeight: 800, fontSize: '0.95rem' }}>
-                    ${inv.amount} USD Paid ✓
-                  </span>
-                  <button
-                    onClick={() => window.print()}
-                    style={{
-                      background: 'var(--badge-primary-bg)',
-                      border: '1px solid var(--badge-primary-border)',
-                      color: 'var(--primary)',
-                      padding: '6px 12px',
-                      borderRadius: '8px',
-                      fontSize: '0.78rem',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                    }}
-                  >
-                    <Printer size={14} /> Receipt
-                  </button>
-                </div>
+          <div className="flex justify-between items-center" style={{ marginBottom: '20px', borderBottom: '1px solid var(--border-color)', paddingBottom: '14px' }}>
+            <div className="flex items-center gap-2.5" style={{ color: 'var(--primary)' }}>
+              <Receipt size={22} />
+              <div>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, color: 'var(--text-main)' }}>
+                  Payment Receipts & Invoices
+                </h3>
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                  Website: <strong>CloudGuard AI</strong> • Verified Purchase History & Receipts
+                </span>
               </div>
-            ))}
+            </div>
+            <span style={{ fontSize: '0.75rem', background: 'var(--badge-primary-bg)', color: 'var(--primary)', padding: '4px 10px', borderRadius: '10px', fontWeight: 700, border: '1px solid var(--badge-primary-border)' }}>
+              {invoices.length} {invoices.length === 1 ? 'Receipt' : 'Receipts'} on Record
+            </span>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            {invoices.map((inv) => {
+              const websiteName = inv.websiteName || 'CloudGuard AI — Cloud Security Scanner';
+              const planName = inv.planName || 'Pro Security Shield';
+              const amount = inv.amount || 39;
+              const dateStr = inv.purchaseTimestamp || (inv.formattedDate ? `${inv.formattedDate} at ${inv.formattedTime || '12:00 PM'}` : `${inv.date}`);
+              const isUpi = inv.paymentMethodType === 'upi' || inv.upiId || (inv.paymentReference && inv.paymentReference.startsWith('UTR'));
+              const isCrypto = inv.paymentMethodType === 'crypto' || inv.txHash || (inv.paymentReference && inv.paymentReference.startsWith('TxHash'));
+              
+              let methodDisplay = inv.paymentMethodLabel;
+              if (!methodDisplay) {
+                if (isUpi) methodDisplay = `UPI (${inv.upiId ? `VPA: ${inv.upiId}` : inv.paymentReference || 'UPI Transfer'})`;
+                else if (isCrypto) methodDisplay = `Crypto (${inv.network ? inv.network.replace('_', ' ') : 'USDT / TxHash'})`;
+                else methodDisplay = inv.paymentReference ? `Card (${inv.paymentReference})` : 'Credit Card';
+              }
+
+              return (
+                <div
+                  key={inv.id}
+                  style={{
+                    background: 'var(--panel-inner-bg)',
+                    padding: '18px 20px',
+                    borderRadius: '16px',
+                    border: '1px solid var(--border-color)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '12px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  }}
+                >
+                  {/* Top Row: Website Name, Invoice ID & Paid Status */}
+                  <div className="flex justify-between items-center" style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '10px' }}>
+                    <div className="flex items-center gap-2">
+                      <div style={{ background: 'var(--badge-primary-bg)', padding: '4px 8px', borderRadius: '8px', fontSize: '0.72rem', fontWeight: 800, color: 'var(--primary)' }}>
+                        {websiteName}
+                      </div>
+                      <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                        {inv.id}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span style={{ color: 'var(--success)', fontWeight: 800, fontSize: '0.95rem' }}>
+                        ${amount}.00 USD Paid ✓
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Middle Grid: Package Name, Package Details, Payment Method, Date */}
+                  <div className="grid grid-cols-4 gap-4" style={{ fontSize: '0.82rem' }}>
+                    {/* 1. Package Name */}
+                    <div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '2px' }}>
+                        Package Name
+                      </div>
+                      <div style={{ fontWeight: 800, color: 'var(--text-main)', fontSize: '0.92rem' }}>
+                        {planName}
+                      </div>
+                    </div>
+
+                    {/* 2. Package Details */}
+                    <div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '2px' }}>
+                        Package Details
+                      </div>
+                      <div style={{ color: 'var(--text-muted)', fontSize: '0.78rem', lineHeight: 1.3 }}>
+                        Safe Auto-Remediation • 24/7 AI SecOps • Real-Time Drift Alerts
+                      </div>
+                    </div>
+
+                    {/* 3. Payment Method */}
+                    <div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '2px' }}>
+                        Payment Method
+                      </div>
+                      <div className="flex items-center gap-1.5" style={{ fontWeight: 700, color: 'var(--text-main)' }}>
+                        {isUpi ? <Smartphone size={14} color="#097939" /> : isCrypto ? <Coins size={14} color="#f59e0b" /> : <CreditCard size={14} color="var(--primary)" />}
+                        <span style={{ fontSize: '0.8rem', wordBreak: 'break-all' }}>{methodDisplay}</span>
+                      </div>
+                    </div>
+
+                    {/* 4. Date of Purchase */}
+                    <div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '2px' }}>
+                        Date of Purchase
+                      </div>
+                      <div className="flex items-center gap-1.5" style={{ color: 'var(--text-main)', fontWeight: 600, fontSize: '0.8rem' }}>
+                        <Calendar size={13} color="var(--primary)" />
+                        <span>{dateStr}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Bottom Action Bar */}
+                  <div className="flex justify-between items-center" style={{ borderTop: '1px solid var(--border-color)', paddingTop: '10px', marginTop: '2px' }}>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
+                      Ref: {inv.paymentReference || inv.transactionId || 'Confirmed on ledger'}
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleOpenReceipt(inv)}
+                        style={{
+                          background: 'var(--badge-primary-bg)',
+                          border: '1px solid var(--badge-primary-border)',
+                          color: 'var(--primary)',
+                          padding: '6px 14px',
+                          borderRadius: '8px',
+                          fontSize: '0.78rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '5px',
+                        }}
+                      >
+                        <Eye size={14} /> View Receipt Details
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSelectedInvoice(inv);
+                          setTimeout(() => window.print(), 100);
+                        }}
+                        style={{
+                          background: 'var(--panel-inner-bg)',
+                          border: '1px solid var(--border-color)',
+                          color: 'var(--text-main)',
+                          padding: '6px 12px',
+                          borderRadius: '8px',
+                          fontSize: '0.78rem',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                        }}
+                      >
+                        <Printer size={14} /> Print
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -565,6 +688,13 @@ export default function Subscription() {
         onClose={() => setIsCheckoutOpen(false)}
         selectedTierId={selectedTier}
         billingCycle={billingCycle}
+      />
+
+      {/* Full Printable Receipt Modal */}
+      <ReceiptModal
+        isOpen={isReceiptModalOpen}
+        onClose={() => setIsReceiptModalOpen(false)}
+        invoice={selectedInvoice}
       />
     </div>
   );
