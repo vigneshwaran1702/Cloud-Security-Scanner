@@ -153,6 +153,9 @@ export function SubscriptionProvider({ children }) {
     const monthsToAdd = targetPlan.durationMonths || 1;
     expiry.setMonth(now.getMonth() + monthsToAdd);
 
+    const transactionId = paymentDetails.transactionId || `TXN-${Date.now().toString().slice(-8)}`;
+    const invoiceId = paymentDetails.invoiceId || `INV-${Date.now().toString().slice(-6)}`;
+
     const updatedPlan = {
       tierId: targetPlan.id,
       billingCycle: targetPlan.period,
@@ -160,18 +163,34 @@ export function SubscriptionProvider({ children }) {
       expiresAt: expiry.toISOString(),
       autoRenew: true,
       paymentMethod: {
+        type: paymentDetails.type || 'card',
         brand: paymentDetails.brand || 'Visa',
         last4: paymentDetails.last4 || '4242',
         exp: paymentDetails.exp || '12/28',
+        cardHolder: paymentDetails.cardHolder || 'Authorized User',
+        upiId: paymentDetails.upiId || null,
+        utr: paymentDetails.utr || null,
+        walletAddress: paymentDetails.walletAddress || null,
+        network: paymentDetails.network || null,
+        txHash: paymentDetails.txHash || null,
+        transactionId,
+        invoiceId,
+        amount: paymentDetails.amount || targetPlan.price,
       }
     };
 
     const newInvoice = {
-      id: `INV-${Date.now().toString().slice(-6)}`,
+      id: invoiceId,
+      transactionId,
       date: now.toISOString().split('T')[0],
+      createdAt: now.toISOString(),
+      planId: targetPlan.id,
       planName: targetPlan.name,
-      amount: targetPlan.price,
+      amount: paymentDetails.amount || targetPlan.price,
+      currency: 'USD',
       status: 'Paid',
+      paymentMethodType: paymentDetails.type || 'card',
+      paymentReference: paymentDetails.utr || paymentDetails.txHash || (paymentDetails.last4 ? `Card ending in ${paymentDetails.last4}` : transactionId),
       downloadUrl: '#',
     };
 

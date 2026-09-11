@@ -5,14 +5,18 @@ import {
   X as CloseIcon,
   ArrowRight,
   HelpCircle,
-  Award
+  Award,
+  FileText,
+  Printer,
+  ShieldCheck,
+  Receipt
 } from 'lucide-react';
 import { useSubscription, PLAN_TIERS } from '../context/SubscriptionContext';
 import { useAuth } from '../context/AuthContext';
 import SubscriptionCheckoutModal from '../components/SubscriptionCheckoutModal';
 
 export default function Subscription() {
-  const { currentPlan, activeTier, isPro, isEnterprise, cancelSubscription } = useSubscription();
+  const { currentPlan, activeTier, isPro, isEnterprise, cancelSubscription, invoices } = useSubscription();
   const { requireAuth } = useAuth();
   const [billingCycle, setBillingCycle] = useState('monthly'); // 'monthly' | 'yearly'
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
@@ -475,6 +479,62 @@ export default function Subscription() {
           </button>
         </div>
       </div>
+
+      {/* Invoice & Payment Receipts History (if available) */}
+      {invoices && invoices.length > 0 && (
+        <div className="glass-panel" style={{ padding: '28px', borderRadius: '20px', marginBottom: '40px' }}>
+          <div className="flex items-center gap-2" style={{ marginBottom: '18px', color: 'var(--primary)' }}>
+            <Receipt size={22} />
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0 }}>Payment Receipts & Invoices</h3>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {invoices.map((inv) => (
+              <div
+                key={inv.id}
+                className="flex justify-between items-center"
+                style={{
+                  background: 'var(--panel-inner-bg)',
+                  padding: '14px 18px',
+                  borderRadius: '12px',
+                  border: '1px solid var(--border-color)',
+                }}
+              >
+                <div>
+                  <div style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: '0.92rem' }}>
+                    {inv.id} — {inv.planName}
+                  </div>
+                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                    Date: {inv.date} • Ref: <span style={{ fontFamily: 'monospace' }}>{inv.paymentReference || inv.transactionId || 'Confirmed'}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span style={{ color: 'var(--success)', fontWeight: 800, fontSize: '0.95rem' }}>
+                    ${inv.amount} USD Paid ✓
+                  </span>
+                  <button
+                    onClick={() => window.print()}
+                    style={{
+                      background: 'var(--badge-primary-bg)',
+                      border: '1px solid var(--badge-primary-border)',
+                      color: 'var(--primary)',
+                      padding: '6px 12px',
+                      borderRadius: '8px',
+                      fontSize: '0.78rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                    }}
+                  >
+                    <Printer size={14} /> Receipt
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* FAQ & Guarantees */}
       <div className="grid grid-cols-2 gap-6" style={{ marginBottom: '24px' }}>
