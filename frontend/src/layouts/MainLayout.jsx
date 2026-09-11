@@ -49,7 +49,12 @@ const breadcrumbMap = {
   '/dashboard': 'Security Command Center Overview',
   '/resources': 'Cloud Asset Inventory',
   '/subscription': 'Subscription & Pricing Plans',
-  '/settings': 'Platform Settings & Cloud Credentials',
+  '/settings': 'Platform Settings & Governance',
+  '/settings/subscription': 'Settings — Subscription & Plan Details',
+  '/settings/theme': 'Settings — Theme & Color Settings',
+  '/settings/cloud': 'Settings — Connected Cloud Accounts',
+  '/settings/general': 'Settings — General Scanner Configuration',
+  '/settings/notifications': 'Settings — Notification Channels',
   '/admin/users': 'IAM & Admin User Governance',
 };
 

@@ -1,18 +1,31 @@
-# Node dependencies
+# ==========================================
+# Node.js & Dependency Ignore Rules
+# ==========================================
 node_modules/
 */node_modules/
+**/node_modules/
+.pnpm-store/
+.npm/
+.node_repl_history
+*.node
+.cache/
+.vite/
+**/dist/
+dist/
+dist-ssr/
+build/
+*.tsbuildinfo
+.eslintcache
+.stylelintcache
+.parcel-cache
+
+# Node Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 .pnpm-debug.log*
-
-# Build outputs
-dist/
-frontend/dist/
-dist-ssr/
-build/
-*.local
+lerna-debug.log*
 
 # Environment variables & secrets
 .env
@@ -20,6 +33,7 @@ build/
 !.env.example
 *.pem
 *.key
+*.local
 
 # Python
 __pycache__/
