@@ -1,16 +1,26 @@
-# Logs
+# Node.js dependencies & outputs
+node_modules/
+dist/
+dist-ssr/
+build/
+.cache/
+.vite/
+*.local
+
+# Node Logs
 logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+.pnpm-debug.log*
 lerna-debug.log*
-
-node_modules
-dist
-dist-ssr
-*.local
+.npm/
+.node_repl_history
+*.node
+*.tsbuildinfo
+.eslintcache
 
 # Editor directories and files
 .vscode/*
@@ -24,6 +34,7 @@ Thumbs.db
 *.sln
 *.sw?
 
+# Environments
 .env
 .env.*
 !.env.example

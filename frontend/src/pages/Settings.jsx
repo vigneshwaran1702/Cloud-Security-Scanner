@@ -1,15 +1,33 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Cloud, Shield, Key, Bell, Clock, AlertTriangle, Save, ToggleLeft, ToggleRight, Mail, MessageSquare, Zap, CreditCard, Sparkles, ArrowRight, ShieldCheck, Sun, Moon, Palette, Check, Receipt, Eye, Printer, Calendar, Smartphone, Coins } from 'lucide-react';
-import { useSubscription } from '../context/SubscriptionContext';
-import { useTheme, ACCENT_PALETTES } from '../context/ThemeContext';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
+import {
+  CreditCard,
+  Palette,
+  Cloud,
+  Shield,
+  Bell,
+  Save,
+  Clock,
+  CheckCircle2,
+  ChevronRight,
+  Sliders,
+  Sparkles,
+  Zap,
+  ArrowLeft,
+  Settings as SettingsIcon,
+  Search
+} from 'lucide-react';
 import { getCloudState, saveCloudState } from '../services/api';
-import ReceiptModal from '../components/ReceiptModal';
+import SubscriptionSettingsTab from './settings/SubscriptionSettingsTab';
+import ThemeSettingsTab from './settings/ThemeSettingsTab';
+import CloudSettingsTab from './settings/CloudSettingsTab';
+import ScannerSettingsTab from './settings/ScannerSettingsTab';
+import NotificationSettingsTab from './settings/NotificationSettingsTab';
 
 const initialSettings = {
   aws: {
-    enabled: false,
-    account_id: '',
+    enabled: true,
+    account_id: '492019381029',
     access_key_id: '',
     secret_access_key: '',
     region: 'us-east-1',
@@ -34,92 +52,76 @@ const initialSettings = {
   },
 };
 
-const awsRegions = ['us-east-1', 'us-east-2', 'us-west-1', 'us-west-2', 'eu-west-1', 'eu-central-1', 'ap-southeast-1'];
-const scanFrequencies = ['Every 1 Hour', 'Every 6 Hours', 'Every 12 Hours', 'Daily', 'Weekly'];
-const severityLevels = ['Low', 'Medium', 'High', 'Critical'];
-
-function Toggle({ value, onChange, label }) {
-  return (
-    <div
-      className="flex items-center gap-3"
-      style={{ cursor: 'pointer' }}
-      onClick={() => onChange(!value)}
-    >
-      {value
-        ? <ToggleRight size={28} color="var(--success)" />
-        : <ToggleLeft size={28} color="var(--text-muted)" />}
-      {label && <span style={{ fontSize: '0.9rem', fontWeight: 500, color: value ? 'var(--text-main)' : 'var(--text-muted)' }}>{label}</span>}
-    </div>
-  );
-}
-
-function SettingsInput({ label, value, onChange, type = 'text', placeholder }) {
-  return (
-    <div className="flex flex-col" style={{ gap: '6px' }}>
-      <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-        {label}
-      </label>
-      <input
-        type={type}
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        placeholder={placeholder}
-        style={{
-          background: 'var(--input-bg)',
-          border: '1px solid var(--border-color)',
-          color: 'var(--text-main)',
-          padding: '10px 14px',
-          borderRadius: '12px',
-          fontSize: '0.9rem',
-          outline: 'none',
-          transition: 'var(--transition)',
-          width: '100%',
-        }}
-      />
-    </div>
-  );
-}
-
-function SettingsSelect({ label, value, onChange, options }) {
-  return (
-    <div className="flex flex-col" style={{ gap: '6px' }}>
-      <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-        {label}
-      </label>
-      <select
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        style={{
-          background: 'var(--input-bg)',
-          border: '1px solid var(--border-color)',
-          color: 'var(--text-main)',
-          padding: '10px 14px',
-          borderRadius: '12px',
-          fontSize: '0.9rem',
-          outline: 'none',
-          cursor: 'pointer',
-        }}
-      >
-        {options.map(opt => (
-          <option key={opt} value={opt} style={{ background: 'var(--bg-color)', color: 'var(--text-main)' }}>{opt}</option>
-        ))}
-      </select>
-    </div>
-  );
-}
+const TABS = [
+  {
+    id: 'subscription',
+    label: 'Subscription & Details',
+    shortLabel: 'Subscription',
+    icon: CreditCard,
+    badge: 'Pro / Tier',
+    description: 'Active tier, billing history, payment methods & receipts',
+  },
+  {
+    id: 'theme',
+    label: 'Theme & Color Settings',
+    shortLabel: 'Theme & Colors',
+    icon: Palette,
+    badge: null,
+    description: 'Cyber Dark / Executive Light modes & neon accent palettes',
+  },
+  {
+    id: 'cloud',
+    label: 'Connected Cloud Accounts',
+    shortLabel: 'Cloud Accounts',
+    icon: Cloud,
+    badge: 'AWS / Azure / GCP',
+    description: 'Multi-cloud IAM credentials & live connection status',
+  },
+  {
+    id: 'general',
+    label: 'General Scanner Configuration',
+    shortLabel: 'Scanner Config',
+    icon: Shield,
+    badge: null,
+    description: 'Scan frequency, minimum severity & safe auto-remediation',
+  },
+  {
+    id: 'notifications',
+    label: 'Notification Channels',
+    shortLabel: 'Notifications',
+    icon: Bell,
+    badge: null,
+    description: 'Email digests, Slack webhooks & incident triggers',
+  },
+];
 
 export default function Settings() {
-  const { currentPlan, activeTier, isPro, invoices } = useSubscription();
-  const { theme, setTheme, accent, setAccent, isDark } = useTheme();
-  const [settings, setSettings] = useState(initialSettings);
-  const [saved, setSaved] = useState(false);
-  const [selectedInvoice, setSelectedInvoice] = useState(null);
-  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+  const params = useParams();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const handleOpenReceipt = (inv) => {
-    setSelectedInvoice(inv);
-    setIsReceiptModalOpen(true);
-  };
+  // Determine active tab from URL params (:section) or query params (?tab=) or fallback to 'subscription'
+  const routeSection = params.section || searchParams.get('tab') || 'subscription';
+  const activeTabId = TABS.some(t => t.id === routeSection) ? routeSection : 'subscription';
+
+  const [settings, setSettings] = useState(() => {
+    try {
+      const saved = localStorage.getItem('cloudguard_scanner_settings');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return initialSettings;
+  });
+
+  const [saved, setSaved] = useState(false);
+  const [lastSavedTime, setLastSavedTime] = useState('Recently');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Persist settings changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('cloudguard_scanner_settings', JSON.stringify(settings));
+    } catch (e) {}
+  }, [settings]);
 
   const updateCloud = (cloud, field, value) => {
     setSettings(prev => ({
@@ -135,8 +137,12 @@ export default function Settings() {
     }));
   };
 
-  const handleSave = () => {
-    // If user provided a cloud ID in settings, persist it
+  const handleSelectTab = (tabId) => {
+    navigate(`/settings/${tabId}`);
+  };
+
+  const handleSaveAll = () => {
+    // If user configured cloud account id, sync to cloud state
     const activeId = settings.aws.account_id || settings.azure.subscription_id || settings.gcp.project_id;
     const activeProv = settings.aws.account_id ? 'AWS' : settings.azure.subscription_id ? 'AZURE' : settings.gcp.project_id ? 'GCP' : null;
     if (activeId) {
@@ -145,517 +151,282 @@ export default function Settings() {
       if (activeProv) state.activeProvider = activeProv;
       saveCloudState(state);
     }
+
+    try {
+      localStorage.setItem('cloudguard_scanner_settings', JSON.stringify(settings));
+    } catch (e) {}
+
+    const nowStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    setLastSavedTime(`Today at ${nowStr}`);
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
   };
 
-  const cloudProviders = [
-    {
-      key: 'aws',
-      name: 'Amazon Web Services',
-      icon: <Cloud size={22} color="#ff9900" />,
-      color: '#ff9900',
-      fields: (
-        <div className="grid grid-cols-2 gap-4" style={{ marginTop: '16px' }}>
-          <SettingsInput label="AWS Account ID" placeholder="e.g. 12-digit ID (492019381029)" value={settings.aws.account_id} onChange={v => updateCloud('aws', 'account_id', v)} />
-          <SettingsInput label="Access Key ID" placeholder="AKIA..." value={settings.aws.access_key_id} onChange={v => updateCloud('aws', 'access_key_id', v)} />
-          <SettingsInput label="Secret Access Key" placeholder="••••••••••••••••" value={settings.aws.secret_access_key} onChange={v => updateCloud('aws', 'secret_access_key', v)} type="password" />
-          <SettingsSelect label="Primary Region" value={settings.aws.region} onChange={v => updateCloud('aws', 'region', v)} options={awsRegions} />
-        </div>
-      ),
-    },
-    {
-      key: 'azure',
-      name: 'Microsoft Azure',
-      icon: <Cloud size={22} color="#0078d4" />,
-      color: '#0078d4',
-      fields: (
-        <div className="grid grid-cols-2 gap-4" style={{ marginTop: '16px' }}>
-          <SettingsInput label="Tenant ID" value={settings.azure.tenant_id} onChange={v => updateCloud('azure', 'tenant_id', v)} />
-          <SettingsInput label="Client ID" value={settings.azure.client_id} onChange={v => updateCloud('azure', 'client_id', v)} />
-          <SettingsInput label="Subscription ID" value={settings.azure.subscription_id} onChange={v => updateCloud('azure', 'subscription_id', v)} />
-        </div>
-      ),
-    },
-    {
-      key: 'gcp',
-      name: 'Google Cloud Platform',
-      icon: <Cloud size={22} color="#4285f4" />,
-      color: '#4285f4',
-      fields: (
-        <div className="grid grid-cols-2 gap-4" style={{ marginTop: '16px' }}>
-          <SettingsInput label="Project ID" value={settings.gcp.project_id} onChange={v => updateCloud('gcp', 'project_id', v)} />
-          <SettingsInput label="Service Account Email" value={settings.gcp.service_account_email} onChange={v => updateCloud('gcp', 'service_account_email', v)} />
-        </div>
-      ),
-    },
-  ];
+  const currentTabObj = TABS.find(t => t.id === activeTabId) || TABS[0];
+  const filteredTabs = TABS.filter(t =>
+    t.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    t.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
-    <div className="flex flex-col gap-6 animate-fade-in" style={{ maxWidth: '1040px', margin: '0 auto', paddingBottom: '32px' }}>
+    <div className="flex flex-col gap-6 animate-fade-in" style={{ maxWidth: '1280px', margin: '0 auto', paddingBottom: '40px' }}>
       
-      {/* Appearance & Theme Selector */}
-      <div className="glass-panel" style={{ padding: '28px' }}>
-        <div className="flex items-center gap-3" style={{ marginBottom: '22px' }}>
-          <div style={{ padding: '10px', borderRadius: '12px', background: 'var(--badge-primary-bg)', border: '1px solid var(--badge-primary-border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Palette size={22} color="var(--primary)" />
-          </div>
-          <div>
-            <h3 style={{ fontSize: '1.25rem', margin: 0, fontWeight: 700 }}>Appearance & Themes</h3>
-            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: '2px 0 0' }}>
-              Personalize your cybersecurity console mode and brand accent palette
-            </p>
-          </div>
-        </div>
-
-        {/* Theme Mode Cards */}
-        <div style={{ marginBottom: '24px' }}>
-          <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '12px' }}>
-            Display Mode
-          </div>
-          <div className="grid grid-cols-2 gap-5">
-            {/* Cyber Dark Option Card */}
-            <div
-              onClick={() => setTheme('dark')}
-              style={{
-                padding: '20px',
-                borderRadius: '16px',
-                cursor: 'pointer',
-                background: theme === 'dark' ? 'var(--sidebar-active-bg)' : 'var(--panel-inner-bg)',
-                border: theme === 'dark' ? '2px solid var(--primary)' : '1px solid var(--border-color)',
-                boxShadow: theme === 'dark' ? '0 8px 24px var(--primary-glow)' : 'none',
-                transition: 'var(--transition)',
-                position: 'relative',
-              }}
-            >
-              {theme === 'dark' && (
-                <span style={{
-                  position: 'absolute',
-                  top: '12px',
-                  right: '12px',
-                  fontSize: '0.68rem',
-                  fontWeight: 800,
-                  padding: '2px 8px',
-                  borderRadius: '6px',
-                  background: 'var(--primary)',
-                  color: '#fff',
-                }}>
-                  ACTIVE
-                </span>
-              )}
-              <div className="flex items-center gap-3" style={{ marginBottom: '12px' }}>
-                <div style={{ padding: '8px', borderRadius: '10px', background: 'var(--primary)', color: '#fff', display: 'flex' }}>
-                  <Moon size={18} />
-                </div>
-                <div>
-                  <h4 style={{ fontSize: '1.02rem', margin: 0, color: 'var(--text-main)' }}>Cyber Dark</h4>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Deep obsidian glass & cyber glow</span>
-                </div>
-              </div>
-
-              {/* Visual Palette Preview */}
-              <div className="flex gap-2" style={{ marginTop: '14px' }}>
-                <div style={{ flex: 1, height: '22px', borderRadius: '6px', background: '#07090e', border: '1px solid rgba(255,255,255,0.15)' }} title="Obsidian Base" />
-                <div style={{ flex: 1, height: '22px', borderRadius: '6px', background: '#0d111a', border: '1px solid rgba(255,255,255,0.1)' }} title="Surface Slate" />
-                <div style={{ flex: 1, height: '22px', borderRadius: '6px', background: 'var(--primary)' }} title="Primary Accent" />
-                <div style={{ flex: 1, height: '22px', borderRadius: '6px', background: '#f8fafc' }} title="Pure Crisp Text" />
-              </div>
-            </div>
-
-            {/* Light Theme Option Card */}
-            <div
-              onClick={() => setTheme('light')}
-              style={{
-                padding: '20px',
-                borderRadius: '16px',
-                cursor: 'pointer',
-                background: theme === 'light' ? 'var(--sidebar-active-bg)' : 'var(--panel-inner-bg)',
-                border: theme === 'light' ? '2px solid var(--primary)' : '1px solid var(--border-color)',
-                boxShadow: theme === 'light' ? '0 8px 24px var(--primary-glow)' : 'none',
-                transition: 'var(--transition)',
-                position: 'relative',
-              }}
-            >
-              {theme === 'light' && (
-                <span style={{
-                  position: 'absolute',
-                  top: '12px',
-                  right: '12px',
-                  fontSize: '0.68rem',
-                  fontWeight: 800,
-                  padding: '2px 8px',
-                  borderRadius: '6px',
-                  background: 'var(--primary)',
-                  color: '#fff',
-                }}>
-                  ACTIVE
-                </span>
-              )}
-              <div className="flex items-center gap-3" style={{ marginBottom: '12px' }}>
-                <div style={{ padding: '8px', borderRadius: '10px', background: '#f59e0b', color: '#fff', display: 'flex' }}>
-                  <Sun size={18} />
-                </div>
-                <div>
-                  <h4 style={{ fontSize: '1.02rem', margin: 0, color: 'var(--text-main)' }}>Executive Light</h4>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Crisp white panels & subtle slate</span>
-                </div>
-              </div>
-
-              {/* Visual Palette Preview */}
-              <div className="flex gap-2" style={{ marginTop: '14px' }}>
-                <div style={{ flex: 1, height: '22px', borderRadius: '6px', background: '#f8fafc', border: '1px solid #e2e8f0' }} title="Clean Off-White" />
-                <div style={{ flex: 1, height: '22px', borderRadius: '6px', background: '#ffffff', border: '1px solid #cbd5e1' }} title="White Card" />
-                <div style={{ flex: 1, height: '22px', borderRadius: '6px', background: 'var(--primary)' }} title="Primary Accent" />
-                <div style={{ flex: 1, height: '22px', borderRadius: '6px', background: '#0f172a' }} title="Charcoal Text" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Accent Color Palette Switcher */}
+      {/* 1. TOP HEADER & BREADCRUMB BAR */}
+      <div className="flex justify-between items-center flex-wrap gap-4 pb-2 border-b" style={{ borderColor: 'var(--border-color)' }}>
         <div>
-          <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '12px' }}>
-            Accent Color Palette
+          <div className="flex items-center gap-2" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '4px' }}>
+            <Link to="/dashboard" style={{ color: 'var(--text-muted)', textDecoration: 'none' }} className="hover:underline">
+              Dashboard
+            </Link>
+            <ChevronRight size={14} />
+            <span style={{ color: 'var(--primary)', fontWeight: 600 }}>Platform Settings</span>
+            <ChevronRight size={14} />
+            <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>{currentTabObj.shortLabel}</span>
           </div>
-          <div className="grid grid-cols-5 gap-3">
-            {ACCENT_PALETTES.map(p => {
-              const isSelected = accent === p.id;
-              return (
-                <div
-                  key={p.id}
-                  onClick={() => setAccent(p.id)}
-                  style={{
-                    padding: '14px 12px',
-                    borderRadius: '14px',
-                    cursor: 'pointer',
-                    background: isSelected ? 'var(--badge-primary-bg)' : 'var(--panel-inner-bg)',
-                    border: isSelected ? '2px solid var(--primary)' : '1px solid var(--border-color)',
-                    transition: 'var(--transition)',
-                    textAlign: 'center',
-                    position: 'relative',
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '4px', marginBottom: '8px' }}>
-                    <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: p.primary, boxShadow: `0 2px 6px ${p.primary}66` }} />
-                    <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: p.accent, boxShadow: `0 2px 6px ${p.accent}66` }} />
-                  </div>
-                  <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '2px' }}>
-                    {p.name}
-                  </div>
-                  <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {p.desc}
-                  </div>
-                  {isSelected && (
-                    <div style={{
-                      position: 'absolute',
-                      top: '6px',
-                      right: '6px',
-                      width: '16px',
-                      height: '16px',
-                      borderRadius: '50%',
-                      background: 'var(--primary)',
-                      color: '#fff',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '0.6rem'
-                    }}>
-                      ✓
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
 
-      {/* Subscription & Billing Management */}
-      <div className="glass-panel" style={{ padding: '28px', border: isPro ? '1px solid var(--success-border)' : '1px solid var(--border-color)' }}>
-        <div className="flex justify-between items-center" style={{ marginBottom: '20px' }}>
-          <div className="flex items-center gap-3">
-            <div style={{ padding: '10px', borderRadius: '12px', background: isPro ? 'var(--success-bg)' : 'var(--badge-primary-bg)' }}>
-              <Zap size={22} color={isPro ? 'var(--success)' : 'var(--primary)'} />
-            </div>
-            <div>
-              <h3 style={{ fontSize: '1.2rem', margin: 0 }}>Subscription & Plan Management</h3>
-              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: '2px 0 0' }}>
-                Manage your cloud protection tier, active safeguards, and billing
-              </p>
-            </div>
-          </div>
-          <Link
-            to="/subscription"
+          <h2 style={{ fontSize: '1.65rem', margin: 0, fontWeight: 800, letterSpacing: '-0.02em' }} className="flex items-center gap-2.5">
+            <SettingsIcon size={26} color="var(--primary)" />
+            Settings & Platform Configuration
+          </h2>
+        </div>
+
+        {/* Global Save Button with Status Feedback */}
+        <div className="flex items-center gap-3">
+          <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }} className="hidden sm:inline-flex items-center gap-1.5">
+            <Clock size={14} />
+            <span>Saved: {lastSavedTime}</span>
+          </span>
+
+          <button
+            type="button"
             className="btn btn-primary"
+            onClick={handleSaveAll}
             style={{
-              padding: '8px 16px',
-              fontSize: '0.85rem',
+              padding: '10px 22px',
+              fontSize: '0.9rem',
               fontWeight: 700,
-              textDecoration: 'none',
-              borderRadius: '10px',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              boxShadow: '0 4px 14px var(--primary-glow)',
             }}
           >
-            {isPro ? 'Manage Subscription' : 'Upgrade to Pro ($39)'}
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-3 gap-4" style={{ marginBottom: '16px' }}>
-          <div style={{ background: 'var(--panel-inner-bg)', padding: '14px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Active Plan</div>
-            <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-main)' }} className="flex items-center gap-2">
-              {activeTier.name}
-              <span style={{ fontSize: '0.7rem', padding: '2px 6px', borderRadius: '8px', background: isPro ? 'var(--success-bg)' : 'var(--badge-primary-bg)', color: isPro ? 'var(--success)' : 'var(--primary)' }}>
-                {activeTier.badge}
-              </span>
-            </div>
-          </div>
-
-          <div style={{ background: 'var(--panel-inner-bg)', padding: '14px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Safe Production Status</div>
-            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: isPro ? 'var(--success)' : 'var(--text-muted)' }} className="flex items-center gap-1.5">
-              <ShieldCheck size={16} color={isPro ? 'var(--success)' : 'var(--text-muted)'} />
-              {isPro ? 'Unlocked & Active' : 'Upgrade to Unlock ($39)'}
-            </div>
-          </div>
-
-          <div style={{ background: 'var(--panel-inner-bg)', padding: '14px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>24/7 Instant Help Hotline</div>
-            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: isPro ? 'var(--primary)' : 'var(--text-muted)' }} className="flex items-center gap-1.5">
-              <Sparkles size={16} color={isPro ? 'var(--primary)' : 'var(--text-muted)'} />
-              {isPro ? 'Priority AI SecOps' : 'Community Mode'}
-            </div>
-          </div>
-        </div>
-
-        {invoices.length > 0 && (
-          <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '16px', marginTop: '16px' }}>
-            <div className="flex justify-between items-center" style={{ marginBottom: '12px' }}>
-              <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
-                Verified Invoices & Purchase Receipts
-              </div>
-              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                Website: <strong>CloudGuard AI</strong>
-              </span>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {invoices.map(inv => {
-                const websiteName = inv.websiteName || 'CloudGuard AI — Cloud Security Scanner';
-                const planName = inv.planName || 'Pro Security Shield';
-                const amount = inv.amount || 39;
-                const dateStr = inv.purchaseTimestamp || (inv.formattedDate ? `${inv.formattedDate} at ${inv.formattedTime || '12:00 PM'}` : `${inv.date}`);
-                const isUpi = inv.paymentMethodType === 'upi' || inv.upiId || (inv.paymentReference && inv.paymentReference.startsWith('UTR'));
-                const isCrypto = inv.paymentMethodType === 'crypto' || inv.txHash || (inv.paymentReference && inv.paymentReference.startsWith('TxHash'));
-                
-                let methodDisplay = inv.paymentMethodLabel;
-                if (!methodDisplay) {
-                  if (isUpi) methodDisplay = `UPI (${inv.upiId ? `VPA: ${inv.upiId}` : inv.paymentReference || 'UPI Transfer'})`;
-                  else if (isCrypto) methodDisplay = `Crypto (${inv.network ? inv.network.replace('_', ' ') : 'USDT'})`;
-                  else methodDisplay = inv.paymentReference ? `Card (${inv.paymentReference})` : 'Credit Card';
-                }
-
-                return (
-                  <div
-                    key={inv.id}
-                    style={{
-                      background: 'var(--panel-inner-bg)',
-                      padding: '14px 16px',
-                      borderRadius: '12px',
-                      border: '1px solid var(--border-color)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '8px',
-                    }}
-                  >
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <span style={{ fontSize: '0.72rem', background: 'var(--badge-primary-bg)', color: 'var(--primary)', padding: '2px 6px', borderRadius: '6px', fontWeight: 800 }}>
-                          {websiteName}
-                        </span>
-                        <span style={{ fontWeight: 800, color: 'var(--text-main)', fontSize: '0.88rem' }}>
-                          {inv.id} — {planName}
-                        </span>
-                      </div>
-                      <span style={{ color: 'var(--success)', fontWeight: 800, fontSize: '0.88rem' }}>
-                        ${amount}.00 USD Paid ✓
-                      </span>
-                    </div>
-
-                    <div className="flex justify-between items-center" style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                      <div className="flex items-center gap-1.5">
-                        {isUpi ? <Smartphone size={13} color="#097939" /> : isCrypto ? <Coins size={13} color="#f59e0b" /> : <CreditCard size={13} color="var(--primary)" />}
-                        <span>Method: <strong>{methodDisplay}</strong></span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Calendar size={13} />
-                        <span>Purchased: {dateStr}</span>
-                      </div>
-                      <button
-                        onClick={() => handleOpenReceipt(inv)}
-                        style={{
-                          background: 'var(--badge-primary-bg)',
-                          border: '1px solid var(--badge-primary-border)',
-                          color: 'var(--primary)',
-                          padding: '4px 10px',
-                          borderRadius: '6px',
-                          fontSize: '0.72rem',
-                          fontWeight: 700,
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '4px',
-                        }}
-                      >
-                        <Receipt size={13} /> Receipt Details
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Cloud Accounts Config */}
-      <div className="flex flex-col gap-4">
-        <h3 style={{ fontSize: '1.2rem', margin: '8px 0 0' }}>Connected Cloud Accounts</h3>
-        {cloudProviders.map(provider => (
-          <div key={provider.key} className="glass-panel" style={{ padding: '24px' }}>
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-3">
-                <div style={{ padding: '8px', borderRadius: '10px', background: 'var(--panel-inner-bg)', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center' }}>
-                  {provider.icon}
-                </div>
-                <div>
-                  <h4 style={{ fontSize: '1.05rem', margin: 0 }}>{provider.name}</h4>
-                  <span style={{ fontSize: '0.8rem', color: settings[provider.key].enabled ? 'var(--success)' : 'var(--text-muted)' }}>
-                    {settings[provider.key].enabled ? 'Connected & Monitored' : 'Disabled'}
-                  </span>
-                </div>
-              </div>
-              <Toggle
-                value={settings[provider.key].enabled}
-                onChange={v => updateCloud(provider.key, 'enabled', v)}
-                label=""
-              />
-            </div>
-            {settings[provider.key].enabled && provider.fields}
-          </div>
-        ))}
-      </div>
-
-      {/* General Scanner Configuration */}
-      <div className="glass-panel" style={{ padding: '28px' }}>
-        <div className="flex items-center gap-4" style={{ marginBottom: '24px' }}>
-          <div style={{ padding: '10px', borderRadius: '12px', background: 'var(--badge-primary-bg)', border: '1px solid var(--badge-primary-border)' }}>
-            <Shield size={22} color="var(--primary)" />
-          </div>
-          <div>
-            <h3 style={{ fontSize: '1.1rem', margin: 0 }}>General Scanner Configuration</h3>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0 }}>Configure scanning frequency and automated action policies</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-6">
-          <SettingsSelect
-            label="Scan Frequency"
-            value={settings.general.scan_frequency}
-            onChange={v => updateGeneral('scan_frequency', v)}
-            options={scanFrequencies}
-          />
-          <SettingsSelect
-            label="Minimum Severity to Report"
-            value={settings.general.min_severity}
-            onChange={v => updateGeneral('min_severity', v)}
-            options={severityLevels}
-          />
-
-          <div className="flex flex-col gap-2" style={{ gridColumn: 'span 2' }}>
-            <Toggle
-              value={settings.general.auto_remediation}
-              onChange={v => updateGeneral('auto_remediation', v)}
-              label="Safe Production Auto-Remediation"
-            />
-            {settings.general.auto_remediation && (
-              <div style={{ padding: '12px 16px', background: 'rgba(234, 179, 8, 0.08)', border: '1px solid rgba(234, 179, 8, 0.25)', borderRadius: '10px', fontSize: '0.85rem', color: 'var(--medium)' }} className="flex items-center gap-3">
-                <AlertTriangle size={16} />
-                <span>Auto-remediation will automatically apply security fixes with pre-flight dry-run and rollback snapshots.</span>
-              </div>
-            )}
-          </div>
+            {saved ? <CheckCircle2 size={18} /> : <Save size={18} />}
+            {saved ? 'All Changes Saved ✓' : 'Save All Settings'}
+          </button>
         </div>
       </div>
 
-      {/* Notifications */}
-      <div className="glass-panel" style={{ padding: '28px' }}>
-        <div className="flex items-center gap-4" style={{ marginBottom: '24px' }}>
-          <div style={{ padding: '10px', borderRadius: '12px', background: 'var(--badge-primary-bg)', border: '1px solid var(--badge-primary-border)' }}>
-            <Bell size={22} color="var(--primary)" />
-          </div>
-          <h3 style={{ fontSize: '1.1rem', margin: 0 }}>Notifications</h3>
-        </div>
-
-        <div className="flex flex-col gap-4">
-          <div style={{ padding: '16px 20px', borderRadius: '12px', background: 'var(--panel-inner-bg)', border: '1px solid var(--border-color)' }} className="flex justify-between items-center">
-            <div className="flex items-center gap-3">
-              <Mail size={18} color="var(--text-muted)" />
-              <span style={{ fontWeight: 500 }}>Email Notifications</span>
-            </div>
-            <Toggle
-              value={settings.general.email_notifications}
-              onChange={v => updateGeneral('email_notifications', v)}
-              label=""
-            />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-3" style={{ marginBottom: '4px' }}>
-              <MessageSquare size={16} color="var(--text-muted)" />
-              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                Slack Webhook URL
-              </label>
-            </div>
+      {/* 2. MAIN SETTINGS TWO-COLUMN / SUB-PAGE LAYOUT */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        {/* LEFT SUB-NAVIGATION SIDEBAR (4 cols on lg) */}
+        <div className="lg:col-span-4 flex flex-col gap-3">
+          
+          {/* Search / Filter in Settings */}
+          <div
+            style={{
+              position: 'relative',
+              background: 'var(--panel-inner-bg)',
+              borderRadius: '12px',
+              border: '1px solid var(--border-color)',
+              padding: '6px 12px',
+            }}
+            className="flex items-center gap-2"
+          >
+            <Search size={16} color="var(--text-muted)" />
             <input
               type="text"
-              value={settings.general.slack_webhook}
-              onChange={e => updateGeneral('slack_webhook', e.target.value)}
+              placeholder="Search settings sections..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
               style={{
-                background: 'var(--input-bg)',
-                border: '1px solid var(--border-color)',
+                background: 'transparent',
+                border: 'none',
                 color: 'var(--text-main)',
-                padding: '10px 14px',
-                borderRadius: '10px',
-                fontSize: '0.9rem',
+                fontSize: '0.85rem',
                 outline: 'none',
                 width: '100%',
               }}
             />
           </div>
+
+          {/* Navigation Tab Links */}
+          <div
+            className="glass-panel"
+            style={{
+              padding: '10px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '6px',
+            }}
+          >
+            {filteredTabs.map((tab) => {
+              const TabIcon = tab.icon;
+              const isActive = activeTabId === tab.id;
+
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => handleSelectTab(tab.id)}
+                  style={{
+                    background: isActive ? 'var(--sidebar-active-bg)' : 'transparent',
+                    border: isActive ? '1px solid var(--sidebar-active-border)' : '1px solid transparent',
+                    color: isActive ? 'var(--text-main)' : 'var(--text-muted)',
+                    boxShadow: isActive ? '0 4px 16px var(--primary-glow)' : 'none',
+                    padding: '14px 16px',
+                    borderRadius: '14px',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    transition: 'var(--transition)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    width: '100%',
+                    position: 'relative',
+                  }}
+                  className="hover:bg-panel-inner"
+                >
+                  <div className="flex items-center gap-3.5" style={{ minWidth: 0 }}>
+                    <div
+                      style={{
+                        padding: '9px',
+                        borderRadius: '10px',
+                        background: isActive ? 'var(--primary)' : 'var(--panel-inner-bg)',
+                        color: isActive ? '#ffffff' : 'var(--text-muted)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                        transition: 'all 0.2s ease',
+                      }}
+                    >
+                      <TabIcon size={18} />
+                    </div>
+
+                    <div style={{ minWidth: 0 }}>
+                      <div className="flex items-center gap-2">
+                        <span style={{ fontSize: '0.92rem', fontWeight: isActive ? 800 : 600, color: isActive ? 'var(--text-main)' : 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {tab.label}
+                        </span>
+                      </div>
+                      <p style={{ fontSize: '0.73rem', color: 'var(--text-muted)', margin: '2px 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {tab.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  <ChevronRight
+                    size={16}
+                    color={isActive ? 'var(--primary)' : 'var(--text-subtle)'}
+                    style={{
+                      transform: isActive ? 'translateX(2px)' : 'none',
+                      transition: 'transform 0.2s ease',
+                      flexShrink: 0,
+                      marginLeft: '6px',
+                    }}
+                  />
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Quick Support / SecOps Help Card */}
+          <div
+            className="glass-panel"
+            style={{
+              padding: '18px',
+              border: '1px solid var(--border-color)',
+              background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(6, 182, 212, 0.05))',
+            }}
+          >
+            <div className="flex items-center gap-2.5" style={{ marginBottom: '8px' }}>
+              <Sparkles size={18} color="var(--primary)" />
+              <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                CloudGuard SecOps AI
+              </span>
+            </div>
+            <p style={{ fontSize: '0.76rem', color: 'var(--text-muted)', margin: '0 0 12px', lineHeight: 1.4 }}>
+              Need assistance provisioning IAM roles or configuring automated webhook alerts?
+            </p>
+            <Link
+              to="/subscription"
+              style={{
+                fontSize: '0.75rem',
+                color: 'var(--primary)',
+                fontWeight: 700,
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+              }}
+            >
+              Open 24/7 SecOps Assistant <ChevronRight size={13} />
+            </Link>
+          </div>
         </div>
+
+        {/* RIGHT MAIN SUB-PAGE CONTENT (8 cols on lg) */}
+        <div className="lg:col-span-8 flex flex-col gap-6">
+          
+          {/* TAB 1: SUBSCRIPTION & DETAILS */}
+          {activeTabId === 'subscription' && (
+            <SubscriptionSettingsTab />
+          )}
+
+          {/* TAB 2: THEME & COLOR SETTINGS */}
+          {activeTabId === 'theme' && (
+            <ThemeSettingsTab />
+          )}
+
+          {/* TAB 3: CONNECTED CLOUD ACCOUNTS */}
+          {activeTabId === 'cloud' && (
+            <CloudSettingsTab
+              settings={settings}
+              updateCloud={updateCloud}
+              setSettings={setSettings}
+            />
+          )}
+
+          {/* TAB 4: GENERAL SCANNER CONFIGURATION */}
+          {activeTabId === 'general' && (
+            <ScannerSettingsTab
+              settings={settings}
+              updateGeneral={updateGeneral}
+            />
+          )}
+
+          {/* TAB 5: NOTIFICATIONS */}
+          {activeTabId === 'notifications' && (
+            <NotificationSettingsTab
+              settings={settings}
+              updateGeneral={updateGeneral}
+            />
+          )}
+
+          {/* Bottom Save Bar on mobile / bottom of section */}
+          <div className="flex justify-between items-center pt-4 border-t" style={{ borderColor: 'var(--border-subtle)' }}>
+            <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+              <Clock size={13} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '5px' }} />
+              Last saved: {lastSavedTime}
+            </span>
+
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={handleSaveAll}
+              style={{ padding: '10px 24px', fontSize: '0.88rem', fontWeight: 700, borderRadius: '10px' }}
+            >
+              {saved ? 'Saved ✓' : 'Save Changes'}
+            </button>
+          </div>
+
+        </div>
+
       </div>
 
-      {/* Save Button */}
-      <div className="flex justify-between items-center" style={{ padding: '8px 0' }}>
-        <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-          <Clock size={14} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '6px' }} />
-          Last saved: Just now
-        </span>
-        <button
-          className="btn btn-primary"
-          onClick={handleSave}
-          style={{ padding: '12px 32px', fontSize: '1rem' }}
-        >
-          <Save size={18} />
-          {saved ? 'Saved ✓' : 'Save Settings'}
-        </button>
-      </div>
-
-      {/* Full Printable Receipt Modal */}
-      <ReceiptModal
-        isOpen={isReceiptModalOpen}
-        onClose={() => setIsReceiptModalOpen(false)}
-        invoice={selectedInvoice}
-      />
     </div>
   );
 }

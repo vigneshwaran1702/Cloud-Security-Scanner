@@ -34,6 +34,7 @@ function App() {
                   <Route path="/resources" element={<Resources />} />
                   <Route path="/subscription" element={<Subscription />} />
                   <Route path="/settings" element={<Settings />} />
+                  <Route path="/settings/:section" element={<Settings />} />
 
                   {/* Admin Only Route */}
                   <Route element={<ProtectedRoute requiredRole="admin" />}>
