@@ -593,7 +593,7 @@ export default function Home() {
               return (
                 <div
                   key={i}
-                  className="glass-panel"
+                  className={`glass-panel home-motion-panel home-motion-panel-${(i % 2) + 1}`}
                   style={{
                     padding: '28px',
                     borderRadius: '20px',
@@ -695,7 +695,7 @@ export default function Home() {
           {frameworks.map((fw, i) => (
             <div
               key={i}
-              className="glass-panel"
+              className={`glass-panel home-motion-panel home-motion-panel-${(i % 2) + 1}`}
               style={{
                 padding: '20px',
                 borderRadius: '16px',

@@ -603,6 +603,36 @@ textarea::placeholder {
   animation: pulseGlow 2.5s infinite;
 }
 
+@keyframes homePanelInOut {
+  0%, 100% {
+    opacity: 0.9;
+    transform: translateY(8px) scale(0.985);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.home-motion-panel {
+  animation: homePanelInOut 5.5s ease-in-out infinite;
+  will-change: opacity, transform;
+}
+
+.home-motion-panel-2 {
+  animation-delay: -2.75s;
+}
+
+.home-motion-panel:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-motion-panel {
+    animation: none;
+  }
+}
+
 /* ================= Scrollbars ================= */
 ::-webkit-scrollbar {
   width: 6px;
