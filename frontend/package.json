@@ -17,7 +17,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^7.18.3",
     "recharts": "^2.12.3",
-    "vite": "^8.2.2"
+    "vite": "^8.3.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
