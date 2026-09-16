@@ -1,10 +1,10 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState } from 'react';
 
 const EarthPortalContext = createContext();
 
 export function EarthPortalProvider({ children }) {
-  const [isEntered, setIsEntered] = useState(true);
-
+  // Starts on the opening screen on load so user sees particles gathering into Earth
+  const [isEntered, setIsEntered] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const enterPortal = () => {
