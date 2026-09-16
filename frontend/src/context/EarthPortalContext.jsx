@@ -4,9 +4,12 @@ const EarthPortalContext = createContext();
 
 export function EarthPortalProvider({ children }) {
   const [isEntered, setIsEntered] = useState(() => {
-    // Check if user has already entered in this session
-    const saved = sessionStorage.getItem('cloudguard_earth_entered');
-    return saved === 'true';
+    try {
+      const saved = sessionStorage.getItem('cloudguard_earth_entered');
+      return saved === 'true';
+    } catch {
+      return false;
+    }
   });
 
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -14,16 +17,19 @@ export function EarthPortalProvider({ children }) {
   const enterPortal = () => {
     if (isTransitioning || isEntered) return;
     setIsTransitioning(true);
-    // Smooth transition delay so particle shockwave completes before overlay removes
     setTimeout(() => {
       setIsEntered(true);
       setIsTransitioning(false);
-      sessionStorage.setItem('cloudguard_earth_entered', 'true');
+      try {
+        sessionStorage.setItem('cloudguard_earth_entered', 'true');
+      } catch {}
     }, 1100);
   };
 
   const resetPortal = () => {
-    sessionStorage.removeItem('cloudguard_earth_entered');
+    try {
+      sessionStorage.removeItem('cloudguard_earth_entered');
+    } catch {}
     setIsEntered(false);
     setIsTransitioning(false);
   };
