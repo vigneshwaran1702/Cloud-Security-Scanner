@@ -1109,3 +1109,44 @@ textarea::placeholder {
   -webkit-text-fill-color: transparent;
 }
 
+/* WeEvolveIT Diagnostic Pill Audit Form */
+.evolve-audit-form {
+  background: rgba(26, 26, 26, 0.88);
+  border: 1px solid var(--border-color);
+  border-radius: 9999px;
+  padding: 6px 8px 6px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 740px;
+  margin: 0 auto;
+  box-shadow: 0 20px 48px -12px rgba(0, 0, 0, 0.9), 0 0 30px var(--primary-glow);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: var(--transition);
+}
+
+.evolve-audit-form:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 20px 48px -10px rgba(0, 0, 0, 0.95), 0 0 35px var(--primary-glow);
+}
+
+@media (max-width: 680px) {
+  .evolve-audit-form {
+    border-radius: 20px;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 14px;
+    gap: 10px;
+  }
+  .evolve-audit-form .audit-divider {
+    display: none;
+  }
+  .evolve-audit-form select,
+  .evolve-audit-form input,
+  .evolve-audit-form button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+

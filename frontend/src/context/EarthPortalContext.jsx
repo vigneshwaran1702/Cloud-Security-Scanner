@@ -3,14 +3,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 const EarthPortalContext = createContext();
 
 export function EarthPortalProvider({ children }) {
-  const [isEntered, setIsEntered] = useState(() => {
-    try {
-      const saved = sessionStorage.getItem('cloudguard_earth_entered');
-      return saved === 'true';
-    } catch {
-      return false;
-    }
-  });
+  const [isEntered, setIsEntered] = useState(true);
 
   const [isTransitioning, setIsTransitioning] = useState(false);
 
