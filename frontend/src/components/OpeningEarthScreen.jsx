@@ -23,7 +23,7 @@ export default function OpeningEarthScreen() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '32px 24px 40px',
+        padding: 'clamp(16px, 3vh, 32px) clamp(14px, 4vw, 24px) clamp(20px, 4vh, 36px)',
         boxSizing: 'border-box',
         overflow: 'hidden',
         opacity: isTransitioning ? 0 : 1,
@@ -59,9 +59,10 @@ export default function OpeningEarthScreen() {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: '12px',
+          gap: '10px',
           textAlign: 'center',
-          width: '100%'
+          width: '100%',
+          maxWidth: '720px'
         }}
       >
         {/* Discrete Direct Entry Bypass Button */}
@@ -73,14 +74,14 @@ export default function OpeningEarthScreen() {
               background: 'rgba(255, 255, 255, 0.08)',
               border: '1px solid rgba(255, 255, 255, 0.25)',
               color: '#ffffff',
-              padding: '7px 16px',
+              padding: '6px 12px',
               borderRadius: '9999px',
-              fontSize: '0.8rem',
+              fontSize: 'clamp(0.72rem, 2vw, 0.8rem)',
               fontFamily: 'JetBrains Mono, monospace',
               cursor: 'pointer',
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '6px',
+              gap: '5px',
               transition: 'all 0.2s ease'
             }}
             onMouseEnter={(e) => {
@@ -92,7 +93,7 @@ export default function OpeningEarthScreen() {
               e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
             }}
           >
-            <span>Skip to Website</span>
+            <span>Skip</span>
             <ArrowRight size={13} />
           </button>
         </div>
@@ -102,16 +103,16 @@ export default function OpeningEarthScreen() {
             src="/logo.png"
             alt="Cloud Security Logo"
             style={{
-              width: '32px',
-              height: '32px',
+              width: 'clamp(26px, 5vw, 32px)',
+              height: 'clamp(26px, 5vw, 32px)',
               objectFit: 'contain',
               filter: 'drop-shadow(0 2px 10px rgba(255, 255, 255, 0.6))'
             }}
           />
-          <span style={{ fontWeight: 800, fontSize: '1.3rem', letterSpacing: '-0.02em', color: '#ffffff' }}>
+          <span style={{ fontWeight: 800, fontSize: 'clamp(1.1rem, 3.5vw, 1.3rem)', letterSpacing: '-0.02em', color: '#ffffff' }}>
             Cloud Security
           </span>
-          <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.82rem', color: '#ffffff', opacity: 0.85, fontWeight: 600 }}>
+          <span style={{ fontFamily: 'JetBrains Mono', fontSize: 'clamp(0.7rem, 2vw, 0.82rem)', color: '#ffffff', opacity: 0.85, fontWeight: 600 }}>
             . evolved
           </span>
         </div>
@@ -119,21 +120,23 @@ export default function OpeningEarthScreen() {
         <div
           style={{
             fontFamily: 'JetBrains Mono, monospace',
-            fontSize: '0.76rem',
+            fontSize: 'clamp(0.66rem, 1.8vw, 0.76rem)',
             color: 'rgba(240, 240, 248, 0.75)',
-            letterSpacing: '0.08em',
+            letterSpacing: '0.06em',
             textTransform: 'uppercase',
             display: 'flex',
             alignItems: 'center',
-            gap: '8px',
+            gap: '6px',
             background: 'rgba(255, 255, 255, 0.06)',
             border: '1px solid rgba(255, 255, 255, 0.15)',
-            padding: '5px 14px',
-            borderRadius: '9999px'
+            padding: '4px 12px',
+            borderRadius: '9999px',
+            maxWidth: '90%',
+            textAlign: 'center'
           }}
         >
           <span style={{ color: '#ffffff' }}>✦</span>
-          <span>{isAssembled ? 'DEFENSE CORE ASSEMBLED · READY' : 'FORMING DEFENSE SPHERE · GATHERING PARTICLES'}</span>
+          <span>{isAssembled ? 'DEFENSE CORE ASSEMBLED · READY' : 'FORMING DEFENSE SPHERE'}</span>
           <span style={{ color: '#ffffff' }}>✦</span>
         </div>
       </header>
@@ -152,14 +155,15 @@ export default function OpeningEarthScreen() {
         style={{
           position: 'relative',
           zIndex: 2,
-          width: '100%',
-          maxWidth: '560px',
+          width: 'min(88vw, 55vh, 520px)',
+          height: 'min(88vw, 55vh, 520px)',
           aspectRatio: '1 / 1',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           cursor: 'pointer',
-          outline: 'none'
+          outline: 'none',
+          margin: 'auto 0'
         }}
       >
         {/* Pulsating Interaction Radar Rings */}
@@ -231,14 +235,12 @@ export default function OpeningEarthScreen() {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: '18px',
+          gap: '12px',
           maxWidth: '620px',
           width: '100%',
           textAlign: 'center'
         }}
       >
-
-
         {/* Global Telemetry Metrics */}
         <div
           style={{
@@ -246,8 +248,8 @@ export default function OpeningEarthScreen() {
             flexWrap: 'wrap',
             justifyContent: 'center',
             alignItems: 'center',
-            gap: '16px',
-            fontSize: '0.78rem',
+            gap: 'clamp(8px, 3vw, 16px)',
+            fontSize: 'clamp(0.68rem, 2vw, 0.78rem)',
             fontFamily: 'JetBrains Mono',
             color: 'rgba(240, 240, 248, 0.7)',
             letterSpacing: '0.04em'

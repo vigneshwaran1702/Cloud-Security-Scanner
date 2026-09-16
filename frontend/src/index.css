@@ -1083,3 +1083,82 @@ textarea::placeholder {
   }
 }
 
+/* ================= Mobile & Desktop Adaptive Layouts ================= */
+@media (max-width: 768px) {
+  .hidden-mobile {
+    display: none !important;
+  }
+
+  .visible-mobile {
+    display: flex !important;
+  }
+
+  /* Main navigation container adjustments */
+  .home-nav-container {
+    padding: 10px 16px !important;
+  }
+
+  /* Compact header on mobile */
+  .gcp-header {
+    padding: 0 10px !important;
+    gap: 8px !important;
+  }
+
+  /* Responsive sidebar drawer for mobile */
+  .gcp-sidebar {
+    position: fixed !important;
+    top: 56px !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    z-index: 1050 !important;
+    background: var(--panel-bg-solid) !important;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.6) !important;
+  }
+
+  .gcp-sidebar-collapsed-mobile {
+    transform: translateX(-100%) !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  .gcp-main-container {
+    padding: 16px 12px 32px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Mobile Marquee item sizing */
+  .evolve-marquee-track > div {
+    width: 290px !important;
+    padding: 14px 18px !important;
+  }
+
+  /* Section padding reductions for small screens */
+  section {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  /* Terminal grid mobile stack */
+  .simulator-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Mobile modal adjustments */
+  .modal-dialog, .modal-box {
+    max-width: 95vw !important;
+    margin: 10px auto !important;
+    padding: 18px 14px !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .visible-mobile {
+    display: none !important;
+  }
+}
+
+

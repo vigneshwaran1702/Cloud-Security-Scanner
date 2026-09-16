@@ -32,7 +32,9 @@ import {
   Compass,
   CheckCircle,
   ExternalLink,
-  ChevronDown
+  ChevronDown,
+  Menu,
+  X
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import WorldAnimation from '../components/WorldAnimation';
@@ -46,6 +48,7 @@ export default function Home() {
   const [isSimulating, setIsSimulating] = useState(false);
   const [activeMethodPhase, setActiveMethodPhase] = useState(0);
   const [activeTab, setActiveTab] = useState('all');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleStartAudit = (e) => {
     e.preventDefault();
@@ -258,13 +261,13 @@ export default function Home() {
           </Link>
         </div>
 
-        {/* Right CTA / Auth Controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        {/* Right CTA / Auth Controls & Mobile Menu Toggle */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           {user ? (
             <Link
               to="/dashboard"
               className="evolve-pill-btn evolve-pill-btn-primary"
-              style={{ fontSize: '0.84rem', padding: '8px 18px' }}
+              style={{ fontSize: '0.84rem', padding: '8px 16px' }}
             >
               <span>Command Center</span>
               <ArrowRight size={14} />
@@ -273,6 +276,7 @@ export default function Home() {
             <>
               <Link
                 to="/login"
+                className="hidden-mobile"
                 style={{
                   color: 'var(--text-main)',
                   textDecoration: 'none',
@@ -291,15 +295,121 @@ export default function Home() {
               <a
                 href="#audit-tool"
                 className="evolve-pill-btn evolve-pill-btn-primary"
-                style={{ fontSize: '0.84rem', padding: '8px 18px' }}
+                style={{ fontSize: '0.82rem', padding: '7px 14px' }}
               >
-                <span>run free audit</span>
-                <span style={{ fontSize: '0.9rem' }}>→</span>
+                <span>free audit</span>
+                <span style={{ fontSize: '0.85rem' }}>→</span>
               </a>
             </>
           )}
+
+          {/* Mobile Hamburger Toggle */}
+          <button
+            type="button"
+            className="visible-mobile"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle navigation menu"
+            style={{
+              background: 'rgba(255, 255, 255, 0.08)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              color: 'var(--text-main)',
+              width: '36px',
+              height: '36px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 0
+            }}
+          >
+            {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+          </button>
         </div>
       </nav>
+
+      {/* Mobile Slide-Down Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div
+          className="visible-mobile"
+          style={{
+            position: 'sticky',
+            top: '64px',
+            zIndex: 99,
+            background: 'rgba(15, 15, 17, 0.98)',
+            backdropFilter: 'blur(20px)',
+            borderBottom: '1px solid var(--border-color)',
+            padding: '20px 24px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px',
+            animation: 'fadeIn 0.2s ease'
+          }}
+        >
+          <a
+            href="#services"
+            onClick={() => setIsMobileMenuOpen(false)}
+            style={{ color: 'var(--text-main)', textDecoration: 'none', fontSize: '1rem', fontWeight: 600, padding: '8px 0' }}
+          >
+            Services & Frameworks
+          </a>
+          <a
+            href="#method"
+            onClick={() => setIsMobileMenuOpen(false)}
+            style={{ color: 'var(--text-main)', textDecoration: 'none', fontSize: '1rem', fontWeight: 600, padding: '8px 0' }}
+          >
+            The 5 Method
+          </a>
+          <a
+            href="#tools"
+            onClick={() => setIsMobileMenuOpen(false)}
+            style={{ color: 'var(--text-main)', textDecoration: 'none', fontSize: '1rem', fontWeight: 600, padding: '8px 0' }}
+          >
+            Free Instant Tools✦
+          </a>
+          <a
+            href="#compliance"
+            onClick={() => setIsMobileMenuOpen(false)}
+            style={{ color: 'var(--text-main)', textDecoration: 'none', fontSize: '1rem', fontWeight: 600, padding: '8px 0' }}
+          >
+            Compliance Standards
+          </a>
+          <a
+            href="#simulator"
+            onClick={() => setIsMobileMenuOpen(false)}
+            style={{ color: 'var(--text-main)', textDecoration: 'none', fontSize: '1rem', fontWeight: 600, padding: '8px 0' }}
+          >
+            Live Terminal Simulator
+          </a>
+          <Link
+            to="/subscription"
+            onClick={() => setIsMobileMenuOpen(false)}
+            style={{ color: 'var(--text-main)', textDecoration: 'none', fontSize: '1rem', fontWeight: 600, padding: '8px 0', display: 'flex', alignItems: 'center', gap: '8px' }}
+          >
+            <span>Pricing & Pro</span>
+            <span style={{ fontSize: '0.7rem', background: 'rgba(255, 255, 255, 0.15)', color: '#ffffff', padding: '1px 6px', borderRadius: '999px', fontWeight: 700 }}>$39</span>
+          </Link>
+          {!user && (
+            <div style={{ display: 'flex', gap: '10px', paddingTop: '10px', borderTop: '1px solid var(--border-color)' }}>
+              <Link
+                to="/login"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="evolve-pill-btn evolve-pill-btn-outline"
+                style={{ flex: 1, justifyContent: 'center', fontSize: '0.86rem' }}
+              >
+                Sign In
+              </Link>
+              <Link
+                to="/register"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="evolve-pill-btn evolve-pill-btn-primary"
+                style={{ flex: 1, justifyContent: 'center', fontSize: '0.86rem' }}
+              >
+                Sign Up
+              </Link>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* 2. HERO SECTION (WeEvolveIT Style - Centered, Spacious & Elegant) */}
       <section style={{
