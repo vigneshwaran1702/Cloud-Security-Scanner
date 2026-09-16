@@ -237,31 +237,7 @@ export default function OpeningEarthScreen() {
           textAlign: 'center'
         }}
       >
-        <button
-          onClick={enterPortal}
-          type="button"
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '10px',
-            padding: '14px 36px',
-            borderRadius: '9999px',
-            background: '#ffffff',
-            color: '#0c0c0c',
-            border: '1px solid rgba(255, 255, 255, 0.8)',
-            fontSize: '0.95rem',
-            fontWeight: 700,
-            fontFamily: 'JetBrains Mono, monospace',
-            letterSpacing: '0.04em',
-            boxShadow: '0 4px 28px rgba(255, 255, 255, 0.45), 0 0 40px rgba(255, 255, 255, 0.2)',
-            cursor: 'pointer',
-            transition: 'all 0.2s ease',
-            transform: isHovered ? 'scale(1.04)' : 'scale(1)'
-          }}
-        >
-          <span>✦ CLICK THE EARTH TO ENTER ✦</span>
-          <ArrowRight size={17} />
-        </button>
+
 
         {/* Global Telemetry Metrics */}
         <div
