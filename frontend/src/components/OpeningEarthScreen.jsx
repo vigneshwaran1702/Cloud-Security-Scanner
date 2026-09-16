@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useEarthPortal } from '../context/EarthPortalContext';
 import ParticleEarth from './ParticleEarth';
-import { Shield, Sparkles, ArrowRight, Zap, Globe, Lock } from 'lucide-react';
+import { ArrowRight, Shield, Globe, Lock } from 'lucide-react';
 
 export default function OpeningEarthScreen() {
   const { isEntered, isTransitioning, enterPortal } = useEarthPortal();
   const [isHovered, setIsHovered] = useState(false);
+  const [isAssembled, setIsAssembled] = useState(false);
 
   if (isEntered && !isTransitioning) {
     return null;
@@ -17,12 +18,12 @@ export default function OpeningEarthScreen() {
         position: 'fixed',
         inset: 0,
         zIndex: 99999,
-        background: '#121214',
+        background: '#0d0d0f',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '36px 24px 44px',
+        padding: '32px 24px 40px',
         boxSizing: 'border-box',
         overflow: 'hidden',
         opacity: isTransitioning ? 0 : 1,
@@ -31,19 +32,19 @@ export default function OpeningEarthScreen() {
         pointerEvents: isTransitioning ? 'none' : 'auto'
       }}
     >
-      {/* Background Starfield / Radial Atmosphere Glow */}
+      {/* Background Starfield / Radial White & Violet Glow */}
       <div
         style={{
           position: 'absolute',
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: '70vw',
-          height: '70vw',
-          maxWidth: '850px',
-          maxHeight: '850px',
+          width: '75vw',
+          height: '75vw',
+          maxWidth: '900px',
+          maxHeight: '900px',
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(228, 0, 124, 0.16) 0%, rgba(124, 91, 255, 0.08) 45%, rgba(0, 0, 0, 0) 70%)',
+          background: 'radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, rgba(124, 91, 255, 0.08) 45%, rgba(0, 0, 0, 0) 70%)',
           filter: 'blur(60px)',
           pointerEvents: 'none',
           zIndex: 0
@@ -69,12 +70,12 @@ export default function OpeningEarthScreen() {
             onClick={enterPortal}
             type="button"
             style={{
-              background: 'rgba(255, 255, 255, 0.06)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
+              background: 'rgba(255, 255, 255, 0.08)',
+              border: '1px solid rgba(255, 255, 255, 0.25)',
               color: '#ffffff',
-              padding: '7px 14px',
+              padding: '7px 16px',
               borderRadius: '9999px',
-              fontSize: '0.78rem',
+              fontSize: '0.8rem',
               fontFamily: 'JetBrains Mono, monospace',
               cursor: 'pointer',
               display: 'inline-flex',
@@ -83,15 +84,15 @@ export default function OpeningEarthScreen() {
               transition: 'all 0.2s ease'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = '#e4007c';
-              e.currentTarget.style.background = 'rgba(228, 0, 124, 0.15)';
+              e.currentTarget.style.borderColor = '#ffffff';
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)';
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)';
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
             }}
           >
-            <span>Enter Website</span>
+            <span>Skip to Website</span>
             <ArrowRight size={13} />
           </button>
         </div>
@@ -104,13 +105,13 @@ export default function OpeningEarthScreen() {
               width: '32px',
               height: '32px',
               objectFit: 'contain',
-              filter: 'drop-shadow(0 2px 8px rgba(228, 0, 124, 0.5))'
+              filter: 'drop-shadow(0 2px 10px rgba(255, 255, 255, 0.6))'
             }}
           />
-          <span style={{ fontWeight: 800, fontSize: '1.25rem', letterSpacing: '-0.02em', color: '#ffffff' }}>
+          <span style={{ fontWeight: 800, fontSize: '1.3rem', letterSpacing: '-0.02em', color: '#ffffff' }}>
             CloudGuard
           </span>
-          <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.8rem', color: '#e4007c', fontWeight: 600 }}>
+          <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.82rem', color: '#ffffff', opacity: 0.85, fontWeight: 600 }}>
             . evolved
           </span>
         </div>
@@ -119,21 +120,21 @@ export default function OpeningEarthScreen() {
           style={{
             fontFamily: 'JetBrains Mono, monospace',
             fontSize: '0.76rem',
-            color: 'rgba(240, 240, 248, 0.65)',
+            color: 'rgba(240, 240, 248, 0.75)',
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            background: 'rgba(255, 255, 255, 0.05)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
+            background: 'rgba(255, 255, 255, 0.06)',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
             padding: '5px 14px',
             borderRadius: '9999px'
           }}
         >
-          <span style={{ color: '#e4007c' }}>✦</span>
-          <span>AUTONOMOUS MULTI-CLOUD SECURITY POSTURE</span>
-          <span style={{ color: '#e4007c' }}>✦</span>
+          <span style={{ color: '#ffffff' }}>✦</span>
+          <span>{isAssembled ? 'DEFENSE CORE ASSEMBLED · READY' : 'FORMING DEFENSE SPHERE · GATHERING PARTICLES'}</span>
+          <span style={{ color: '#ffffff' }}>✦</span>
         </div>
       </header>
 
@@ -165,10 +166,10 @@ export default function OpeningEarthScreen() {
         <div
           style={{
             position: 'absolute',
-            width: '82%',
-            height: '82%',
+            width: '84%',
+            height: '84%',
             borderRadius: '50%',
-            border: '1px dashed rgba(228, 0, 124, 0.35)',
+            border: '1px dashed rgba(255, 255, 255, 0.35)',
             animation: 'spin 45s linear infinite',
             pointerEvents: 'none',
             transform: isHovered ? 'scale(1.05)' : 'scale(1)',
@@ -179,10 +180,10 @@ export default function OpeningEarthScreen() {
         <div
           style={{
             position: 'absolute',
-            width: '92%',
-            height: '92%',
+            width: '94%',
+            height: '94%',
             borderRadius: '50%',
-            border: '1px solid rgba(124, 91, 255, 0.2)',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
             pointerEvents: 'none'
           }}
         />
@@ -192,6 +193,7 @@ export default function OpeningEarthScreen() {
           stage="opening"
           onEarthClick={enterPortal}
           isTransitioning={isTransitioning}
+          onAssembled={() => setIsAssembled(true)}
         />
 
         {/* Floating Center Cursor Cue */}
@@ -199,25 +201,25 @@ export default function OpeningEarthScreen() {
           style={{
             position: 'absolute',
             pointerEvents: 'none',
-            background: 'rgba(23, 23, 23, 0.88)',
-            border: '1px solid rgba(228, 0, 124, 0.5)',
+            background: 'rgba(18, 18, 20, 0.92)',
+            border: '1px solid rgba(255, 255, 255, 0.4)',
             backdropFilter: 'blur(12px)',
-            padding: '6px 14px',
+            padding: '6px 16px',
             borderRadius: '9999px',
-            fontSize: '0.72rem',
+            fontSize: '0.74rem',
             fontFamily: 'JetBrains Mono',
             color: '#ffffff',
-            boxShadow: '0 4px 20px rgba(228, 0, 124, 0.35)',
-            opacity: isHovered ? 1 : 0.8,
+            boxShadow: '0 4px 20px rgba(255, 255, 255, 0.25)',
+            opacity: isHovered ? 1 : 0.85,
             transform: isHovered ? 'translateY(-8px)' : 'translateY(0)',
             transition: 'all 0.25s ease',
             display: 'flex',
             alignItems: 'center',
-            gap: '6px'
+            gap: '7px'
           }}
         >
-          <span style={{ color: '#e4007c' }}>✦</span>
-          <span>CLICK TO INITIALIZE DEFENSE</span>
+          <span style={{ color: '#ffffff' }}>✦</span>
+          <span>{isAssembled ? 'CLICK THE EARTH TO ENTER' : 'CONVERGING PARTICLES...'}</span>
         </div>
       </main>
 
@@ -242,16 +244,16 @@ export default function OpeningEarthScreen() {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '10px',
-            padding: '14px 34px',
+            padding: '14px 36px',
             borderRadius: '9999px',
-            background: 'linear-gradient(135deg, #e4007c 0%, #c9006c 100%)',
-            color: '#ffffff',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            fontSize: '0.94rem',
+            background: '#ffffff',
+            color: '#0c0c0c',
+            border: '1px solid rgba(255, 255, 255, 0.8)',
+            fontSize: '0.95rem',
             fontWeight: 700,
             fontFamily: 'JetBrains Mono, monospace',
             letterSpacing: '0.04em',
-            boxShadow: '0 6px 28px rgba(228, 0, 124, 0.55), 0 0 40px rgba(228, 0, 124, 0.3)',
+            boxShadow: '0 4px 28px rgba(255, 255, 255, 0.45), 0 0 40px rgba(255, 255, 255, 0.2)',
             cursor: 'pointer',
             transition: 'all 0.2s ease',
             transform: isHovered ? 'scale(1.04)' : 'scale(1)'
@@ -271,13 +273,13 @@ export default function OpeningEarthScreen() {
             gap: '16px',
             fontSize: '0.78rem',
             fontFamily: 'JetBrains Mono',
-            color: 'rgba(240, 240, 248, 0.65)',
+            color: 'rgba(240, 240, 248, 0.7)',
             letterSpacing: '0.04em'
           }}
         >
           <span>17 COUNTRIES AUDITED</span>
           <span style={{ opacity: 0.3 }}>·</span>
-          <span style={{ color: '#e4007c' }}>10 CLOUD HUBS</span>
+          <span style={{ color: '#ffffff', fontWeight: 600 }}>10 CLOUD HUBS</span>
           <span style={{ opacity: 0.3 }}>·</span>
           <span style={{ color: '#10b981' }}>SUB-SECOND TELEMETRY</span>
         </div>

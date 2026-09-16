@@ -27,13 +27,13 @@ const CONTINENT_ANCHORS = [
 
 // Major Cloud Hub Data Centers
 const CLOUD_HUBS = [
-  { name: 'AWS us-east-1', lat: 38.0, lon: -77.5, color: '#e4007c' },
-  { name: 'AWS us-west-2', lat: 45.5, lon: -122.6, color: '#e4007c' },
+  { name: 'AWS us-east-1', lat: 38.0, lon: -77.5, color: '#ffffff' },
+  { name: 'AWS us-west-2', lat: 45.5, lon: -122.6, color: '#ffffff' },
   { name: 'Azure Frankfurt', lat: 50.1, lon: 8.6, color: '#7c5bff' },
   { name: 'Azure Amsterdam', lat: 52.3, lon: 4.9, color: '#7c5bff' },
   { name: 'GCP Tokyo', lat: 35.6, lon: 139.6, color: '#06b6d4' },
   { name: 'GCP Singapore', lat: 1.3, lon: 103.8, color: '#06b6d4' },
-  { name: 'AWS Sydney', lat: -33.8, lon: 151.2, color: '#e4007c' },
+  { name: 'AWS Sydney', lat: -33.8, lon: 151.2, color: '#ffffff' },
   { name: 'Azure São Paulo', lat: -23.5, lon: -46.6, color: '#7c5bff' },
   { name: 'GCP Mumbai', lat: 19.0, lon: 72.8, color: '#06b6d4' },
   { name: 'Azure Dubai', lat: 25.2, lon: 55.2, color: '#7c5bff' }
@@ -53,11 +53,14 @@ const ARCS = [
 export default function ParticleEarth({
   stage = 'opening', // 'opening' | 'background'
   onEarthClick = null,
-  isTransitioning = false
+  isTransitioning = false,
+  onAssembled = null
 }) {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
   const animFrameId = useRef(null);
+  const gatherTimeRef = useRef(stage === 'opening' ? 0 : 5);
+  const assembledRef = useRef(stage !== 'opening');
 
   const rotation = useRef({
     rotX: 0.24,
@@ -84,6 +87,7 @@ export default function ParticleEarth({
     if (!ctx) return;
 
     const dpr = window.devicePixelRatio || 1;
+
     const getDims = () => {
       const rect = canvas.getBoundingClientRect();
       const w = Math.max(320, rect.width || canvas.offsetWidth || 500) * dpr;
@@ -105,11 +109,25 @@ export default function ParticleEarth({
     window.addEventListener('resize', handleResize);
 
     // ==========================================
+    // Helper to generate scatter outer space point
+    // ==========================================
+    const createScatterPoint = (targetX, targetY, targetZ) => {
+      const scatterDist = 3.2 + Math.random() * 4.2;
+      const randomTheta = Math.random() * Math.PI * 2;
+      const randomPhi = Math.acos(Math.random() * 2 - 1);
+      const sx = Math.sin(randomPhi) * Math.cos(randomTheta) * scatterDist;
+      const sy = Math.cos(randomPhi) * scatterDist;
+      const sz = Math.sin(randomPhi) * Math.sin(randomTheta) * scatterDist;
+      const delay = Math.random() * 0.45;
+      return { sx, sy, sz, delay };
+    };
+
+    // ==========================================
     // Generate 3D Earth Particle System
     // ==========================================
     const particles = [];
 
-    // 1. Fibonacci Sphere Surface Grid (~700 points)
+    // 1. Fibonacci Sphere Surface Grid (~720 points)
     const totalGrid = 720;
     const goldenRatio = (1 + Math.sqrt(5)) / 2;
 
@@ -119,16 +137,21 @@ export default function ParticleEarth({
       const x = Math.sin(phi) * Math.cos(theta);
       const y = Math.cos(phi);
       const z = Math.sin(phi) * Math.sin(theta);
+      const scatter = createScatterPoint(x, y, z);
 
       particles.push({
         origX: x,
         origY: y,
         origZ: z,
+        startX: scatter.sx,
+        startY: scatter.sy,
+        startZ: scatter.sz,
+        delay: scatter.delay,
         x, y, z,
         vx: 0, vy: 0, vz: 0,
         baseSize: Math.random() * 1.5 + 1.2,
         type: 'grid',
-        colorType: Math.random() > 0.35 ? 'magenta' : 'ice',
+        colorType: Math.random() > 0.3 ? 'white' : 'ice',
         twinkleOffset: Math.random() * Math.PI * 2
       });
     }
@@ -145,22 +168,27 @@ export default function ParticleEarth({
         const x = Math.cos(latRad) * Math.sin(lonRad);
         const y = -Math.sin(latRad);
         const z = Math.cos(latRad) * Math.cos(lonRad);
+        const scatter = createScatterPoint(x, y, z);
 
         particles.push({
           origX: x,
           origY: y,
           origZ: z,
+          startX: scatter.sx,
+          startY: scatter.sy,
+          startZ: scatter.sz,
+          delay: scatter.delay,
           x, y, z,
           vx: 0, vy: 0, vz: 0,
           baseSize: Math.random() * 1.8 + 1.5,
           type: 'continent',
-          colorType: Math.random() > 0.3 ? 'magenta' : 'violet',
+          colorType: Math.random() > 0.25 ? 'white' : 'violet',
           twinkleOffset: Math.random() * Math.PI * 2
         });
       }
     });
 
-    // 3. Outer Atmospheric Halo Cloud (~200 points)
+    // 3. Outer Atmospheric Halo Cloud (~180 points)
     for (let i = 0; i < 180; i++) {
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(Math.random() * 2 - 1);
@@ -168,11 +196,16 @@ export default function ParticleEarth({
       const x = r * Math.sin(phi) * Math.cos(theta);
       const y = r * Math.cos(phi);
       const z = r * Math.sin(phi) * Math.sin(theta);
+      const scatter = createScatterPoint(x, y, z);
 
       particles.push({
         origX: x,
         origY: y,
         origZ: z,
+        startX: scatter.sx,
+        startY: scatter.sy,
+        startZ: scatter.sz,
+        delay: scatter.delay,
         x, y, z,
         vx: 0, vy: 0, vz: 0,
         baseSize: Math.random() * 1.2 + 0.8,
@@ -201,6 +234,19 @@ export default function ParticleEarth({
     // ==========================================
     const render = () => {
       time += 0.03;
+
+      // Particle gathering progress
+      if (stage === 'opening') {
+        gatherTimeRef.current += 0.018;
+        if (gatherTimeRef.current >= 1.8 && !assembledRef.current) {
+          assembledRef.current = true;
+          if (onAssembled) onAssembled();
+        }
+      } else {
+        gatherTimeRef.current = 5;
+      }
+      const gTime = gatherTimeRef.current;
+
       const rot = rotation.current;
 
       if (!rot.isDragging) {
@@ -230,16 +276,16 @@ export default function ParticleEarth({
         baseRadius = Math.min(width, height) * 0.44;
       }
 
-      // Atmospheric Backlight Glow
-      const glowGrad = ctx.createRadialGradient(cx, cy, baseRadius * 0.6, cx, cy, baseRadius * 1.38);
+      // Atmospheric Backlight Glow (Glowing White / Cyber Violet)
+      const glowGrad = ctx.createRadialGradient(cx, cy, baseRadius * 0.5, cx, cy, baseRadius * 1.38);
       if (stage === 'opening') {
-        glowGrad.addColorStop(0, 'rgba(228, 0, 124, 0.22)');
-        glowGrad.addColorStop(0.4, 'rgba(124, 91, 255, 0.12)');
-        glowGrad.addColorStop(0.85, 'rgba(6, 182, 212, 0.04)');
+        glowGrad.addColorStop(0, 'rgba(255, 255, 255, 0.18)');
+        glowGrad.addColorStop(0.4, 'rgba(124, 91, 255, 0.1)');
+        glowGrad.addColorStop(0.85, 'rgba(6, 182, 212, 0.03)');
         glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
       } else {
-        glowGrad.addColorStop(0, 'rgba(228, 0, 124, 0.12)');
-        glowGrad.addColorStop(0.5, 'rgba(124, 91, 255, 0.06)');
+        glowGrad.addColorStop(0, 'rgba(255, 255, 255, 0.08)');
+        glowGrad.addColorStop(0.5, 'rgba(124, 91, 255, 0.05)');
         glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
       }
       ctx.fillStyle = glowGrad;
@@ -273,49 +319,71 @@ export default function ParticleEarth({
         };
       };
 
-      // 1. Draw Equator & Latitude Rings in subtle neon lines
-      ctx.strokeStyle = stage === 'opening' ? 'rgba(228, 0, 124, 0.25)' : 'rgba(228, 0, 124, 0.12)';
-      ctx.lineWidth = 1 * dpr;
+      // Rings and arcs visibility fades in as particles assemble
+      const structureFade = Math.min(1, Math.max(0, (gTime - 1.2) / 0.6));
 
-      // Equator
-      ctx.beginPath();
-      for (let a = 0; a <= Math.PI * 2; a += 0.1) {
-        const proj = project(Math.cos(a), 0, Math.sin(a));
-        if (a === 0) ctx.moveTo(proj.sx, proj.sy);
-        else ctx.lineTo(proj.sx, proj.sy);
-      }
-      ctx.closePath();
-      ctx.stroke();
+      // 1. Draw Equator & Latitude Rings in subtle white lines
+      if (structureFade > 0.05) {
+        ctx.strokeStyle = stage === 'opening' 
+          ? `rgba(255, 255, 255, ${0.28 * structureFade})` 
+          : 'rgba(255, 255, 255, 0.12)';
+        ctx.lineWidth = 1 * dpr;
 
-      // Latitude 30deg N & S
-      [-0.5, 0.5].forEach((latOffset) => {
-        const ringRad = Math.sqrt(1 - latOffset * latOffset);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+        // Equator
         ctx.beginPath();
-        for (let a = 0; a <= Math.PI * 2; a += 0.15) {
-          const proj = project(Math.cos(a) * ringRad, latOffset, Math.sin(a) * ringRad);
+        for (let a = 0; a <= Math.PI * 2; a += 0.1) {
+          const proj = project(Math.cos(a), 0, Math.sin(a));
           if (a === 0) ctx.moveTo(proj.sx, proj.sy);
           else ctx.lineTo(proj.sx, proj.sy);
         }
         ctx.closePath();
         ctx.stroke();
-      });
 
-      // 2. Render All Particles
+        // Latitude 30deg N & S
+        [-0.5, 0.5].forEach((latOffset) => {
+          const ringRad = Math.sqrt(1 - latOffset * latOffset);
+          ctx.strokeStyle = `rgba(255, 255, 255, ${0.06 * structureFade})`;
+          ctx.beginPath();
+          for (let a = 0; a <= Math.PI * 2; a += 0.15) {
+            const proj = project(Math.cos(a) * ringRad, latOffset, Math.sin(a) * ringRad);
+            if (a === 0) ctx.moveTo(proj.sx, proj.sy);
+            else ctx.lineTo(proj.sx, proj.sy);
+          }
+          ctx.closePath();
+          ctx.stroke();
+        });
+      }
+
+      // 2. Render All Particles (gathering from outer space into sphere)
       const shockProgress = shockwave.current.progress;
       const isShock = shockwave.current.active;
 
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
 
+        // Position interpolation: from outer space startX,Y,Z to globe origX,Y,Z
+        let curX, curY, curZ;
+        if (gTime >= 2.5) {
+          curX = p.origX;
+          curY = p.origY;
+          curZ = p.origZ;
+        } else {
+          const localT = Math.max(0, Math.min(1, (gTime - p.delay) / 1.5));
+          // Cubic ease-out curve for smooth coalescence
+          const ease = 1 - Math.pow(1 - localT, 3.2);
+          curX = p.startX + (p.origX - p.startX) * ease;
+          curY = p.startY + (p.origY - p.startY) * ease;
+          curZ = p.startZ + (p.origZ - p.startZ) * ease;
+        }
+
         // Magnetic Hover deflection if cursor is close (opening stage only)
-        if (stage === 'opening' && mousePos.current.isHovering) {
+        if (stage === 'opening' && mousePos.current.isHovering && gTime >= 1.6) {
           const dx = mousePos.current.x * dpr - cx;
           const dy = mousePos.current.y * dpr - cy;
           const mouseDist = Math.sqrt(dx * dx + dy * dy);
           if (mouseDist < baseRadius * 1.2) {
-            p.x += (Math.sin(time * 2 + i) * 0.008);
-            p.y += (Math.cos(time * 2 + i) * 0.008);
+            curX += (Math.sin(time * 2 + i) * 0.008);
+            curY += (Math.cos(time * 2 + i) * 0.008);
           }
         }
 
@@ -325,7 +393,7 @@ export default function ParticleEarth({
           radiusMultiplier = 1 + Math.sin(shockProgress * Math.PI) * 0.35;
         }
 
-        const proj = project(p.origX, p.origY, p.origZ, radiusMultiplier);
+        const proj = project(curX, curY, curZ, radiusMultiplier);
 
         if (proj.visible) {
           const depthAlpha = Math.max(0.06, (proj.sz + 0.3) / 1.3);
@@ -334,12 +402,12 @@ export default function ParticleEarth({
 
           const dotSize = Math.max(0.8, p.baseSize * (1 + proj.sz * 0.5) * dpr);
 
-          if (p.colorType === 'magenta') {
-            ctx.fillStyle = `rgba(228, 0, 124, ${finalAlpha})`;
+          if (p.colorType === 'white') {
+            ctx.fillStyle = `rgba(255, 255, 255, ${finalAlpha * 0.95})`;
           } else if (p.colorType === 'violet') {
             ctx.fillStyle = `rgba(124, 91, 255, ${finalAlpha})`;
           } else {
-            ctx.fillStyle = `rgba(240, 240, 248, ${finalAlpha * 0.9})`;
+            ctx.fillStyle = `rgba(210, 230, 255, ${finalAlpha * 0.9})`;
           }
 
           ctx.beginPath();
@@ -348,83 +416,85 @@ export default function ParticleEarth({
         }
       }
 
-      // 3. Project and Draw Connecting Defense Arcs
-      const projectedHubs = hubPoints.map((h) => ({
-        ...h,
-        proj: project(h.x, h.y, h.z)
-      }));
+      // 3. Project and Draw Connecting Defense Arcs (fade in once sphere assembled)
+      if (structureFade > 0.1) {
+        const projectedHubs = hubPoints.map((h) => ({
+          ...h,
+          proj: project(h.x, h.y, h.z)
+        }));
 
-      ARCS.forEach((arc, arcIdx) => {
-        const n1 = projectedHubs[arc.from];
-        const n2 = projectedHubs[arc.to];
+        ARCS.forEach((arc, arcIdx) => {
+          const n1 = projectedHubs[arc.from];
+          const n2 = projectedHubs[arc.to];
 
-        if (n1.proj.visible || n2.proj.visible) {
-          const midX = (n1.x + n2.x) * 0.5;
-          const midY = (n1.y + n2.y) * 0.5;
-          const midZ = (n1.z + n2.z) * 0.5;
-          const midLen = Math.sqrt(midX * midX + midY * midY + midZ * midZ) || 1;
-          const elevation = 1.36;
-          const peak = {
-            x: (midX / midLen) * elevation,
-            y: (midY / midLen) * elevation,
-            z: (midZ / midLen) * elevation
-          };
-          const peakProj = project(peak.x, peak.y, peak.z);
+          if (n1.proj.visible || n2.proj.visible) {
+            const midX = (n1.x + n2.x) * 0.5;
+            const midY = (n1.y + n2.y) * 0.5;
+            const midZ = (n1.z + n2.z) * 0.5;
+            const midLen = Math.sqrt(midX * midX + midY * midY + midZ * midZ) || 1;
+            const elevation = 1.36;
+            const peak = {
+              x: (midX / midLen) * elevation,
+              y: (midY / midLen) * elevation,
+              z: (midZ / midLen) * elevation
+            };
+            const peakProj = project(peak.x, peak.y, peak.z);
 
-          // Arc line
-          ctx.beginPath();
-          ctx.moveTo(n1.proj.sx, n1.proj.sy);
-          ctx.quadraticCurveTo(peakProj.sx, peakProj.sy, n2.proj.sx, n2.proj.sy);
+            // Arc line
+            ctx.beginPath();
+            ctx.moveTo(n1.proj.sx, n1.proj.sy);
+            ctx.quadraticCurveTo(peakProj.sx, peakProj.sy, n2.proj.sx, n2.proj.sy);
 
-          const arcAlpha = Math.max(0.08, (n1.proj.sz + n2.proj.sz + 1) * 0.22);
-          ctx.strokeStyle = `rgba(228, 0, 124, ${arcAlpha * (stage === 'opening' ? 0.6 : 0.25)})`;
-          ctx.lineWidth = 1.2 * dpr;
-          ctx.stroke();
+            const arcAlpha = Math.max(0.08, (n1.proj.sz + n2.proj.sz + 1) * 0.22) * structureFade;
+            ctx.strokeStyle = `rgba(255, 255, 255, ${arcAlpha * (stage === 'opening' ? 0.65 : 0.25)})`;
+            ctx.lineWidth = 1.2 * dpr;
+            ctx.stroke();
 
-          // Traveling Pulse Beacon
-          const t = (time * 0.5 + arcIdx * 0.25) % 1;
-          const pulseX = (1 - t) * (1 - t) * n1.proj.sx + 2 * (1 - t) * t * peakProj.sx + t * t * n2.proj.sx;
-          const pulseY = (1 - t) * (1 - t) * n1.proj.sy + 2 * (1 - t) * t * peakProj.sy + t * t * n2.proj.sy;
+            // Traveling Pulse Beacon
+            const t = (time * 0.5 + arcIdx * 0.25) % 1;
+            const pulseX = (1 - t) * (1 - t) * n1.proj.sx + 2 * (1 - t) * t * peakProj.sx + t * t * n2.proj.sx;
+            const pulseY = (1 - t) * (1 - t) * n1.proj.sy + 2 * (1 - t) * t * peakProj.sy + t * t * n2.proj.sy;
 
-          ctx.fillStyle = '#ffffff';
-          ctx.shadowColor = '#e4007c';
-          ctx.shadowBlur = 8 * dpr;
-          ctx.beginPath();
-          ctx.arc(pulseX, pulseY, 2.2 * dpr, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.shadowBlur = 0;
-        }
-      });
+            ctx.fillStyle = '#ffffff';
+            ctx.shadowColor = '#ffffff';
+            ctx.shadowBlur = 8 * dpr;
+            ctx.beginPath();
+            ctx.arc(pulseX, pulseY, 2.2 * dpr, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+          }
+        });
 
-      // 4. Draw Hub Nodes and Pulsing Telemetry Beacons
-      projectedHubs.forEach((hub) => {
-        if (hub.proj.visible && hub.proj.sz > -0.15) {
-          const sz = (3.5 + hub.proj.sz * 2.5) * dpr;
-          const pulseRad = sz + Math.sin(time * 3 + hub.lon) * 4.5 * dpr;
+        // 4. Draw Hub Nodes and Pulsing Telemetry Beacons
+        projectedHubs.forEach((hub) => {
+          if (hub.proj.visible && hub.proj.sz > -0.15) {
+            const sz = (3.5 + hub.proj.sz * 2.5) * dpr;
+            const pulseRad = sz + Math.sin(time * 3 + hub.lon) * 4.5 * dpr;
 
-          // Pulse ring
-          ctx.strokeStyle = 'rgba(228, 0, 124, 0.7)';
-          ctx.lineWidth = 1 * dpr;
-          ctx.beginPath();
-          ctx.arc(hub.proj.sx, hub.proj.sy, Math.max(sz, pulseRad), 0, Math.PI * 2);
-          ctx.stroke();
+            // Pulse ring
+            ctx.strokeStyle = `rgba(255, 255, 255, ${0.7 * structureFade})`;
+            ctx.lineWidth = 1 * dpr;
+            ctx.beginPath();
+            ctx.arc(hub.proj.sx, hub.proj.sy, Math.max(sz, pulseRad), 0, Math.PI * 2);
+            ctx.stroke();
 
-          // Core node
-          ctx.fillStyle = hub.color;
-          ctx.shadowColor = hub.color;
-          ctx.shadowBlur = 10 * dpr;
-          ctx.beginPath();
-          ctx.arc(hub.proj.sx, hub.proj.sy, sz, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.shadowBlur = 0;
+            // Core node
+            ctx.fillStyle = hub.color;
+            ctx.shadowColor = hub.color;
+            ctx.shadowBlur = 10 * dpr;
+            ctx.beginPath();
+            ctx.arc(hub.proj.sx, hub.proj.sy, sz, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
 
-          // Inner white pinhead
-          ctx.fillStyle = '#ffffff';
-          ctx.beginPath();
-          ctx.arc(hub.proj.sx, hub.proj.sy, sz * 0.45, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      });
+            // Inner white pinhead
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(hub.proj.sx, hub.proj.sy, sz * 0.45, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        });
+      }
 
       animFrameId.current = requestAnimationFrame(render);
     };

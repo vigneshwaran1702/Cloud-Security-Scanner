@@ -99,7 +99,7 @@ export default function Home() {
         'how your multi-cloud actually runs — not the architecture diagram version',
         'clarity before code'
       ],
-      color: '#e4007c'
+      color: '#ffffff'
     },
     {
       num: '02',
@@ -254,7 +254,7 @@ export default function Home() {
           </a>
           <Link to="/subscription" style={{ color: 'var(--text-muted)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
             <span>pricing</span>
-            <span style={{ fontSize: '0.68rem', background: 'rgba(228, 0, 124, 0.15)', color: 'var(--primary)', padding: '1px 6px', borderRadius: '999px', fontWeight: 700 }}>PRO</span>
+            <span style={{ fontSize: '0.68rem', background: 'rgba(255, 255, 255, 0.15)', color: 'var(--primary)', padding: '1px 6px', borderRadius: '999px', fontWeight: 700 }}>PRO</span>
           </Link>
         </div>
 
@@ -319,7 +319,7 @@ export default function Home() {
           transform: 'translateX(-50%)',
           width: '900px',
           height: '480px',
-          background: 'radial-gradient(circle, rgba(228, 0, 124, 0.22) 0%, rgba(124, 91, 255, 0.12) 50%, rgba(0,0,0,0) 75%)',
+          background: 'radial-gradient(circle, rgba(255, 255, 255, 0.14) 0%, rgba(124, 91, 255, 0.06) 50%, rgba(0,0,0,0) 75%)',
           filter: 'blur(90px)',
           zIndex: 0,
           pointerEvents: 'none'
@@ -659,7 +659,7 @@ export default function Home() {
             <div className="evolve-card" style={{ padding: '28px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-                  <div style={{ color: 'var(--primary)', background: 'rgba(228, 0, 124, 0.1)', padding: '10px', borderRadius: '12px' }}>
+                  <div style={{ color: 'var(--primary)', background: 'rgba(255, 255, 255, 0.08)', padding: '10px', borderRadius: '12px' }}>
                     <ShieldCheck size={22} />
                   </div>
                   <span className="evolve-mono-badge" style={{ color: 'var(--primary)' }}>✦POPULAR</span>
@@ -824,7 +824,7 @@ export default function Home() {
                           fontFamily: 'JetBrains Mono',
                           fontSize: '0.68rem',
                           color: srv.tag.includes('AI') ? 'var(--primary)' : 'var(--text-muted)',
-                          background: srv.tag.includes('AI') ? 'rgba(228, 0, 124, 0.1)' : 'var(--panel-inner-bg)',
+                          background: srv.tag.includes('AI') ? 'rgba(255, 255, 255, 0.12)' : 'var(--panel-inner-bg)',
                           padding: '1px 6px',
                           borderRadius: '999px',
                           whiteSpace: 'nowrap'
@@ -962,7 +962,7 @@ export default function Home() {
                 </div>
 
                 <div style={{
-                  background: 'linear-gradient(135deg, rgba(228, 0, 124, 0.12), rgba(124, 91, 255, 0.08))',
+                  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(124, 91, 255, 0.06))',
                   border: '1px solid var(--border-color-hover)',
                   borderRadius: '12px',
                   padding: '18px',
@@ -1049,7 +1049,7 @@ export default function Home() {
       {/* 9. "WHAT'S SLOWING YOU DOWN?" (WeEvolveIT Signature CTA) */}
       <section style={{ padding: '70px 24px', maxWidth: '1280px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
         <div style={{
-          background: 'linear-gradient(135deg, rgba(228, 0, 124, 0.15), rgba(124, 91, 255, 0.1))',
+          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(124, 91, 255, 0.06))',
           border: '1px solid var(--border-color-hover)',
           borderRadius: '24px',
           padding: '56px 36px',

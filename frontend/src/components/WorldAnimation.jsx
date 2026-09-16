@@ -103,7 +103,7 @@ export default function WorldAnimation({ className = '', onRegionClick = null })
 
       // Outer Atmospheric Glow
       const glowGrad = ctx.createRadialGradient(cx, cy, globeRadius * 0.7, cx, cy, globeRadius * 1.35);
-      glowGrad.addColorStop(0, 'rgba(228, 0, 124, 0.12)');
+      glowGrad.addColorStop(0, 'rgba(255, 255, 255, 0.15)');
       glowGrad.addColorStop(0.5, 'rgba(124, 91, 255, 0.07)');
       glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
       ctx.fillStyle = glowGrad;
@@ -145,7 +145,7 @@ export default function WorldAnimation({ className = '', onRegionClick = null })
       ctx.stroke();
 
       // Equator Ring
-      ctx.strokeStyle = 'rgba(228, 0, 124, 0.2)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.22)';
       ctx.beginPath();
       for (let a = 0; a <= Math.PI * 2; a += 0.1) {
         const p = project({ x: Math.cos(a), y: 0, z: Math.sin(a) });
@@ -167,7 +167,7 @@ export default function WorldAnimation({ className = '', onRegionClick = null })
 
           ctx.fillStyle = proj.z > 0.4
             ? `rgba(240, 240, 248, ${depthAlpha * 0.85})`
-            : `rgba(228, 0, 124, ${depthAlpha * 0.5})`;
+            : `rgba(255, 255, 255, ${depthAlpha * 0.45})`;
 
           ctx.beginPath();
           ctx.arc(proj.px, proj.py, dotSize, 0, Math.PI * 2);
@@ -205,7 +205,7 @@ export default function WorldAnimation({ className = '', onRegionClick = null })
           ctx.quadraticCurveTo(peakProj.px, peakProj.py, n2.proj.px, n2.proj.py);
 
           const arcAlpha = Math.max(0.12, (n1.proj.z + n2.proj.z + 1) * 0.25);
-          ctx.strokeStyle = `rgba(228, 0, 124, ${arcAlpha * 0.45})`;
+          ctx.strokeStyle = `rgba(255, 255, 255, ${arcAlpha * 0.35})`;
           ctx.lineWidth = 1.2 * (window.devicePixelRatio || 1);
           ctx.stroke();
 
@@ -215,7 +215,7 @@ export default function WorldAnimation({ className = '', onRegionClick = null })
           const pulseY = (1 - t) * (1 - t) * n1.proj.py + 2 * (1 - t) * t * peakProj.py + t * t * n2.proj.py;
 
           ctx.fillStyle = '#ffffff';
-          ctx.shadowColor = '#e4007c';
+          ctx.shadowColor = '#ffffff';
           ctx.shadowBlur = 8;
           ctx.beginPath();
           ctx.arc(pulseX, pulseY, 2.5 * (window.devicePixelRatio || 1), 0, Math.PI * 2);
@@ -231,15 +231,15 @@ export default function WorldAnimation({ className = '', onRegionClick = null })
           const pulseRadius = size + Math.sin(pulseTime * 3 + node.lon) * 4 * (window.devicePixelRatio || 1);
 
           // Outer Pulse Ring
-          ctx.strokeStyle = 'rgba(228, 0, 124, 0.6)';
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
           ctx.lineWidth = 1 * (window.devicePixelRatio || 1);
           ctx.beginPath();
           ctx.arc(node.proj.px, node.proj.py, Math.max(size, pulseRadius), 0, Math.PI * 2);
           ctx.stroke();
 
           // Solid Core Node
-          ctx.fillStyle = node.provider === 'AWS' ? '#e4007c' : node.provider === 'AZURE' ? '#7c5bff' : '#06b6d4';
-          ctx.shadowColor = '#e4007c';
+          ctx.fillStyle = node.provider === 'AWS' ? '#ffffff' : node.provider === 'AZURE' ? '#7c5bff' : '#06b6d4';
+          ctx.shadowColor = '#ffffff';
           ctx.shadowBlur = 10;
           ctx.beginPath();
           ctx.arc(node.proj.px, node.proj.py, size, 0, Math.PI * 2);

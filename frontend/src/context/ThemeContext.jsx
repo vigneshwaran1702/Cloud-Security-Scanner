@@ -3,7 +3,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 const ThemeContext = createContext();
 
 export const ACCENT_PALETTES = [
-  { id: 'evolve', name: 'WeEvolveIT Magenta', primary: '#e4007c', accent: '#7c5bff', desc: 'Electric Magenta & Cyber Violet' },
+  { id: 'evolve', name: 'Cyber White', primary: '#ffffff', accent: '#7c5bff', desc: 'Pure White & Cyber Violet' },
   { id: 'indigo', name: 'Cyber Indigo', primary: '#6366f1', accent: '#06b6d4', desc: 'Electric Indigo & Cyan' },
   { id: 'cyan', name: 'Cyan Sentry', primary: '#0ea5e9', accent: '#6366f1', desc: 'Sky Blue & Cyber Violet' },
   { id: 'emerald', name: 'Emerald Matrix', primary: '#10b981', accent: '#06b6d4', desc: 'Neon Emerald & Cyber Teal' },

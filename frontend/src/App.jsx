@@ -14,6 +14,7 @@ import { NotificationProvider } from './context/NotificationContext';
 import { SubscriptionProvider } from './context/SubscriptionContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { EarthPortalProvider } from './context/EarthPortalContext';
+import OpeningEarthScreen from './components/OpeningEarthScreen';
 import BackgroundEarth from './components/BackgroundEarth';
 
 function App() {
@@ -23,6 +24,9 @@ function App() {
         <AuthProvider>
           <NotificationProvider>
             <SubscriptionProvider>
+              {/* Opening Interactive Particle Earth Screen (Click Earth to Enter) */}
+              <OpeningEarthScreen />
+
               {/* Persistent Background Particle Earth for All Pages */}
               <BackgroundEarth />
 
@@ -63,5 +67,3 @@ function App() {
 }
 
 export default App;
-
-
