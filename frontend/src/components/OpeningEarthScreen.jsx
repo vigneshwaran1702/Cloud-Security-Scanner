@@ -141,8 +141,27 @@ export default function OpeningEarthScreen() {
         </div>
       </header>
 
-      {/* Center 3D Particle Earth in the Dead Center */}
-      <main
+      {/* Fullscreen 3D Particle Earth - Collects from wide natural surroundings of the screen */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          zIndex: 1,
+          width: '100%',
+          height: '100%',
+          overflow: 'hidden'
+        }}
+      >
+        <ParticleEarth
+          stage="opening"
+          onEarthClick={enterPortal}
+          isTransitioning={isTransitioning}
+          onAssembled={() => setIsAssembled(true)}
+        />
+      </div>
+
+      {/* Center Interactive Anchor & Enter Prompt (No boxed borders) */}
+      <div
         onClick={enterPortal}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -154,78 +173,60 @@ export default function OpeningEarthScreen() {
         }}
         style={{
           position: 'relative',
-          zIndex: 2,
-          width: 'min(88vw, 55vh, 520px)',
-          height: 'min(88vw, 55vh, 520px)',
-          aspectRatio: '1 / 1',
+          zIndex: 3,
+          width: 'min(65vw, 45vh, 420px)',
+          height: 'min(65vw, 45vh, 420px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           cursor: 'pointer',
           outline: 'none',
-          margin: 'auto 0'
+          margin: 'auto 0',
+          borderRadius: '50%'
         }}
       >
-        {/* Pulsating Interaction Radar Rings */}
+        {/* Soft interactive hover aura - no hard boxes or dashed frames */}
         <div
           style={{
             position: 'absolute',
-            width: '84%',
-            height: '84%',
+            inset: '-10%',
             borderRadius: '50%',
-            border: '1px dashed rgba(255, 255, 255, 0.35)',
-            animation: 'spin 45s linear infinite',
-            pointerEvents: 'none',
-            transform: isHovered ? 'scale(1.05)' : 'scale(1)',
-            transition: 'transform 0.4s ease'
-          }}
-        />
-
-        <div
-          style={{
-            position: 'absolute',
-            width: '94%',
-            height: '94%',
-            borderRadius: '50%',
-            border: '1px solid rgba(255, 255, 255, 0.15)',
+            background: 'radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 70%)',
+            opacity: isHovered ? 1 : 0,
+            transform: isHovered ? 'scale(1.08)' : 'scale(0.96)',
+            transition: 'opacity 0.4s ease, transform 0.4s ease',
             pointerEvents: 'none'
           }}
         />
 
-        {/* 3D Particle Earth Canvas */}
-        <ParticleEarth
-          stage="opening"
-          onEarthClick={enterPortal}
-          isTransitioning={isTransitioning}
-          onAssembled={() => setIsAssembled(true)}
-        />
-
-        {/* Floating Center Cursor Cue */}
+        {/* Center Prompt Pill Badge */}
         <div
           style={{
-            position: 'absolute',
+            position: 'relative',
             pointerEvents: 'none',
-            background: 'rgba(18, 18, 20, 0.92)',
-            border: '1px solid rgba(255, 255, 255, 0.4)',
+            background: 'rgba(14, 14, 18, 0.88)',
+            border: '1px solid rgba(255, 255, 255, 0.35)',
             backdropFilter: 'blur(12px)',
-            padding: '6px 16px',
+            padding: '7px 18px',
             borderRadius: '9999px',
-            fontSize: '0.74rem',
-            fontFamily: 'JetBrains Mono',
+            fontSize: 'clamp(0.72rem, 2vw, 0.82rem)',
+            fontFamily: 'JetBrains Mono, monospace',
             color: '#ffffff',
-            boxShadow: '0 4px 20px rgba(255, 255, 255, 0.25)',
+            boxShadow: '0 4px 24px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 255, 255, 0.2)',
             opacity: isHovered ? 1 : 0.85,
-            transform: isHovered ? 'translateY(-8px)' : 'translateY(0)',
-            transition: 'all 0.25s ease',
+            transform: isHovered ? 'scale(1.05)' : 'scale(1)',
+            transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
             display: 'flex',
             alignItems: 'center',
-            gap: '7px'
+            gap: '8px'
           }}
         >
           <span style={{ color: '#ffffff' }}>✦</span>
-          <span>{isAssembled ? 'CLICK THE EARTH TO ENTER' : 'CONVERGING PARTICLES...'}</span>
+          <span style={{ fontWeight: 600, letterSpacing: '0.04em' }}>
+            {isAssembled ? 'CLICK THE GLOBE TO ENTER' : 'CONVERGING PARTICLES...'}
+          </span>
         </div>
-      </main>
+      </div>
 
       {/* Bottom Action Controls & Telemetry Stats */}
       <footer
