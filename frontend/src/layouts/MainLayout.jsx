@@ -389,14 +389,30 @@ export default function MainLayout() {
 
       {/* 2. GOOGLE CLOUD CONSOLE BODY LAYOUT */}
       <div style={{ display: 'flex', flex: 1, position: 'relative' }}>
+        {/* Mobile Backdrop Overlay when Drawer is open */}
+        {isSidebarOpen && (
+          <div
+            className="visible-mobile"
+            onClick={() => setIsSidebarOpen(false)}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              top: '56px',
+              background: 'rgba(0, 0, 0, 0.65)',
+              backdropFilter: 'blur(4px)',
+              zIndex: 1040
+            }}
+          />
+        )}
+
         {/* Left Navigation Sidebar */}
         <aside
-          className="gcp-sidebar"
+          className={`gcp-sidebar ${!isSidebarOpen ? 'gcp-sidebar-collapsed-mobile' : ''}`}
           style={{
             width: isSidebarOpen ? '250px' : '68px',
             minWidth: isSidebarOpen ? '250px' : '68px',
             padding: isSidebarOpen ? '16px 0' : '16px 6px',
-            transition: 'width 0.25s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+            transition: 'width 0.25s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s ease',
           }}
         >
           <nav className="flex flex-col gap-1" style={{ flex: 1 }}>
@@ -407,6 +423,11 @@ export default function MainLayout() {
                 <Link
                   key={item.path}
                   to={item.path}
+                  onClick={() => {
+                    if (window.innerWidth <= 768) {
+                      setIsSidebarOpen(false);
+                    }
+                  }}
                   className={`gcp-nav-item ${isActive ? 'active' : ''}`}
                   title={!isSidebarOpen ? item.label : undefined}
                   style={{
