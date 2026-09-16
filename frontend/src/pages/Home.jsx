@@ -327,25 +327,26 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* 2. HERO SECTION (WeEvolveIT Style with 3D World Animation) */}
+      {/* 2. HERO SECTION (WeEvolveIT Style - Centered, Spacious & Elegant) */}
       <section style={{
         position: 'relative',
-        padding: '60px 24px 70px',
-        maxWidth: '1360px',
+        padding: '70px 24px 80px',
+        maxWidth: '1280px',
         margin: '0 auto',
         width: '100%',
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
+        textAlign: 'center'
       }}>
         {/* Glow Background Accent */}
         <div style={{
           position: 'absolute',
-          top: '0px',
+          top: '-40px',
           left: '50%',
           transform: 'translateX(-50%)',
-          width: '800px',
-          height: '400px',
-          background: 'radial-gradient(circle, rgba(228, 0, 124, 0.2) 0%, rgba(124, 91, 255, 0.1) 50%, rgba(0,0,0,0) 75%)',
-          filter: 'blur(80px)',
+          width: '900px',
+          height: '480px',
+          background: 'radial-gradient(circle, rgba(228, 0, 124, 0.22) 0%, rgba(124, 91, 255, 0.12) 50%, rgba(0,0,0,0) 75%)',
+          filter: 'blur(90px)',
           zIndex: 0,
           pointerEvents: 'none'
         }} />
@@ -353,73 +354,63 @@ export default function Home() {
         <div style={{
           position: 'relative',
           zIndex: 1,
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
-          alignItems: 'center',
-          gap: '40px'
+          maxWidth: '960px',
+          margin: '0 auto',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center'
         }}>
-          {/* Left Column: Editorial Headline, Diagnostic Form, Metrics */}
-          <div>
-            {/* Top Pill Announcement with Star */}
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              background: 'var(--badge-primary-bg)',
-              border: '1px solid var(--badge-primary-border)',
-              padding: '6px 18px',
-              borderRadius: '9999px',
-              fontSize: '0.82rem',
-              fontFamily: 'JetBrains Mono',
-              color: 'var(--badge-primary-color)',
-              marginBottom: '22px',
-              boxShadow: '0 2px 14px var(--primary-glow)'
-            }}>
-              <span>✦</span>
-              <span>your cloud security partner. evolved.</span>
-              <span style={{ opacity: 0.5 }}>·</span>
-              <span style={{ color: '#ffffff' }}>MULTI-CLOUD CSPM</span>
-            </div>
+          {/* Top Pill Announcement with Star */}
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            background: 'var(--badge-primary-bg)',
+            border: '1px solid var(--badge-primary-border)',
+            padding: '7px 22px',
+            borderRadius: '9999px',
+            fontSize: '0.84rem',
+            fontFamily: 'JetBrains Mono, monospace',
+            color: 'var(--badge-primary-color)',
+            marginBottom: '26px',
+            boxShadow: '0 2px 16px var(--primary-glow)'
+          }}>
+            <span style={{ color: 'var(--primary)' }}>✦</span>
+            <span>your cloud security partner. evolved.</span>
+            <span style={{ opacity: 0.35 }}>|</span>
+            <span style={{ color: '#ffffff', fontWeight: 600 }}>MULTI-CLOUD CSPM</span>
+          </div>
 
-            {/* Main Hero Headline (Editorial WeEvolveIT Style) */}
-            <h1 style={{
-              fontSize: 'clamp(2.3rem, 5vw, 4rem)',
-              fontWeight: 800,
-              lineHeight: 1.08,
-              letterSpacing: '-0.035em',
-              margin: '0 0 20px 0'
-            }}>
-              your cloud security partner. <br />
-              <span className="evolve-gradient-text">evolved.</span>
-            </h1>
+          {/* Main Hero Headline (Editorial WeEvolveIT Style) */}
+          <h1 style={{
+            fontSize: 'clamp(2.5rem, 5.5vw, 4.4rem)',
+            fontWeight: 850,
+            lineHeight: 1.1,
+            letterSpacing: '-0.035em',
+            margin: '0 0 24px 0',
+            textTransform: 'lowercase'
+          }}>
+            your cloud security partner. <br />
+            <span className="evolve-gradient-text">evolved.</span>
+          </h1>
 
-            {/* Subtitle */}
-            <p style={{
-              fontSize: 'clamp(0.98rem, 1.6vw, 1.15rem)',
-              color: 'var(--text-muted)',
-              lineHeight: 1.65,
-              maxWidth: '600px',
-              margin: '0 0 32px 0'
-            }}>
-              AI specialists. A five-phase method — <strong>Discover</strong>, <strong>Diagnose</strong>, <strong>Design</strong>, <strong>Deliver</strong>, <strong>Evolve</strong> — that transforms how your business runs on the cloud. HQ multi-cloud telemetry, presence across AWS, Azure & GCP, zero agents required.
-            </p>
+          {/* Subtitle */}
+          <p style={{
+            fontSize: 'clamp(1.02rem, 1.8vw, 1.2rem)',
+            color: 'var(--text-muted)',
+            lineHeight: 1.7,
+            maxWidth: '720px',
+            margin: '0 auto 36px auto'
+          }}>
+            AI specialists. A five-phase method — <strong style={{ color: 'var(--text-main)' }}>Discover</strong>, <strong style={{ color: 'var(--text-main)' }}>Diagnose</strong>, <strong style={{ color: 'var(--text-main)' }}>Design</strong>, <strong style={{ color: 'var(--text-main)' }}>Deliver</strong>, <strong style={{ color: 'var(--text-main)' }}>Evolve</strong> — that transforms how your business runs on the cloud. Multi-cloud telemetry across AWS, Azure & GCP with zero agents required.
+          </p>
 
-            {/* Quick Instant Audit Box (WeEvolveIT Diagnostic Pill) */}
-            <div id="audit-tool" style={{ marginBottom: '26px' }}>
-              <form onSubmit={handleStartAudit} style={{
-                background: 'rgba(28, 28, 28, 0.9)',
-                border: '1px solid var(--border-color)',
-                borderRadius: '9999px',
-                padding: '8px 10px 8px 18px',
-                display: 'flex',
-                flexWrap: 'wrap',
-                alignItems: 'center',
-                gap: '10px',
-                maxWidth: '640px',
-                boxShadow: '0 16px 40px -10px rgba(0, 0, 0, 0.8), 0 0 25px var(--primary-glow)',
-                backdropFilter: 'blur(16px)'
-              }}>
-                {/* Provider Selector */}
+          {/* Quick Instant Audit Box (WeEvolveIT Diagnostic Pill) */}
+          <div id="audit-tool" style={{ width: '100%', maxWidth: '740px', marginBottom: '28px' }}>
+            <form onSubmit={handleStartAudit} className="evolve-audit-form">
+              {/* Provider Selector */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Cloud size={16} color="var(--primary)" />
                 <select
                   value={provider}
                   onChange={(e) => setProvider(e.target.value)}
@@ -431,96 +422,93 @@ export default function Home() {
                     fontSize: '0.88rem',
                     outline: 'none',
                     cursor: 'pointer',
-                    paddingRight: '6px'
+                    padding: '4px 8px 4px 0',
+                    fontFamily: 'inherit'
                   }}
                 >
                   <option value="AWS" style={{ background: '#1c1c1c' }}>AWS Account</option>
                   <option value="AZURE" style={{ background: '#1c1c1c' }}>Azure Subscription</option>
                   <option value="GCP" style={{ background: '#1c1c1c' }}>GCP Project</option>
                 </select>
+              </div>
 
-                <div style={{ width: '1px', height: '24px', background: 'var(--border-color)' }} />
+              <div className="audit-divider" style={{ width: '1px', height: '24px', background: 'var(--border-color)' }} />
 
-                {/* Cloud ID Input */}
-                <input
-                  type="text"
-                  value={accountId}
-                  onChange={(e) => setAccountId(e.target.value)}
-                  placeholder={
-                    provider === 'AWS'
-                      ? '12-digit AWS Account ID (e.g. 123456789012)'
-                      : provider === 'AZURE'
-                      ? 'Azure Subscription ID / Tenant GUID'
-                      : 'GCP Project ID (e.g. cloud-prod-2026)'
-                  }
-                  style={{
-                    flex: 1,
-                    minWidth: '180px',
-                    background: 'transparent',
-                    color: 'var(--text-main)',
-                    border: 'none',
-                    fontSize: '0.88rem',
-                    fontFamily: 'JetBrains Mono, monospace',
-                    outline: 'none'
-                  }}
-                />
+              {/* Cloud ID Input */}
+              <input
+                type="text"
+                value={accountId}
+                onChange={(e) => setAccountId(e.target.value)}
+                placeholder={
+                  provider === 'AWS'
+                    ? '12-digit AWS Account ID (e.g. 123456789012)'
+                    : provider === 'AZURE'
+                    ? 'Azure Subscription ID / Tenant GUID'
+                    : 'GCP Project ID (e.g. cloud-prod-2026)'
+                }
+                style={{
+                  flex: 1,
+                  minWidth: '220px',
+                  background: 'transparent',
+                  color: 'var(--text-main)',
+                  border: 'none',
+                  fontSize: '0.88rem',
+                  fontFamily: 'JetBrains Mono, monospace',
+                  outline: 'none',
+                  padding: '6px 8px'
+                }}
+              />
 
-                {/* Run Audit Button */}
-                <button
-                  type="submit"
-                  disabled={isSimulating}
-                  className="evolve-pill-btn evolve-pill-btn-primary"
-                  style={{ padding: '10px 22px', fontSize: '0.88rem', whiteSpace: 'nowrap' }}
-                >
-                  {isSimulating ? (
-                    <>
-                      <RefreshCw size={15} style={{ animation: 'spin 1s linear infinite' }} />
-                      <span>diagnosing...</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>diagnose friction</span>
-                      <span>→</span>
-                    </>
-                  )}
-                </button>
-              </form>
-            </div>
-
-            {/* Quick Metrics Trust Bar */}
-            <div style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'center',
-              gap: '14px',
-              color: 'var(--text-muted)',
-              fontSize: '0.82rem',
-              fontFamily: 'JetBrains Mono',
-              letterSpacing: '0.02em'
-            }}>
-              <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>183+</span>
-              <span>frictions diagnosed</span>
-              <span style={{ opacity: 0.3 }}>·</span>
-              <span style={{ color: 'var(--primary)', fontWeight: 700 }}>99.8%</span>
-              <span>compliance</span>
-              <span style={{ opacity: 0.3 }}>·</span>
-              <span style={{ color: 'var(--accent)', fontWeight: 700 }}>17</span>
-              <span>frameworks</span>
-              <span style={{ opacity: 0.3 }}>·</span>
-              <span style={{ color: 'var(--success)', fontWeight: 700 }}>0</span>
-              <span>agents</span>
-            </div>
+              {/* Run Audit Button */}
+              <button
+                type="submit"
+                disabled={isSimulating}
+                className="evolve-pill-btn evolve-pill-btn-primary"
+                style={{ padding: '10px 24px', fontSize: '0.88rem', whiteSpace: 'nowrap' }}
+              >
+                {isSimulating ? (
+                  <>
+                    <RefreshCw size={15} style={{ animation: 'spin 1s linear infinite' }} />
+                    <span>diagnosing...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>diagnose friction</span>
+                    <span>→</span>
+                  </>
+                )}
+              </button>
+            </form>
           </div>
 
-          {/* Right Column: 3D Interactive World Animation */}
+          {/* Quick Metrics Trust Bar */}
           <div style={{
-            display: 'flex',
-            flexDirection: 'column',
+            display: 'inline-flex',
+            flexWrap: 'wrap',
             alignItems: 'center',
             justifyContent: 'center',
-            position: 'relative'
+            gap: '14px',
+            color: 'var(--text-muted)',
+            fontSize: '0.82rem',
+            fontFamily: 'JetBrains Mono, monospace',
+            letterSpacing: '0.02em',
+            background: 'rgba(23, 23, 23, 0.65)',
+            border: '1px solid var(--border-color)',
+            padding: '9px 24px',
+            borderRadius: '9999px',
+            backdropFilter: 'blur(12px)'
           }}>
-            <WorldAnimation />
+            <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>183+</span>
+            <span>frictions diagnosed</span>
+            <span style={{ opacity: 0.3 }}>·</span>
+            <span style={{ color: 'var(--primary)', fontWeight: 700 }}>99.8%</span>
+            <span>compliance</span>
+            <span style={{ opacity: 0.3 }}>·</span>
+            <span style={{ color: 'var(--accent)', fontWeight: 700 }}>17</span>
+            <span>frameworks</span>
+            <span style={{ opacity: 0.3 }}>·</span>
+            <span style={{ color: 'var(--success)', fontWeight: 700 }}>0</span>
+            <span>agents required</span>
           </div>
         </div>
       </section>
@@ -937,32 +925,55 @@ export default function Home() {
             <div style={{
               padding: '24px',
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: '20px'
+              gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
+              gap: '24px',
+              alignItems: 'center'
             }}>
-              {/* Left Column: Logs */}
+              {/* Left Column: Interactive 3D Multi-Cloud Telemetry Radar */}
               <div style={{
                 background: 'rgba(5, 5, 5, 0.9)',
-                borderRadius: '12px',
+                borderRadius: '16px',
                 padding: '18px',
                 border: '1px solid var(--border-subtle)',
-                fontFamily: 'JetBrains Mono',
-                fontSize: '0.82rem',
-                lineHeight: 1.6
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center'
               }}>
-                <div style={{ color: 'var(--text-muted)', marginBottom: '12px', fontSize: '0.74rem', textTransform: 'uppercase' }}>
-                  // Real-time Event Stream
+                <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.74rem', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
+                    // 3D Telemetry Radar
+                  </span>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.72rem', color: 'var(--primary)', fontWeight: 600 }}>
+                    ✦ 10 Regions Live
+                  </span>
                 </div>
-                <div style={{ color: '#38bdf8' }}>[12:00:01] ⚡ Telemetry listener active on AWS us-east-1 & Azure eastus2...</div>
-                <div style={{ color: '#10b981' }}>[12:00:03] ✔ 142 cloud resources inventoried across 5 VPCs.</div>
-                <div style={{ color: '#f43f5e' }}>[12:00:05] ✖ CRITICAL: S3 Bucket "corp-analytics-prod" public read policy enabled!</div>
-                <div style={{ color: '#f97316' }}>[12:00:06] ✖ HIGH: EC2 Security Group 0.0.0.0/0 inbound SSH port 22 open.</div>
-                <div style={{ color: 'var(--primary)' }}>[12:00:08] ✦ AI Autonomous Fix: Terraform patch prepared & verified.</div>
-                <div style={{ color: '#10b981' }}>[12:00:10] ✔ CIS Benchmark Score: 94% (Grade A - Optimal)</div>
+                <WorldAnimation />
               </div>
 
-              {/* Right Column: Score & Action */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              {/* Right Column: Event Stream Logs & Score Card */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {/* Event Stream Logs */}
+                <div style={{
+                  background: 'rgba(5, 5, 5, 0.9)',
+                  borderRadius: '16px',
+                  padding: '18px',
+                  border: '1px solid var(--border-subtle)',
+                  fontFamily: 'JetBrains Mono',
+                  fontSize: '0.82rem',
+                  lineHeight: 1.6
+                }}>
+                  <div style={{ color: 'var(--text-muted)', marginBottom: '12px', fontSize: '0.74rem', textTransform: 'uppercase' }}>
+                    // Real-time Event Stream
+                  </div>
+                  <div style={{ color: '#38bdf8' }}>[12:00:01] ⚡ Telemetry listener active on AWS us-east-1 & Azure eastus2...</div>
+                  <div style={{ color: '#10b981' }}>[12:00:03] ✔ 142 cloud resources inventoried across 5 VPCs.</div>
+                  <div style={{ color: '#f43f5e' }}>[12:00:05] ✖ CRITICAL: S3 Bucket &ldquo;corp-analytics-prod&rdquo; public read policy enabled!</div>
+                  <div style={{ color: '#f97316' }}>[12:00:06] ✖ HIGH: EC2 Security Group 0.0.0.0/0 inbound SSH port 22 open.</div>
+                  <div style={{ color: 'var(--primary)' }}>[12:00:08] ✦ AI Autonomous Fix: Terraform patch prepared & verified.</div>
+                  <div style={{ color: '#10b981' }}>[12:00:10] ✔ CIS Benchmark Score: 94% (Grade A - Optimal)</div>
+                </div>
+
+                {/* Score & Action Row */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div style={{ background: '#141414', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '16px' }}>
                     <div style={{ fontFamily: 'JetBrains Mono', fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Security Posture</div>

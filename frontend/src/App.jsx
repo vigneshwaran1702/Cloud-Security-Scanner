@@ -12,8 +12,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
 import { SubscriptionProvider } from './context/SubscriptionContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { EarthPortalProvider } from './context/EarthPortalContext';
-import OpeningEarthScreen from './components/OpeningEarthScreen';
 import BackgroundEarth from './components/BackgroundEarth';
 
 function App() {
@@ -23,9 +23,6 @@ function App() {
         <AuthProvider>
           <NotificationProvider>
             <SubscriptionProvider>
-              {/* Initial Centered Particle Earth Opening Screen */}
-              <OpeningEarthScreen />
-
               {/* Persistent Background Particle Earth for All Pages */}
               <BackgroundEarth />
 
