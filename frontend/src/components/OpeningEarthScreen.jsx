@@ -59,9 +59,43 @@ export default function OpeningEarthScreen() {
           flexDirection: 'column',
           alignItems: 'center',
           gap: '12px',
-          textAlign: 'center'
+          textAlign: 'center',
+          width: '100%'
         }}
       >
+        {/* Discrete Direct Entry Bypass Button */}
+        <div style={{ position: 'absolute', top: '0px', right: '0px', zIndex: 10 }}>
+          <button
+            onClick={enterPortal}
+            type="button"
+            style={{
+              background: 'rgba(255, 255, 255, 0.06)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              color: '#ffffff',
+              padding: '7px 14px',
+              borderRadius: '9999px',
+              fontSize: '0.78rem',
+              fontFamily: 'JetBrains Mono, monospace',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = '#e4007c';
+              e.currentTarget.style.background = 'rgba(228, 0, 124, 0.15)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)';
+            }}
+          >
+            <span>Enter Website</span>
+            <ArrowRight size={13} />
+          </button>
+        </div>
+
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <img
             src="/logo.png"
@@ -105,8 +139,15 @@ export default function OpeningEarthScreen() {
 
       {/* Center 3D Particle Earth in the Dead Center */}
       <main
+        onClick={enterPortal}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        role="button"
+        tabIndex={0}
+        aria-label="Click the Earth to enter the website"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') enterPortal();
+        }}
         style={{
           position: 'relative',
           zIndex: 2,
@@ -116,7 +157,8 @@ export default function OpeningEarthScreen() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          cursor: 'pointer'
+          cursor: 'pointer',
+          outline: 'none'
         }}
       >
         {/* Pulsating Interaction Radar Rings */}

@@ -83,13 +83,23 @@ export default function ParticleEarth({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    let width = (canvas.width = canvas.offsetWidth * (window.devicePixelRatio || 1));
-    let height = (canvas.height = canvas.offsetHeight * (window.devicePixelRatio || 1));
+    const dpr = window.devicePixelRatio || 1;
+    const getDims = () => {
+      const rect = canvas.getBoundingClientRect();
+      const w = Math.max(320, rect.width || canvas.offsetWidth || 500) * dpr;
+      const h = Math.max(320, rect.height || canvas.offsetHeight || 500) * dpr;
+      return { w, h };
+    };
+
+    let { w: width, h: height } = getDims();
+    canvas.width = width;
+    canvas.height = height;
 
     const handleResize = () => {
       if (!canvas) return;
-      width = canvas.width = (canvas.offsetWidth || 600) * (window.devicePixelRatio || 1);
-      height = canvas.height = (canvas.offsetHeight || 600) * (window.devicePixelRatio || 1);
+      const dims = getDims();
+      width = canvas.width = dims.w;
+      height = canvas.height = dims.h;
     };
 
     window.addEventListener('resize', handleResize);
@@ -421,11 +431,18 @@ export default function ParticleEarth({
 
     render();
 
-    // Mouse Drag Listeners
+    // Mouse & Touch Drag & Click Listeners
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let totalMoved = 0;
+
     const handleMouseDown = (e) => {
       rotation.current.isDragging = true;
       rotation.current.lastX = e.clientX;
       rotation.current.lastY = e.clientY;
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+      totalMoved = 0;
     };
 
     const handleMouseMove = (e) => {
@@ -439,6 +456,7 @@ export default function ParticleEarth({
       if (!rotation.current.isDragging) return;
       const dx = e.clientX - rotation.current.lastX;
       const dy = e.clientY - rotation.current.lastY;
+      totalMoved += Math.abs(dx) + Math.abs(dy);
       rotation.current.rotY += dx * 0.006;
       rotation.current.rotX = Math.max(-0.8, Math.min(0.8, rotation.current.rotX + dy * 0.006));
       rotation.current.lastX = e.clientX;
@@ -447,6 +465,10 @@ export default function ParticleEarth({
 
     const handleMouseUp = () => {
       rotation.current.isDragging = false;
+      // If user clicked rather than dragged, trigger onEarthClick
+      if (totalMoved < 8 && stage === 'opening' && onEarthClick) {
+        onEarthClick();
+      }
     };
 
     const handleMouseLeave = () => {
@@ -454,11 +476,43 @@ export default function ParticleEarth({
       mousePos.current.isHovering = false;
     };
 
+    const handleTouchStart = (e) => {
+      if (e.touches.length === 1) {
+        rotation.current.isDragging = true;
+        rotation.current.lastX = e.touches[0].clientX;
+        rotation.current.lastY = e.touches[0].clientY;
+        dragStartX = e.touches[0].clientX;
+        dragStartY = e.touches[0].clientY;
+        totalMoved = 0;
+      }
+    };
+
+    const handleTouchMove = (e) => {
+      if (!rotation.current.isDragging || e.touches.length !== 1) return;
+      const dx = e.touches[0].clientX - rotation.current.lastX;
+      const dy = e.touches[0].clientY - rotation.current.lastY;
+      totalMoved += Math.abs(dx) + Math.abs(dy);
+      rotation.current.rotY += dx * 0.007;
+      rotation.current.rotX = Math.max(-0.8, Math.min(0.8, rotation.current.rotX + dy * 0.007));
+      rotation.current.lastX = e.touches[0].clientX;
+      rotation.current.lastY = e.touches[0].clientY;
+    };
+
+    const handleTouchEnd = () => {
+      rotation.current.isDragging = false;
+      if (totalMoved < 10 && stage === 'opening' && onEarthClick) {
+        onEarthClick();
+      }
+    };
+
     const dom = canvas;
     dom.addEventListener('mousedown', handleMouseDown);
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseup', handleMouseUp);
     dom.addEventListener('mouseleave', handleMouseLeave);
+    dom.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd);
 
     return () => {
       if (animFrameId.current) cancelAnimationFrame(animFrameId.current);
@@ -467,6 +521,9 @@ export default function ParticleEarth({
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
       dom.removeEventListener('mouseleave', handleMouseLeave);
+      dom.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
     };
   }, [stage, isTransitioning]);
 
