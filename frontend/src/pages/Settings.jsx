@@ -23,9 +23,7 @@ import {
 } from 'lucide-react';
 import { getCloudState, saveCloudState } from '../services/api';
 import { useSubscription } from '../context/SubscriptionContext';
-import { useTheme, ACCENT_PALETTES } from '../context/ThemeContext';
 import SubscriptionSettingsTab from './settings/SubscriptionSettingsTab';
-import ThemeSettingsTab from './settings/ThemeSettingsTab';
 import CloudSettingsTab from './settings/CloudSettingsTab';
 import ScannerSettingsTab from './settings/ScannerSettingsTab';
 import NotificationSettingsTab from './settings/NotificationSettingsTab';
@@ -68,14 +66,6 @@ const SETTINGS_SECTIONS = [
     color: '#6366f1',
   },
   {
-    id: 'theme',
-    label: 'Theme & Color Settings',
-    shortLabel: 'Theme & Colors',
-    icon: Palette,
-    description: 'Cyber Dark / Executive Light modes & neon accent palettes',
-    color: '#06b6d4',
-  },
-  {
     id: 'cloud',
     label: 'Connected Cloud Accounts',
     shortLabel: 'Cloud Accounts',
@@ -107,7 +97,6 @@ export default function Settings() {
   const [searchParams] = useSearchParams();
 
   const { activeTier, isPro, invoices } = useSubscription();
-  const { theme, accent } = useTheme();
 
   // If URL has /settings/:section or ?tab=, show that sub-page; otherwise show the Main Hub Directory
   const activeSectionId = section || searchParams.get('tab');
@@ -558,10 +547,6 @@ export default function Settings() {
           <div className="flex flex-col gap-6 animate-fade-in">
             {activeSectionId === 'subscription' && (
               <SubscriptionSettingsTab />
-            )}
-
-            {activeSectionId === 'theme' && (
-              <ThemeSettingsTab />
             )}
 
             {activeSectionId === 'cloud' && (

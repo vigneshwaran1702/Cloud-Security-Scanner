@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
-import { Shield, Mail, Lock, LogIn, ShieldAlert, ArrowRight, ShieldCheck, Eye, EyeOff, Sun, Moon, Sparkles, Loader2 } from 'lucide-react';
+import { Shield, Mail, Lock, LogIn, ShieldAlert, ArrowRight, ShieldCheck, Eye, EyeOff, Sparkles, Loader2 } from 'lucide-react';
 
 export default function Login() {
   const location = useLocation();
@@ -15,7 +14,6 @@ export default function Login() {
   const [googleLoading, setGoogleLoading] = useState(false);
 
   const { login, loginWithGoogle, user } = useAuth();
-  const { toggleTheme, isDark } = useTheme();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -77,42 +75,6 @@ export default function Login() {
       background: 'var(--auth-bg-gradient)',
       position: 'relative',
     }}>
-      {/* Floating Theme Toggle in Top Right */}
-      <button
-        onClick={toggleTheme}
-        type="button"
-        style={{
-          position: 'absolute',
-          top: '24px',
-          right: '24px',
-          background: 'var(--panel-bg)',
-          border: '1px solid var(--border-color)',
-          color: 'var(--text-main)',
-          padding: '8px 14px',
-          borderRadius: '12px',
-          fontSize: '0.85rem',
-          fontWeight: 600,
-          cursor: 'pointer',
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '6px',
-          boxShadow: 'var(--glass-shadow)',
-          transition: 'var(--transition)',
-        }}
-      >
-        {isDark ? (
-          <>
-            <Sun size={16} color="#fbbf24" />
-            <span>Light Mode</span>
-          </>
-        ) : (
-          <>
-            <Moon size={16} color="var(--primary)" />
-            <span>Dark Mode</span>
-          </>
-        )}
-      </button>
-
       <div className="glass-panel animate-fade-in" style={{
         width: '100%',
         maxWidth: '460px',

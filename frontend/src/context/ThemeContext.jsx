@@ -12,58 +12,25 @@ export const ACCENT_PALETTES = [
 ];
 
 export function ThemeProvider({ children }) {
-  const [theme, setThemeState] = useState(() => {
-    const saved = localStorage.getItem('cloudguard_theme');
-    if (saved === 'light' || saved === 'dark') {
-      return saved;
-    }
-    return 'dark';
-  });
-
-  const [accent, setAccentState] = useState(() => {
-    const savedAccent = localStorage.getItem('cloudguard_accent');
-    if (ACCENT_PALETTES.some(p => p.id === savedAccent)) {
-      return savedAccent;
-    }
-    return 'evolve';
-  });
-
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('cloudguard_theme', theme);
-  }, [theme]);
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-accent', accent);
-    localStorage.setItem('cloudguard_accent', accent);
-  }, [accent]);
-
-  const toggleTheme = () => {
-    setThemeState(prev => (prev === 'light' ? 'dark' : 'light'));
-  };
-
-  const setTheme = (newTheme) => {
-    if (newTheme === 'light' || newTheme === 'dark') {
-      setThemeState(newTheme);
-    }
-  };
-
-  const setAccent = (newAccent) => {
-    if (ACCENT_PALETTES.some(p => p.id === newAccent)) {
-      setAccentState(newAccent);
-    }
-  };
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.documentElement.setAttribute('data-accent', 'evolve');
+    try {
+      localStorage.setItem('cloudguard_theme', 'dark');
+      localStorage.setItem('cloudguard_accent', 'evolve');
+    } catch {}
+  }, []);
 
   return (
     <ThemeContext.Provider value={{
-      theme,
-      toggleTheme,
-      setTheme,
-      accent,
-      setAccent,
+      theme: 'dark',
+      toggleTheme: () => {},
+      setTheme: () => {},
+      accent: 'evolve',
+      setAccent: () => {},
       accentList: ACCENT_PALETTES,
-      isDark: theme === 'dark',
-      isLight: theme === 'light'
+      isDark: true,
+      isLight: false
     }}>
       {children}
     </ThemeContext.Provider>
