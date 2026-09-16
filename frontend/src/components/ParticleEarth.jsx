@@ -1,42 +1,139 @@
 import { useEffect, useRef, useState } from 'react';
 
-// Continent approximate centroid anchors to form recognizable landmass particle clusters
-const CONTINENT_ANCHORS = [
+// Real Geographical Landmass Classifier
+// Checks whether any (latitude, longitude) coordinate falls on Earth's continental landmasses
+function isEarthLand(lat, lon) {
+  // Normalize longitude to [-180, 180]
+  while (lon > 180) lon -= 360;
+  while (lon < -180) lon += 360;
+
+  // Antarctica & Sub-Antarctic
+  if (lat < -62) return true;
+
+  // Greenland
+  if (lat >= 60 && lat <= 83 && lon >= -73 && lon <= -12) return true;
+
   // North America
-  { lat: 40, lon: -100, spread: 28, count: 50 },
-  { lat: 55, lon: -115, spread: 24, count: 35 },
-  { lat: 28, lon: -82, spread: 18, count: 30 },
+  // Canada & Alaska
+  if (lat >= 54 && lat <= 72 && lon >= -168 && lon <= -55) return true;
+  // Conterminous USA & Southern Canada
+  if (lat >= 25 && lat <= 54 && lon >= -125 && lon <= -66) {
+    // Exclude Gulf of Mexico
+    if (lat < 30 && lon >= -97 && lon <= -82) return false;
+    return true;
+  }
+  // Mexico
+  if (lat >= 14 && lat <= 32 && lon >= -117 && lon <= -86) return true;
+  // Central America
+  if (lat >= 7 && lat <= 18 && lon >= -92 && lon <= -77) return true;
+  // Caribbean Islands (Cuba, Hispaniola, Puerto Rico)
+  if (lat >= 18 && lat <= 26 && lon >= -85 && lon <= -65) return true;
+
   // South America
-  { lat: -15, lon: -55, spread: 22, count: 45 },
-  { lat: -32, lon: -65, spread: 16, count: 25 },
+  if (lat >= -56 && lat <= 12 && lon >= -81 && lon <= -34) {
+    if (lat < -20) {
+      // Southern tapering cone (Chile, Argentina)
+      const left = -75 + (lat + 20) * 0.15;
+      const right = -45 + (lat + 20) * 0.45;
+      return lon >= left && lon <= right;
+    }
+    return true;
+  }
+
   // Europe
-  { lat: 50, lon: 15, spread: 20, count: 55 },
-  { lat: 60, lon: 25, spread: 18, count: 30 },
+  if (lat >= 36 && lat <= 71 && lon >= -10 && lon <= 45) {
+    // Mediterranean Sea Exclusion (cut out water between Europe and Africa)
+    if (lat >= 36 && lat <= 42 && lon >= -5 && lon <= 25) {
+      // Iberian peninsula, Italy, Greece
+      if ((lon >= -10 && lon <= 3) || (lon >= 8 && lon <= 18) || (lon >= 20 && lon <= 28)) {
+        return true;
+      }
+      return false;
+    }
+    return true;
+  }
+  // British Isles
+  if (lat >= 50 && lat <= 60 && lon >= -11 && lon <= 2) return true;
+  // Scandinavia
+  if (lat >= 55 && lat <= 71 && lon >= 5 && lon <= 32) return true;
+
   // Africa
-  { lat: 5, lon: 20, spread: 26, count: 55 },
-  { lat: -25, lon: 25, spread: 18, count: 30 },
+  if (lat >= -35 && lat <= 37 && lon >= -18 && lon <= 52) {
+    // Southern cone taper
+    if (lat < 0) {
+      const left = 10 + lat * 0.2;
+      const right = 42 + lat * 0.4;
+      return lon >= left && lon <= right;
+    }
+    // Red Sea cut
+    if (lat >= 12 && lat <= 28 && lon >= 38 && lon <= 44) return false;
+    return true;
+  }
+  // Madagascar
+  if (lat >= -26 && lat <= -12 && lon >= 43 && lon <= 51) return true;
+
   // Asia
-  { lat: 35, lon: 85, spread: 32, count: 70 },
-  { lat: 55, lon: 75, spread: 28, count: 50 },
-  { lat: 22, lon: 110, spread: 24, count: 45 },
-  { lat: 15, lon: 100, spread: 18, count: 35 },
+  // Russia / Siberia
+  if (lat >= 50 && lat <= 75 && lon >= 45 && lon <= 180) return true;
+  // Middle East & Arabia
+  if (lat >= 12 && lat <= 35 && lon >= 35 && lon <= 62) {
+    if (lat >= 12 && lat <= 27 && lon >= 38 && lon <= 43) return false; // Red Sea
+    if (lat >= 24 && lat <= 30 && lon >= 48 && lon <= 56) return false; // Persian Gulf
+    return true;
+  }
+  // Central Asia
+  if (lat >= 35 && lat <= 55 && lon >= 45 && lon <= 90) {
+    if (lat >= 37 && lat <= 47 && lon >= 47 && lon <= 54) return false; // Caspian Sea
+    return true;
+  }
+  // Indian Subcontinent
+  if (lat >= 8 && lat <= 35 && lon >= 68 && lon <= 90) {
+    if (lat < 22) {
+      // Tapering Indian peninsula
+      const left = 68 + (22 - lat) * 0.7;
+      const right = 89 - (22 - lat) * 0.6;
+      return lon >= left && lon <= right;
+    }
+    return true;
+  }
+  // Sri Lanka
+  if (lat >= 5 && lat <= 10 && lon >= 79 && lon <= 82) return true;
+  // East Asia (China, Mongolia, Korea)
+  if (lat >= 18 && lat <= 52 && lon >= 90 && lon <= 135) {
+    if (lat >= 32 && lat <= 40 && lon >= 119 && lon <= 126) return false; // Yellow Sea
+    return true;
+  }
+  // Japan
+  if (lat >= 30 && lat <= 46 && lon >= 129 && lon <= 146) return true;
+  // Southeast Asia
+  if (lat >= 8 && lat <= 24 && lon >= 92 && lon <= 110) return true;
+  // Indonesia, Malaysia, Philippines, Papua
+  if (lat >= -11 && lat <= 7 && lon >= 95 && lon <= 142) return true;
+  if (lat >= 5 && lat <= 20 && lon >= 117 && lon <= 127) return true;
+
   // Australia & Oceania
-  { lat: -25, lon: 135, spread: 20, count: 40 },
-  { lat: -40, lon: 175, spread: 12, count: 20 }
-];
+  if (lat >= -44 && lat <= -10 && lon >= 112 && lon <= 154) {
+    if (lat < -38) return lat >= -44 && lat <= -40 && lon >= 144 && lon <= 149; // Tasmania
+    return true;
+  }
+  // New Zealand
+  if (lat >= -47 && lat <= -34 && lon >= 166 && lon <= 179) return true;
+
+  return false;
+}
 
 // Major Cloud Hub Data Centers
 const CLOUD_HUBS = [
   { name: 'AWS us-east-1', lat: 38.0, lon: -77.5, color: '#ffffff' },
   { name: 'AWS us-west-2', lat: 45.5, lon: -122.6, color: '#ffffff' },
-  { name: 'Azure Frankfurt', lat: 50.1, lon: 8.6, color: '#7c5bff' },
-  { name: 'Azure Amsterdam', lat: 52.3, lon: 4.9, color: '#7c5bff' },
-  { name: 'GCP Tokyo', lat: 35.6, lon: 139.6, color: '#06b6d4' },
-  { name: 'GCP Singapore', lat: 1.3, lon: 103.8, color: '#06b6d4' },
+  { name: 'Azure Frankfurt', lat: 50.1, lon: 8.6, color: '#ffffff' },
+  { name: 'Azure Amsterdam', lat: 52.3, lon: 4.9, color: '#ffffff' },
+  { name: 'GCP Tokyo', lat: 35.6, lon: 139.6, color: '#ffffff' },
+  { name: 'GCP Singapore', lat: 1.3, lon: 103.8, color: '#ffffff' },
   { name: 'AWS Sydney', lat: -33.8, lon: 151.2, color: '#ffffff' },
-  { name: 'Azure São Paulo', lat: -23.5, lon: -46.6, color: '#7c5bff' },
-  { name: 'GCP Mumbai', lat: 19.0, lon: 72.8, color: '#06b6d4' },
-  { name: 'Azure Dubai', lat: 25.2, lon: 55.2, color: '#7c5bff' }
+  { name: 'Azure São Paulo', lat: -23.5, lon: -46.6, color: '#ffffff' },
+  { name: 'GCP Mumbai', lat: 19.0, lon: 72.8, color: '#ffffff' },
+  { name: 'Azure Dubai', lat: 25.2, lon: 55.2, color: '#ffffff' }
 ];
 
 const ARCS = [
@@ -63,12 +160,12 @@ export default function ParticleEarth({
   const assembledRef = useRef(stage !== 'opening');
 
   const rotation = useRef({
-    rotX: 0.24,
-    rotY: 0.5,
+    rotX: 0.22,
+    rotY: 0.6,
     isDragging: false,
     lastX: 0,
     lastY: 0,
-    autoSpeed: stage === 'opening' ? 0.007 : 0.003
+    autoSpeed: stage === 'opening' ? 0.005 : 0.0025
   });
 
   const mousePos = useRef({ x: -9999, y: -9999, isHovering: false });
@@ -109,67 +206,103 @@ export default function ParticleEarth({
     window.addEventListener('resize', handleResize);
 
     // ==========================================
-    // Helper to generate scatter outer space point
+    // Helper to generate scatter coordinates from normal surrounding screen
     // ==========================================
-    const createScatterPoint = (targetX, targetY, targetZ) => {
-      const scatterDist = 3.2 + Math.random() * 4.2;
-      const randomTheta = Math.random() * Math.PI * 2;
-      const randomPhi = Math.acos(Math.random() * 2 - 1);
-      const sx = Math.sin(randomPhi) * Math.cos(randomTheta) * scatterDist;
-      const sy = Math.cos(randomPhi) * scatterDist;
-      const sz = Math.sin(randomPhi) * Math.sin(randomTheta) * scatterDist;
-      const delay = Math.random() * 0.45;
+    const createScatterPoint = () => {
+      const effBaseR = stage === 'opening'
+        ? Math.min(width * 0.32, height * 0.30, 240 * dpr)
+        : Math.min(width, height) * 0.44;
+      const halfW = (width / 2) / Math.max(1, effBaseR);
+      const halfH = (height / 2) / Math.max(1, effBaseR);
+      const maxDim = Math.hypot(halfW, halfH);
+
+      const mode = Math.random();
+      let sx, sy, sz;
+
+      if (mode < 0.48) {
+        // 1. Spawning from outside the screen perimeter (left, right, top, bottom edges)
+        const edge = Math.floor(Math.random() * 4);
+        const margin = 0.2 + Math.random() * 1.0;
+        if (edge === 0) {
+          // Top edge
+          sx = (Math.random() * 2 - 1) * (halfW + margin);
+          sy = -(halfH + margin);
+        } else if (edge === 1) {
+          // Bottom edge
+          sx = (Math.random() * 2 - 1) * (halfW + margin);
+          sy = (halfH + margin);
+        } else if (edge === 2) {
+          // Left edge
+          sx = -(halfW + margin);
+          sy = (Math.random() * 2 - 1) * (halfH + margin);
+        } else {
+          // Right edge
+          sx = (halfW + margin);
+          sy = (Math.random() * 2 - 1) * (halfH + margin);
+        }
+        sz = (Math.random() - 0.5) * 4.2;
+      } else if (mode < 0.84) {
+        // 2. Wide ambient surrounding screen space (corners, quadrants, cosmic surrounding)
+        const angle = Math.random() * Math.PI * 2;
+        const rDist = 1.6 + Math.random() * (maxDim * 1.25);
+        sx = Math.cos(angle) * rDist * (halfW / maxDim * 1.2 + 0.35);
+        sy = Math.sin(angle) * rDist * (halfH / maxDim * 1.2 + 0.35);
+        sz = (Math.random() - 0.5) * 4.8;
+      } else {
+        // 3. Deep space background & foreground streaming in
+        const angle = Math.random() * Math.PI * 2;
+        const rDist = 1.3 + Math.random() * 2.4;
+        sx = Math.cos(angle) * rDist;
+        sy = Math.sin(angle) * rDist;
+        sz = (Math.random() > 0.5 ? 1 : -1) * (2.8 + Math.random() * 3.5);
+      }
+
+      // Staggered arrival delay (0.0 to 0.70 seconds)
+      const delay = Math.random() * 0.7;
       return { sx, sy, sz, delay };
     };
 
-    // ==========================================
-    // Generate 3D Earth Particle System
-    // ==========================================
-    const particles = [];
-
-    // 1. Fibonacci Sphere Surface Grid (~720 points)
-    const totalGrid = 720;
-    const goldenRatio = (1 + Math.sqrt(5)) / 2;
-
-    for (let i = 0; i < totalGrid; i++) {
-      const theta = (2 * Math.PI * i) / goldenRatio;
-      const phi = Math.acos(1 - (2 * (i + 0.5)) / totalGrid);
-      const x = Math.sin(phi) * Math.cos(theta);
-      const y = Math.cos(phi);
-      const z = Math.sin(phi) * Math.sin(theta);
-      const scatter = createScatterPoint(x, y, z);
-
-      particles.push({
-        origX: x,
-        origY: y,
-        origZ: z,
-        startX: scatter.sx,
-        startY: scatter.sy,
-        startZ: scatter.sz,
-        delay: scatter.delay,
-        x, y, z,
-        vx: 0, vy: 0, vz: 0,
-        baseSize: Math.random() * 1.5 + 1.2,
-        type: 'grid',
-        colorType: Math.random() > 0.3 ? 'white' : 'ice',
-        twinkleOffset: Math.random() * Math.PI * 2
+    // Ambient stars in surrounding space
+    const ambientStars = [];
+    for (let i = 0; i < 110; i++) {
+      ambientStars.push({
+        x: Math.random(),
+        y: Math.random(),
+        size: Math.random() * 1.3 + 0.5,
+        alpha: Math.random() * 0.6 + 0.25,
+        twinkleSpeed: Math.random() * 1.5 + 0.8,
+        offset: Math.random() * Math.PI * 2
       });
     }
 
-    // 2. Continent Landmass Dense Clusters (~500 points)
-    CONTINENT_ANCHORS.forEach((c) => {
-      for (let i = 0; i < c.count; i++) {
-        // Gaussian spread around anchor lat/lon
-        const latOffset = (Math.random() - 0.5) * c.spread;
-        const lonOffset = (Math.random() - 0.5) * c.spread;
-        const latRad = ((c.lat + latOffset) * Math.PI) / 180;
-        const lonRad = ((c.lon + lonOffset) * Math.PI) / 180;
+    // ==========================================
+    // Generate Realistic 3D Earth Particle System
+    // ==========================================
+    const particles = [];
+    const totalSphereSamples = 2200;
+    const goldenRatio = (1 + Math.sqrt(5)) / 2;
 
-        const x = Math.cos(latRad) * Math.sin(lonRad);
-        const y = -Math.sin(latRad);
-        const z = Math.cos(latRad) * Math.cos(lonRad);
-        const scatter = createScatterPoint(x, y, z);
+    for (let i = 0; i < totalSphereSamples; i++) {
+      const theta = (2 * Math.PI * i) / goldenRatio;
+      const phi = Math.acos(1 - (2 * (i + 0.5)) / totalSphereSamples);
+      
+      // Convert spherical angles to latitude and longitude
+      const lat = 90 - (phi * 180) / Math.PI;
+      let lon = ((theta * 180) / Math.PI) % 360;
+      if (lon > 180) lon -= 360;
 
+      // Classify whether this coordinate lies on Earth's continents
+      const isLand = isEarthLand(lat, lon);
+
+      // Unit sphere 3D Cartesian coordinates
+      const x = Math.sin(phi) * Math.cos(theta);
+      const y = Math.cos(phi);
+      const z = Math.sin(phi) * Math.sin(theta);
+
+      const scatter = createScatterPoint(x, y, z);
+
+      if (isLand) {
+        // CONTINENT PARTICLES: Dense, bright, sharp white/silver landmasses
         particles.push({
           origX: x,
           origY: y,
@@ -178,41 +311,55 @@ export default function ParticleEarth({
           startY: scatter.sy,
           startZ: scatter.sz,
           delay: scatter.delay,
-          x, y, z,
-          vx: 0, vy: 0, vz: 0,
-          baseSize: Math.random() * 1.8 + 1.5,
-          type: 'continent',
-          colorType: Math.random() > 0.25 ? 'white' : 'violet',
+          isLand: true,
+          baseSize: Math.random() * 1.6 + 1.4,
           twinkleOffset: Math.random() * Math.PI * 2
         });
+
+        // Add additional sub-particles on continents to give solid land texture
+        if (Math.random() > 0.45) {
+          const jitterAngle = Math.random() * Math.PI * 2;
+          const jitterDist = 0.012;
+          const jx = x + Math.cos(jitterAngle) * jitterDist;
+          const jy = y + Math.sin(jitterAngle) * jitterDist;
+          const jz = z;
+          const jLen = Math.sqrt(jx * jx + jy * jy + jz * jz) || 1;
+          const nx = jx / jLen;
+          const ny = jy / jLen;
+          const nz = jz / jLen;
+          const jScatter = createScatterPoint(nx, ny, nz);
+
+          particles.push({
+            origX: nx,
+            origY: ny,
+            origZ: nz,
+            startX: jScatter.sx,
+            startY: jScatter.sy,
+            startZ: jScatter.sz,
+            delay: jScatter.delay,
+            isLand: true,
+            baseSize: Math.random() * 1.3 + 1.0,
+            twinkleOffset: Math.random() * Math.PI * 2
+          });
+        }
+      } else {
+        // OCEAN PARTICLES: Faint, sparse, dark cyber blue-grey dots showing water depth
+        // Only keep a fraction of ocean points to give continents high contrast
+        if (Math.random() > 0.52) {
+          particles.push({
+            origX: x,
+            origY: y,
+            origZ: z,
+            startX: scatter.sx,
+            startY: scatter.sy,
+            startZ: scatter.sz,
+            delay: scatter.delay,
+            isLand: false,
+            baseSize: Math.random() * 0.9 + 0.7,
+            twinkleOffset: Math.random() * Math.PI * 2
+          });
+        }
       }
-    });
-
-    // 3. Outer Atmospheric Halo Cloud (~180 points)
-    for (let i = 0; i < 180; i++) {
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(Math.random() * 2 - 1);
-      const r = 1.08 + Math.random() * 0.15; // slightly above surface
-      const x = r * Math.sin(phi) * Math.cos(theta);
-      const y = r * Math.cos(phi);
-      const z = r * Math.sin(phi) * Math.sin(theta);
-      const scatter = createScatterPoint(x, y, z);
-
-      particles.push({
-        origX: x,
-        origY: y,
-        origZ: z,
-        startX: scatter.sx,
-        startY: scatter.sy,
-        startZ: scatter.sz,
-        delay: scatter.delay,
-        x, y, z,
-        vx: 0, vy: 0, vz: 0,
-        baseSize: Math.random() * 1.2 + 0.8,
-        type: 'halo',
-        colorType: 'violet',
-        twinkleOffset: Math.random() * Math.PI * 2
-      });
     }
 
     // Hub Nodes coordinates
@@ -270,28 +417,67 @@ export default function ParticleEarth({
       // Base globe radius depends on stage
       let baseRadius;
       if (stage === 'opening') {
-        baseRadius = Math.min(width, height) * 0.36;
+        baseRadius = Math.min(width * 0.32, height * 0.30, 240 * dpr);
+        if (baseRadius < 110 * dpr) {
+          baseRadius = Math.min(width * 0.38, height * 0.34);
+        }
       } else {
-        // In background mode, large atmospheric ambient scale
         baseRadius = Math.min(width, height) * 0.44;
       }
 
-      // Atmospheric Backlight Glow (Glowing White / Cyber Violet)
-      const glowGrad = ctx.createRadialGradient(cx, cy, baseRadius * 0.5, cx, cy, baseRadius * 1.38);
+      // Subtle ambient stars twinkling in surrounding deep space
       if (stage === 'opening') {
-        glowGrad.addColorStop(0, 'rgba(255, 255, 255, 0.18)');
-        glowGrad.addColorStop(0.4, 'rgba(124, 91, 255, 0.1)');
-        glowGrad.addColorStop(0.85, 'rgba(6, 182, 212, 0.03)');
-        glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      } else {
-        glowGrad.addColorStop(0, 'rgba(255, 255, 255, 0.08)');
-        glowGrad.addColorStop(0.5, 'rgba(124, 91, 255, 0.05)');
-        glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        for (let i = 0; i < ambientStars.length; i++) {
+          const star = ambientStars[i];
+          const stAlpha = star.alpha * (0.65 + 0.35 * Math.sin(time * star.twinkleSpeed + star.offset));
+          ctx.fillStyle = `rgba(255, 255, 255, ${stAlpha * 0.5})`;
+          ctx.beginPath();
+          ctx.arc(star.x * width, star.y * height, star.size * dpr, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
-      ctx.fillStyle = glowGrad;
-      ctx.beginPath();
-      ctx.arc(cx, cy, baseRadius * 1.38, 0, Math.PI * 2);
-      ctx.fill();
+
+      // Globe sphere disc and atmospheric glow fade in as particles converge
+      const globeDiscAlpha = stage === 'opening'
+        ? Math.min(1, Math.max(0, (gTime - 0.7) / 1.0))
+        : 1;
+
+      if (globeDiscAlpha > 0.01) {
+        ctx.save();
+        ctx.globalAlpha = globeDiscAlpha;
+
+        // 1. Dark Oceanic Globe Sphere Disc (Creates solid 3D Earth depth behind continents)
+        const oceanGrad = ctx.createRadialGradient(
+          cx - baseRadius * 0.3,
+          cy - baseRadius * 0.3,
+          baseRadius * 0.1,
+          cx,
+          cy,
+          baseRadius
+        );
+        oceanGrad.addColorStop(0, 'rgba(18, 22, 34, 0.95)');
+        oceanGrad.addColorStop(0.7, 'rgba(10, 12, 18, 0.95)');
+        oceanGrad.addColorStop(1, 'rgba(4, 5, 8, 0.98)');
+        
+        ctx.fillStyle = oceanGrad;
+        ctx.beginPath();
+        ctx.arc(cx, cy, baseRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Atmospheric Rim Light Glow (Glowing White / Subtle Blue Rim)
+        const glowGrad = ctx.createRadialGradient(cx, cy, baseRadius * 0.85, cx, cy, baseRadius * 1.35);
+        glowGrad.addColorStop(0, 'rgba(255, 255, 255, 0.14)');
+        glowGrad.addColorStop(0.3, 'rgba(120, 160, 255, 0.09)');
+        glowGrad.addColorStop(0.7, 'rgba(124, 91, 255, 0.04)');
+        glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        
+        ctx.fillStyle = glowGrad;
+        ctx.beginPath();
+        ctx.arc(cx, cy, baseRadius * 1.35, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+      }
 
       // Matrix rotation values
       const cosY = Math.cos(rot.rotY);
@@ -315,18 +501,16 @@ export default function ParticleEarth({
           sx: cx + x2 * r,
           sy: cy + y2 * r,
           sz: z2,
-          visible: z2 > -0.3
+          visible: z2 > -0.2
         };
       };
 
       // Rings and arcs visibility fades in as particles assemble
       const structureFade = Math.min(1, Math.max(0, (gTime - 1.2) / 0.6));
 
-      // 1. Draw Equator & Latitude Rings in subtle white lines
+      // 2. Draw Subtle Equator & Latitude Guide Lines
       if (structureFade > 0.05) {
-        ctx.strokeStyle = stage === 'opening' 
-          ? `rgba(255, 255, 255, ${0.28 * structureFade})` 
-          : 'rgba(255, 255, 255, 0.12)';
+        ctx.strokeStyle = `rgba(255, 255, 255, ${0.16 * structureFade})`;
         ctx.lineWidth = 1 * dpr;
 
         // Equator
@@ -342,7 +526,7 @@ export default function ParticleEarth({
         // Latitude 30deg N & S
         [-0.5, 0.5].forEach((latOffset) => {
           const ringRad = Math.sqrt(1 - latOffset * latOffset);
-          ctx.strokeStyle = `rgba(255, 255, 255, ${0.06 * structureFade})`;
+          ctx.strokeStyle = `rgba(255, 255, 255, ${0.05 * structureFade})`;
           ctx.beginPath();
           for (let a = 0; a <= Math.PI * 2; a += 0.15) {
             const proj = project(Math.cos(a) * ringRad, latOffset, Math.sin(a) * ringRad);
@@ -354,7 +538,7 @@ export default function ParticleEarth({
         });
       }
 
-      // 2. Render All Particles (gathering from outer space into sphere)
+      // 3. Render Particles (Continents vs Oceans)
       const shockProgress = shockwave.current.progress;
       const isShock = shockwave.current.active;
 
@@ -363,20 +547,23 @@ export default function ParticleEarth({
 
         // Position interpolation: from outer space startX,Y,Z to globe origX,Y,Z
         let curX, curY, curZ;
+        let pAlpha = 1;
         if (gTime >= 2.5) {
           curX = p.origX;
           curY = p.origY;
           curZ = p.origZ;
         } else {
           const localT = Math.max(0, Math.min(1, (gTime - p.delay) / 1.5));
-          // Cubic ease-out curve for smooth coalescence
           const ease = 1 - Math.pow(1 - localT, 3.2);
           curX = p.startX + (p.origX - p.startX) * ease;
           curY = p.startY + (p.origY - p.startY) * ease;
           curZ = p.startZ + (p.origZ - p.startZ) * ease;
+          if (stage === 'opening') {
+            pAlpha = Math.min(1, localT * 2.8);
+          }
         }
 
-        // Magnetic Hover deflection if cursor is close (opening stage only)
+        // Magnetic Hover deflection if cursor is close
         if (stage === 'opening' && mousePos.current.isHovering && gTime >= 1.6) {
           const dx = mousePos.current.x * dpr - cx;
           const dy = mousePos.current.y * dpr - cy;
@@ -387,7 +574,6 @@ export default function ParticleEarth({
           }
         }
 
-        // Shockwave expansion calculation
         let radiusMultiplier = 1;
         if (isShock) {
           radiusMultiplier = 1 + Math.sin(shockProgress * Math.PI) * 0.35;
@@ -396,18 +582,20 @@ export default function ParticleEarth({
         const proj = project(curX, curY, curZ, radiusMultiplier);
 
         if (proj.visible) {
-          const depthAlpha = Math.max(0.06, (proj.sz + 0.3) / 1.3);
-          const twinkle = 0.8 + Math.sin(time * 2 + p.twinkleOffset) * 0.2;
-          const finalAlpha = Math.min(1, depthAlpha * twinkle * (stage === 'opening' ? 1.0 : 0.45));
+          const depthAlpha = Math.max(0.06, (proj.sz + 0.2) / 1.2);
+          const twinkle = 0.85 + Math.sin(time * 2 + p.twinkleOffset) * 0.15;
+          const dotSize = Math.max(0.8, p.baseSize * (1 + proj.sz * 0.45) * dpr);
 
-          const dotSize = Math.max(0.8, p.baseSize * (1 + proj.sz * 0.5) * dpr);
-
-          if (p.colorType === 'white') {
-            ctx.fillStyle = `rgba(255, 255, 255, ${finalAlpha * 0.95})`;
-          } else if (p.colorType === 'violet') {
-            ctx.fillStyle = `rgba(124, 91, 255, ${finalAlpha})`;
+          if (p.isLand) {
+            // CONTINENTS: Crisp glowing white & bright silver
+            const finalAlpha = Math.min(1, depthAlpha * twinkle * (stage === 'opening' ? 1.0 : 0.65) * pAlpha);
+            ctx.fillStyle = proj.sz > 0.3
+              ? `rgba(255, 255, 255, ${finalAlpha})`
+              : `rgba(225, 230, 245, ${finalAlpha * 0.85})`;
           } else {
-            ctx.fillStyle = `rgba(210, 230, 255, ${finalAlpha * 0.9})`;
+            // OCEANS: Faint subtle blue-grey matrix
+            const finalAlpha = Math.min(0.35, depthAlpha * twinkle * 0.3 * pAlpha);
+            ctx.fillStyle = `rgba(100, 140, 200, ${finalAlpha})`;
           }
 
           ctx.beginPath();
@@ -416,7 +604,7 @@ export default function ParticleEarth({
         }
       }
 
-      // 3. Project and Draw Connecting Defense Arcs (fade in once sphere assembled)
+      // 4. Project and Draw Connecting Defense Arcs
       if (structureFade > 0.1) {
         const projectedHubs = hubPoints.map((h) => ({
           ...h,
@@ -432,7 +620,7 @@ export default function ParticleEarth({
             const midY = (n1.y + n2.y) * 0.5;
             const midZ = (n1.z + n2.z) * 0.5;
             const midLen = Math.sqrt(midX * midX + midY * midY + midZ * midZ) || 1;
-            const elevation = 1.36;
+            const elevation = 1.34;
             const peak = {
               x: (midX / midLen) * elevation,
               y: (midY / midLen) * elevation,
@@ -465,7 +653,7 @@ export default function ParticleEarth({
           }
         });
 
-        // 4. Draw Hub Nodes and Pulsing Telemetry Beacons
+        // 5. Draw Hub Nodes and Pulsing Telemetry Beacons
         projectedHubs.forEach((hub) => {
           if (hub.proj.visible && hub.proj.sz > -0.15) {
             const sz = (3.5 + hub.proj.sz * 2.5) * dpr;
@@ -479,8 +667,8 @@ export default function ParticleEarth({
             ctx.stroke();
 
             // Core node
-            ctx.fillStyle = hub.color;
-            ctx.shadowColor = hub.color;
+            ctx.fillStyle = '#ffffff';
+            ctx.shadowColor = '#ffffff';
             ctx.shadowBlur = 10 * dpr;
             ctx.beginPath();
             ctx.arc(hub.proj.sx, hub.proj.sy, sz, 0, Math.PI * 2);
@@ -488,7 +676,7 @@ export default function ParticleEarth({
             ctx.shadowBlur = 0;
 
             // Inner white pinhead
-            ctx.fillStyle = '#ffffff';
+            ctx.fillStyle = '#0c0c0c';
             ctx.beginPath();
             ctx.arc(hub.proj.sx, hub.proj.sy, sz * 0.45, 0, Math.PI * 2);
             ctx.fill();
@@ -535,7 +723,6 @@ export default function ParticleEarth({
 
     const handleMouseUp = () => {
       rotation.current.isDragging = false;
-      // If user clicked rather than dragged, trigger onEarthClick
       if (totalMoved < 8 && stage === 'opening' && onEarthClick) {
         onEarthClick();
       }
