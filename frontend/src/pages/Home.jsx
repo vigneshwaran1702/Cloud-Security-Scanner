@@ -17,8 +17,6 @@ import {
   Play,
   Check,
   ChevronRight,
-  Sun,
-  Moon,
   LogIn,
   UserPlus,
   Cpu,
@@ -37,12 +35,10 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
 import WorldAnimation from '../components/WorldAnimation';
 
 export default function Home() {
   const { user } = useAuth();
-  const { toggleTheme, isDark } = useTheme();
   const navigate = useNavigate();
 
   const [provider, setProvider] = useState('AWS');
@@ -264,28 +260,6 @@ export default function Home() {
 
         {/* Right CTA / Auth Controls */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          {/* Theme Toggle */}
-          <button
-            onClick={toggleTheme}
-            type="button"
-            style={{
-              background: 'var(--panel-inner-bg)',
-              border: '1px solid var(--border-color)',
-              color: 'var(--text-main)',
-              width: '36px',
-              height: '36px',
-              borderRadius: '9999px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'var(--transition)'
-            }}
-            title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-          >
-            {isDark ? <Sun size={15} color="#fbbf24" /> : <Moon size={15} color="var(--primary)" />}
-          </button>
-
           {user ? (
             <Link
               to="/dashboard"

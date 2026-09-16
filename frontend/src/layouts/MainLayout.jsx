@@ -12,8 +12,6 @@ import {
   Sparkles,
   Zap,
   Crown,
-  Sun,
-  Moon,
   ChevronDown,
   User,
   CheckCircle2,
@@ -35,7 +33,6 @@ import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNotifications } from '../context/NotificationContext';
 import { useSubscription } from '../context/SubscriptionContext';
-import { useTheme } from '../context/ThemeContext';
 import { getCloudState } from '../services/api';
 import SecurityChatDrawer from '../components/SecurityChatDrawer';
 import CloudAccountVerifierModal from '../components/CloudAccountVerifierModal';
@@ -51,7 +48,6 @@ const breadcrumbMap = {
   '/subscription': 'Subscription & Pricing Plans',
   '/settings': 'Platform Settings & Governance',
   '/settings/subscription': 'Settings — Subscription & Plan Details',
-  '/settings/theme': 'Settings — Theme & Color Settings',
   '/settings/cloud': 'Settings — Connected Cloud Accounts',
   '/settings/general': 'Settings — General Scanner Configuration',
   '/settings/notifications': 'Settings — Notification Channels',
@@ -62,7 +58,6 @@ export default function MainLayout() {
   const { user, logout, isAdmin, requireAuth, openAuthModal } = useAuth();
   const { unreadCount } = useNotifications();
   const { isPro, activeTier } = useSubscription();
-  const { theme, toggleTheme, isDark } = useTheme();
   const location = useLocation();
   const currentPath = location.pathname;
 
@@ -241,17 +236,6 @@ export default function MainLayout() {
             }}
           >
             <Bot size={20} color="#1a73e8" />
-          </button>
-
-          {/* Theme Toggle */}
-          <button
-            onClick={toggleTheme}
-            className="header-icon-btn"
-            type="button"
-            title={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
-            style={{ width: '36px', height: '36px', borderRadius: '50%' }}
-          >
-            {isDark ? <Sun size={17} color="#fbbf24" /> : <Moon size={17} color="#1a73e8" />}
           </button>
 
           {/* Notifications */}
