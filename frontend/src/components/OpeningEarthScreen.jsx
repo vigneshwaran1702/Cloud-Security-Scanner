@@ -100,7 +100,7 @@ export default function OpeningEarthScreen() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <img
             src="/logo.png"
-            alt="CloudGuard Logo"
+            alt="Cloud Security Logo"
             style={{
               width: '32px',
               height: '32px',
@@ -109,7 +109,7 @@ export default function OpeningEarthScreen() {
             }}
           />
           <span style={{ fontWeight: 800, fontSize: '1.3rem', letterSpacing: '-0.02em', color: '#ffffff' }}>
-            CloudGuard
+            Cloud Security
           </span>
           <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.82rem', color: '#ffffff', opacity: 0.85, fontWeight: 600 }}>
             . evolved

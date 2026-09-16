@@ -87,7 +87,7 @@ export default function Login() {
         <div className="flex flex-col items-center gap-3 text-center" style={{ marginBottom: '24px' }}>
           <img
             src="/logo.png"
-            alt="CloudGuard Logo"
+            alt="Cloud Security Logo"
             style={{
               width: '72px',
               height: '72px',
@@ -98,7 +98,7 @@ export default function Login() {
           />
           <div>
             <h1 className="gradient-text" style={{ fontSize: '1.75rem', fontWeight: 700, margin: 0 }}>
-              CloudGuard AI
+              Cloud Security
             </h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '4px' }}>
               Sign in to your Cloud Security Portal

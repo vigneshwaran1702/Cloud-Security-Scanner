@@ -107,7 +107,7 @@ export default function Register() {
         <div className="flex flex-col items-center gap-3 text-center" style={{ marginBottom: '24px' }}>
           <img
             src="/logo.png"
-            alt="CloudGuard Logo"
+            alt="Cloud Security Logo"
             style={{
               width: '72px',
               height: '72px',
@@ -121,7 +121,7 @@ export default function Register() {
               Create Account
             </h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '4px' }}>
-              Register your profile to access CloudGuard AI
+              Register your profile to access Cloud Security
             </p>
           </div>
         </div>

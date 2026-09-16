@@ -217,7 +217,7 @@ export default function Home() {
         <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', color: 'inherit' }}>
           <img
             src="/logo.png"
-            alt="CloudGuard Logo"
+            alt="Cloud Security Logo"
             style={{
               width: '34px',
               height: '34px',
@@ -227,7 +227,7 @@ export default function Home() {
           />
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
             <span style={{ fontWeight: 800, fontSize: '1.18rem', letterSpacing: '-0.02em', color: 'var(--text-main)' }}>
-              CloudGuard
+              Cloud Security
             </span>
             <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.78rem', color: 'var(--primary)', fontWeight: 600 }}>
               . evolved
@@ -1109,8 +1109,8 @@ export default function Home() {
           {/* Col 1: Brand */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
-              <img src="/logo.png" alt="CloudGuard" style={{ width: '28px', height: '28px' }} />
-              <span style={{ fontWeight: 800, fontSize: '1.08rem' }}>CloudGuard</span>
+              <img src="/logo.png" alt="Cloud Security" style={{ width: '28px', height: '28px' }} />
+              <span style={{ fontWeight: 800, fontSize: '1.08rem' }}>Cloud Security</span>
             </div>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.84rem', lineHeight: 1.6 }}>
               AI specialists. A five-phase method — Discover, Diagnose, Design, Deliver, Evolve — that transforms how your business runs on the cloud.
@@ -1178,7 +1178,7 @@ export default function Home() {
           color: 'var(--text-muted)'
         }}>
           <div>
-            © 2026 CloudGuard® — registered trademark · built to evolve
+            © 2026 Cloud Security® — registered trademark · built to evolve
           </div>
           <div style={{ display: 'flex', gap: '18px' }}>
             <span>Privacy Policy</span>
