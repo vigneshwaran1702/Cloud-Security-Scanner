@@ -4,45 +4,45 @@
    ========================================================= */
 
 :root {
-  /* ================= Default Theme: Cyber Dark ================= */
-  --bg-color: #07090e;
-  --bg-secondary: #0d111a;
+  /* ================= Default Theme: WeEvolveIT Cyber Dark ================= */
+  --bg-color: #171717;
+  --bg-secondary: #111111;
   
-  --panel-bg: rgba(13, 17, 26, 0.75);
-  --panel-bg-solid: #0d111a;
-  --panel-inner-bg: rgba(7, 9, 14, 0.6);
+  --panel-bg: rgba(23, 23, 23, 0.88);
+  --panel-bg-solid: #1c1c1c;
+  --panel-inner-bg: rgba(15, 15, 15, 0.7);
   
-  --border-color: rgba(255, 255, 255, 0.08);
-  --border-color-hover: rgba(99, 102, 241, 0.4);
-  --border-subtle: rgba(255, 255, 255, 0.04);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-color-hover: rgba(228, 0, 124, 0.45);
+  --border-subtle: rgba(255, 255, 255, 0.05);
   
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --text-subtle: #64748b;
+  --text-main: #f0f0f8;
+  --text-muted: rgba(240, 240, 248, 0.65);
+  --text-subtle: rgba(240, 240, 248, 0.45);
   
-  /* Primary Brand Accent (Cyber Indigo / Electric Cyan) */
-  --primary: #6366f1;
-  --primary-hover: #4f46e5;
-  --primary-glow: rgba(99, 102, 241, 0.35);
-  --accent: #06b6d4;
-  --accent-hover: #0891b2;
-  --accent-glow: rgba(6, 182, 212, 0.3);
+  /* Primary Brand Accent (WeEvolveIT Electric Magenta & Cyber Violet) */
+  --primary: #e4007c;
+  --primary-hover: #c9006c;
+  --primary-glow: rgba(228, 0, 124, 0.4);
+  --accent: #7c5bff;
+  --accent-hover: #633fe8;
+  --accent-glow: rgba(124, 91, 255, 0.35);
   
-  --input-bg: rgba(10, 14, 22, 0.85);
+  --input-bg: rgba(18, 18, 18, 0.9);
   --input-border: rgba(255, 255, 255, 0.12);
   --input-text: #ffffff;
   
-  --card-bg: rgba(15, 20, 31, 0.65);
-  --card-border: rgba(255, 255, 255, 0.07);
-  --table-hover: rgba(99, 102, 241, 0.05);
+  --card-bg: rgba(28, 28, 28, 0.7);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --table-hover: rgba(228, 0, 124, 0.06);
   --table-header-bg: rgba(255, 255, 255, 0.02);
   
-  --code-bg: #05070c;
-  --code-text: #38bdf8;
+  --code-bg: #0d0d0d;
+  --code-text: #ff4da6;
   
-  --badge-primary-bg: rgba(99, 102, 241, 0.15);
-  --badge-primary-color: #818cf8;
-  --badge-primary-border: rgba(99, 102, 241, 0.35);
+  --badge-primary-bg: rgba(228, 0, 124, 0.12);
+  --badge-primary-color: #ff4da6;
+  --badge-primary-border: rgba(228, 0, 124, 0.35);
   
   /* Severity Badges & Status Tokens */
   --critical: #f43f5e;
@@ -65,18 +65,18 @@
   --success-bg: rgba(16, 185, 129, 0.12);
   --success-border: rgba(16, 185, 129, 0.3);
 
-  --glass-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.06);
-  --glass-shadow-hover: 0 24px 50px -10px rgba(0, 0, 0, 0.8), 0 0 25px var(--primary-glow);
-  --card-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.4);
+  --glass-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  --glass-shadow-hover: 0 24px 50px -10px rgba(0, 0, 0, 0.85), 0 0 25px var(--primary-glow);
+  --card-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.5);
   
   --transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   --transition-fast: all 0.15s ease;
 
-  --bg-gradient-1: rgba(99, 102, 241, 0.14);
-  --bg-gradient-2: rgba(6, 182, 212, 0.1);
-  --auth-bg-gradient: radial-gradient(ellipse at 50% 0%, rgba(99, 102, 241, 0.22) 0%, rgba(7, 9, 14, 0.95) 60%, #07090e 100%);
-  --sidebar-active-bg: linear-gradient(135deg, rgba(99, 102, 241, 0.18), rgba(6, 182, 212, 0.12));
-  --sidebar-active-border: rgba(99, 102, 241, 0.35);
+  --bg-gradient-1: rgba(228, 0, 124, 0.12);
+  --bg-gradient-2: rgba(124, 91, 255, 0.08);
+  --auth-bg-gradient: radial-gradient(ellipse at 50% 0%, rgba(228, 0, 124, 0.2) 0%, rgba(23, 23, 23, 0.95) 60%, #171717 100%);
+  --sidebar-active-bg: linear-gradient(135deg, rgba(228, 0, 124, 0.2), rgba(124, 91, 255, 0.12));
+  --sidebar-active-border: rgba(228, 0, 124, 0.4);
 }
 
 /* ================= Light Theme: Clean Executive Slate ================= */
@@ -151,6 +151,23 @@
 }
 
 /* ================= Accent Theme Overrides ================= */
+
+/* 0. WeEvolveIT Magenta & Violet Accent */
+[data-accent="evolve"] {
+  --primary: #e4007c;
+  --primary-hover: #c9006c;
+  --primary-glow: rgba(228, 0, 124, 0.4);
+  --accent: #7c5bff;
+  --accent-hover: #633fe8;
+  --accent-glow: rgba(124, 91, 255, 0.35);
+  --badge-primary-bg: rgba(228, 0, 124, 0.12);
+  --badge-primary-color: #ff4da6;
+  --badge-primary-border: rgba(228, 0, 124, 0.35);
+  --bg-gradient-1: rgba(228, 0, 124, 0.12);
+  --bg-gradient-2: rgba(124, 91, 255, 0.08);
+  --sidebar-active-bg: linear-gradient(135deg, rgba(228, 0, 124, 0.2), rgba(124, 91, 255, 0.12));
+  --sidebar-active-border: rgba(228, 0, 124, 0.4);
+}
 
 /* 1. Emerald Matrix Accent */
 [data-accent="emerald"] {
@@ -988,3 +1005,107 @@ textarea::placeholder {
     padding: 20px 16px;
   }
 }
+
+/* =========================================================
+   WeEvolveIT Signature Aesthetics & Utility Styles
+   ========================================================= */
+
+@keyframes evolve-marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.evolve-marquee-container {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.evolve-marquee-track {
+  display: flex;
+  width: max-content;
+  gap: 20px;
+  animation: evolve-marquee 40s linear infinite;
+}
+
+.evolve-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+/* WeEvolveIT Hairline Card */
+.evolve-card {
+  background: var(--panel-bg-solid);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  transition: var(--transition);
+}
+
+.evolve-card:hover {
+  border-color: var(--border-color-hover);
+  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.7), 0 0 20px var(--primary-glow);
+  transform: translateY(-2px);
+}
+
+/* WeEvolveIT Pill Button */
+.evolve-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border-radius: 9999px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.evolve-pill-btn-primary {
+  background: var(--primary);
+  color: #ffffff;
+  border: 1px solid transparent;
+  box-shadow: 0 4px 16px var(--primary-glow);
+}
+
+.evolve-pill-btn-primary:hover {
+  background: var(--primary-hover);
+  box-shadow: 0 6px 24px var(--primary-glow);
+  transform: translateY(-1px);
+}
+
+.evolve-pill-btn-outline {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+}
+
+.evolve-pill-btn-outline:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+/* WeEvolveIT Monospace Badge */
+.evolve-mono-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  border: 1px solid var(--border-color);
+  background: var(--panel-inner-bg);
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* WeEvolveIT Editorial Gradient Text */
+.evolve-gradient-text {
+  background: linear-gradient(135deg, #ffffff 30%, var(--primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
