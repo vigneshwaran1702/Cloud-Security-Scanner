@@ -200,7 +200,7 @@ export default function Home() {
   ];
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-color)', color: 'var(--text-main)', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', color: 'var(--text-main)', display: 'flex', flexDirection: 'column' }}>
       
       {/* 1. TOP NAVIGATION BAR (WeEvolveIT Style) */}
       <nav style={{
