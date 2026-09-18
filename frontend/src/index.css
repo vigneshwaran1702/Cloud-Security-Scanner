@@ -1039,6 +1039,7 @@ textarea::placeholder {
 .evolve-gradient-text {
   background: linear-gradient(135deg, #ffffff 40%, rgba(255, 255, 255, 0.65) 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
