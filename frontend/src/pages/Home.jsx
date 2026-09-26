@@ -478,17 +478,6 @@ export default function Home() {
             <span className="evolve-gradient-text">evolved.</span>
           </h1>
 
-          {/* Subtitle */}
-          <p style={{
-            fontSize: 'clamp(1.02rem, 1.8vw, 1.2rem)',
-            color: 'var(--text-muted)',
-            lineHeight: 1.7,
-            maxWidth: '720px',
-            margin: '0 auto 36px auto'
-          }}>
-            AI specialists. A five-phase method — <strong style={{ color: 'var(--text-main)' }}>Discover</strong>, <strong style={{ color: 'var(--text-main)' }}>Diagnose</strong>, <strong style={{ color: 'var(--text-main)' }}>Design</strong>, <strong style={{ color: 'var(--text-main)' }}>Deliver</strong>, <strong style={{ color: 'var(--text-main)' }}>Evolve</strong> — that transforms how your business runs on the cloud. Multi-cloud telemetry across AWS, Azure & GCP with zero agents required.
-          </p>
-
           {/* Quick Instant Audit Box (WeEvolveIT Diagnostic Pill) */}
           <div id="audit-tool" style={{ width: '100%', maxWidth: '740px', marginBottom: '28px' }}>
             <form onSubmit={handleStartAudit} className="evolve-audit-form">
