@@ -198,6 +198,80 @@ export default function Home() {
     { name: 'ISO/IEC 27001', score: '95%', count: '58 Controls', status: 'Verified' }
   ];
 
+  const capabilities = [
+    {
+      icon: Cloud,
+      title: 'Multi-Cloud CSPM',
+      desc: 'Unified security posture discovery and inventory tracking across AWS, Microsoft Azure, and Google Cloud Platform in real time with zero agents.',
+      badge: 'Multi-Cloud',
+      stats: 'AWS · Azure · GCP',
+      color: '#38bdf8'
+    },
+    {
+      icon: Sparkles,
+      title: 'AI Root-Cause & Blast Radius',
+      desc: 'Generative AI analyzes misconfigurations and maps out lateral movement risks and privilege jumps before malicious actors exploit them.',
+      badge: '✦AI Powered',
+      stats: 'Graph Neural Engine',
+      color: '#a855f7'
+    },
+    {
+      icon: Zap,
+      title: '1-Click Autonomous Remediation',
+      desc: 'Instantly patch open S3 buckets, unrestricted SSH/RDP ports, and overprivileged IAM roles with tested Terraform & CLI scripts.',
+      badge: 'Instant Fix',
+      stats: '1-Click Terraform',
+      color: '#10b981'
+    },
+    {
+      icon: FileCheck,
+      title: 'Continuous Compliance Engine',
+      desc: 'Automated compliance auditing against CIS Benchmarks, SOC 2 Type II, HIPAA, NIST CSF, PCI-DSS v4.0, and ISO 27001.',
+      badge: 'Audit Ready',
+      stats: '6 Frameworks',
+      color: '#fbbf24'
+    },
+    {
+      icon: KeyRound,
+      title: 'IAM & Zero-Trust Governance',
+      desc: 'Detect shadow admin access, orphaned credentials, privilege escalation pathways, and enforce strict least privilege across all accounts.',
+      badge: 'Zero Trust',
+      stats: 'Wildcard & Key Audit',
+      color: '#f43f5e'
+    },
+    {
+      icon: Activity,
+      title: 'Real-Time Threat & Drift Detection',
+      desc: 'Continuous infrastructure drift monitoring with sub-second alert triggers, CloudTrail integration, and customizable webhook dispatches.',
+      badge: '24/7 Monitoring',
+      stats: 'Sub-Second Webhooks',
+      color: '#06b6d4'
+    }
+  ];
+
+  const securityGuarantees = [
+    {
+      icon: Lock,
+      title: 'Zero Credential Storage',
+      desc: 'We never store long-lived credentials. All scans use temporary, cryptographically signed AWS STS, Azure Service Principal, or GCP STS tokens.'
+    },
+    {
+      icon: ShieldCheck,
+      title: '100% Agentless Architecture',
+      desc: 'Zero software daemons or kernel agents installed inside your workloads. Zero compute CPU overhead, zero cluster crash risk.'
+    },
+    {
+      icon: FileText,
+      title: 'Enterprise Data Encryption',
+      desc: 'All telemetry is encrypted end-to-end with TLS 1.3 in-transit and AES-256 at-rest. Telemetry is evaluated strictly in-memory.'
+    },
+    {
+      icon: Sliders,
+      title: 'Read-Only Cloud Access',
+      desc: 'Initial diagnosis operates under strictly scoped read-only policies (SecurityAudit / Reader). Remediation requires explicit approval.'
+    }
+  ];
+
   return (
     <div style={{ minHeight: '100vh', background: 'transparent', color: 'var(--text-main)', display: 'flex', flexDirection: 'column' }}>
       
@@ -239,12 +313,18 @@ export default function Home() {
         </Link>
 
         {/* Center Editorial Lowercase Nav Links */}
-        <div className="hidden-mobile" style={{ display: 'flex', alignItems: 'center', gap: '24px', fontSize: '0.88rem', fontWeight: 500 }}>
+        <div className="hidden-mobile" style={{ display: 'flex', alignItems: 'center', gap: '20px', fontSize: '0.88rem', fontWeight: 500 }}>
           <a href="#services" style={{ color: 'var(--text-muted)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '3px', transition: 'var(--transition)' }}>
             services<span style={{ fontSize: '0.65rem' }}>▾</span>
           </a>
           <a href="#method" style={{ color: 'var(--text-muted)', textDecoration: 'none', transition: 'var(--transition)' }}>
             the 5 method
+          </a>
+          <a href="#capabilities" style={{ color: 'var(--text-muted)', textDecoration: 'none', transition: 'var(--transition)' }}>
+            capabilities
+          </a>
+          <a href="#how-it-works" style={{ color: 'var(--text-muted)', textDecoration: 'none', transition: 'var(--transition)' }}>
+            how it works
           </a>
           <a href="#tools" style={{ color: 'var(--text-muted)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '3px', transition: 'var(--transition)' }}>
             free tools<span style={{ color: 'var(--primary)', fontSize: '0.7rem' }}>✦</span>
@@ -358,6 +438,20 @@ export default function Home() {
             style={{ color: 'var(--text-main)', textDecoration: 'none', fontSize: '1rem', fontWeight: 600, padding: '8px 0' }}
           >
             The 5 Method
+          </a>
+          <a
+            href="#capabilities"
+            onClick={() => setIsMobileMenuOpen(false)}
+            style={{ color: 'var(--text-main)', textDecoration: 'none', fontSize: '1rem', fontWeight: 600, padding: '8px 0' }}
+          >
+            Key Capabilities✦
+          </a>
+          <a
+            href="#how-it-works"
+            onClick={() => setIsMobileMenuOpen(false)}
+            style={{ color: 'var(--text-main)', textDecoration: 'none', fontSize: '1rem', fontWeight: 600, padding: '8px 0' }}
+          >
+            How It Works (3 Steps)
           </a>
           <a
             href="#tools"
@@ -477,6 +571,83 @@ export default function Home() {
             your cloud security partner. <br />
             <span className="evolve-gradient-text">evolved.</span>
           </h1>
+
+          {/* Detailed Subtitle */}
+          <p style={{
+            fontSize: 'clamp(1.02rem, 1.8vw, 1.2rem)',
+            color: 'var(--text-muted)',
+            lineHeight: 1.7,
+            maxWidth: '740px',
+            margin: '0 auto 24px auto'
+          }}>
+            AI specialists. A five-phase method — <strong style={{ color: 'var(--text-main)' }}>Discover</strong>, <strong style={{ color: 'var(--text-main)' }}>Diagnose</strong>, <strong style={{ color: 'var(--text-main)' }}>Design</strong>, <strong style={{ color: 'var(--text-main)' }}>Deliver</strong>, <strong style={{ color: 'var(--text-main)' }}>Evolve</strong> — that transforms how your business runs on the cloud. Multi-cloud telemetry across AWS, Azure &amp; GCP with zero agents required.
+          </p>
+
+          {/* Quick Architecture Feature Badges */}
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            gap: '8px',
+            marginBottom: '28px'
+          }}>
+            <span style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              border: '1px solid var(--border-color)',
+              padding: '4px 12px',
+              borderRadius: '999px',
+              fontSize: '0.78rem',
+              fontFamily: 'JetBrains Mono, monospace',
+              color: 'var(--text-muted)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}>
+              <ShieldCheck size={13} color="var(--success)" /> Zero-Agent Telemetry
+            </span>
+            <span style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              border: '1px solid var(--border-color)',
+              padding: '4px 12px',
+              borderRadius: '999px',
+              fontSize: '0.78rem',
+              fontFamily: 'JetBrains Mono, monospace',
+              color: 'var(--text-muted)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}>
+              <Zap size={13} color="#eab308" /> Sub-Second Drift Detection
+            </span>
+            <span style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              border: '1px solid var(--border-color)',
+              padding: '4px 12px',
+              borderRadius: '999px',
+              fontSize: '0.78rem',
+              fontFamily: 'JetBrains Mono, monospace',
+              color: 'var(--text-muted)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}>
+              <Sparkles size={13} color="#a855f7" /> 1-Click AI Terraform Fixes
+            </span>
+            <span style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              border: '1px solid var(--border-color)',
+              padding: '4px 12px',
+              borderRadius: '999px',
+              fontSize: '0.78rem',
+              fontFamily: 'JetBrains Mono, monospace',
+              color: 'var(--text-muted)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}>
+              <Lock size={13} color="#38bdf8" /> 100% Read-Only Access
+            </span>
+          </div>
 
           {/* Quick Instant Audit Box (WeEvolveIT Diagnostic Pill) */}
           <div id="audit-tool" style={{ width: '100%', maxWidth: '740px', marginBottom: '28px' }}>
@@ -729,6 +900,103 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 4.1 KEY CAPABILITIES DEEP-DIVE SECTION */}
+      <section id="capabilities" style={{
+        padding: '90px 24px',
+        maxWidth: '1280px',
+        margin: '0 auto',
+        width: '100%',
+        boxSizing: 'border-box'
+      }}>
+        <div style={{ textAlign: 'center', maxWidth: '780px', margin: '0 auto 56px auto' }}>
+          <div className="evolve-mono-badge" style={{ marginBottom: '16px' }}>
+            <span>✦ ENTERPRISE CAPABILITIES</span>
+          </div>
+          <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3.2rem)', fontWeight: 800, letterSpacing: '-0.03em', margin: '0 0 16px 0' }}>
+            Complete Cloud Posture &amp; Threat Protection
+          </h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '1rem', lineHeight: 1.65 }}>
+            Unified multi-cloud discovery, identity intelligence, automated remediation, and continuous compliance into a single autonomous command center.
+          </p>
+        </div>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+          gap: '22px'
+        }}>
+          {capabilities.map((cap, i) => {
+            const Icon = cap.icon;
+            return (
+              <div
+                key={i}
+                className="evolve-card"
+                style={{
+                  padding: '30px 26px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  position: 'relative'
+                }}
+              >
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.08)',
+                      border: '1px solid var(--border-color)',
+                      color: cap.color,
+                      padding: '12px',
+                      borderRadius: '14px',
+                      display: 'inline-flex'
+                    }}>
+                      <Icon size={24} />
+                    </div>
+                    <span className="evolve-mono-badge" style={{ fontSize: '0.72rem' }}>
+                      {cap.badge}
+                    </span>
+                  </div>
+
+                  <h3 style={{ fontSize: '1.24rem', fontWeight: 800, margin: '0 0 10px 0', color: 'var(--text-main)' }}>
+                    {cap.title}
+                  </h3>
+                  <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', lineHeight: 1.6, margin: 0 }}>
+                    {cap.desc}
+                  </p>
+                </div>
+
+                <div style={{
+                  marginTop: '22px',
+                  paddingTop: '16px',
+                  borderTop: '1px solid var(--border-subtle)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between'
+                }}>
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    {cap.stats}
+                  </span>
+                  <Link
+                    to="/dashboard"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      fontSize: '0.82rem',
+                      fontWeight: 600,
+                      color: 'var(--primary)',
+                      textDecoration: 'none'
+                    }}
+                  >
+                    <span>Explore</span>
+                    <ArrowRight size={13} />
+                  </Link>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
       {/* 5. "TEST YOUR CLOUD · FREE, NO SIGNUP" (WeEvolveIT Interactive Tools) */}
       <section id="tools" style={{
         padding: '70px 24px',
@@ -836,6 +1104,114 @@ export default function Home() {
                   <span>→</span>
                 </Link>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5.1 HOW IT WORKS 3-STEP SECTION */}
+      <section id="how-it-works" style={{
+        padding: '90px 24px',
+        maxWidth: '1280px',
+        margin: '0 auto',
+        width: '100%',
+        boxSizing: 'border-box'
+      }}>
+        <div style={{ textAlign: 'center', maxWidth: '780px', margin: '0 auto 56px auto' }}>
+          <div className="evolve-mono-badge" style={{ marginBottom: '16px' }}>
+            <span>✦ RAPID 60-SECOND ONBOARDING</span>
+          </div>
+          <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3.2rem)', fontWeight: 800, letterSpacing: '-0.03em', margin: '0 0 16px 0' }}>
+            How Cloud Security Works in 3 Steps
+          </h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '1rem', lineHeight: 1.65 }}>
+            From zero visibility to 100% compliant cloud infrastructure in three frictionless steps — no agents, no daemons, no performance hit.
+          </p>
+        </div>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+          gap: '24px'
+        }}>
+          <div className="evolve-card" style={{ padding: '34px 28px', position: 'relative' }}>
+            <div style={{ fontSize: '3rem', fontWeight: 900, fontFamily: 'JetBrains Mono', color: 'rgba(255, 255, 255, 0.15)', lineHeight: 1, marginBottom: '14px' }}>
+              01
+            </div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', marginBottom: '8px' }}>
+              <Cloud size={18} />
+              <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase' }}>Connect Cloud</span>
+            </div>
+            <h3 style={{ fontSize: '1.24rem', fontWeight: 800, margin: '0 0 10px 0' }}>
+              Attach In Under 60 Seconds
+            </h3>
+            <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', lineHeight: 1.6, margin: '0 0 16px 0' }}>
+              Attach your AWS Cross-Account Role, Azure Service Principal, or GCP Service Account. 100% read-only, non-intrusive, zero agents required.
+            </p>
+            <div style={{
+              background: 'rgba(0, 0, 0, 0.4)',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: '8px',
+              padding: '8px 12px',
+              fontFamily: 'JetBrains Mono',
+              fontSize: '0.74rem',
+              color: 'var(--text-subtle)'
+            }}>
+              $ terraform apply -target=module.cloudguard_role
+            </div>
+          </div>
+
+          <div className="evolve-card" style={{ padding: '34px 28px', position: 'relative' }}>
+            <div style={{ fontSize: '3rem', fontWeight: 900, fontFamily: 'JetBrains Mono', color: 'rgba(124, 91, 255, 0.25)', lineHeight: 1, marginBottom: '14px' }}>
+              02
+            </div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: 'var(--accent)', marginBottom: '8px' }}>
+              <Cpu size={18} />
+              <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase' }}>AI Scan Engine</span>
+            </div>
+            <h3 style={{ fontSize: '1.24rem', fontWeight: 800, margin: '0 0 10px 0' }}>
+              Deep Posture &amp; Blast Radius
+            </h3>
+            <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', lineHeight: 1.6, margin: '0 0 16px 0' }}>
+              Scanner models evaluate configuration drifts, IAM wildcard risks, public S3 buckets, and map lateral jump pathways using graph AI.
+            </p>
+            <div style={{
+              background: 'rgba(0, 0, 0, 0.4)',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: '8px',
+              padding: '8px 12px',
+              fontFamily: 'JetBrains Mono',
+              fontSize: '0.74rem',
+              color: '#38bdf8'
+            }}>
+              ✔ 74 CIS controls · 142 assets mapped
+            </div>
+          </div>
+
+          <div className="evolve-card" style={{ padding: '34px 28px', position: 'relative' }}>
+            <div style={{ fontSize: '3rem', fontWeight: 900, fontFamily: 'JetBrains Mono', color: 'rgba(16, 185, 129, 0.25)', lineHeight: 1, marginBottom: '14px' }}>
+              03
+            </div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: 'var(--success)', marginBottom: '8px' }}>
+              <Zap size={18} />
+              <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase' }}>Auto-Remediate</span>
+            </div>
+            <h3 style={{ fontSize: '1.24rem', fontWeight: 800, margin: '0 0 10px 0' }}>
+              1-Click Verified Fixes
+            </h3>
+            <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', lineHeight: 1.6, margin: '0 0 16px 0' }}>
+              Apply autonomous patches in 1-click or export ready-to-run Terraform and AWS CLI code to restore optimal security posture with zero regressions.
+            </p>
+            <div style={{
+              background: 'rgba(0, 0, 0, 0.4)',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: '8px',
+              padding: '8px 12px',
+              fontFamily: 'JetBrains Mono',
+              fontSize: '0.74rem',
+              color: '#10b981'
+            }}>
+              ✔ Remediation dry-run passed (0 regressions)
             </div>
           </div>
         </div>
@@ -1145,6 +1521,63 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 8.1 ARCHITECTURE & ENTERPRISE SECURITY GUARANTEES */}
+      <section id="architecture" style={{ padding: '80px 24px', maxWidth: '1280px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
+        <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 48px auto' }}>
+          <div className="evolve-mono-badge" style={{ marginBottom: '12px' }}>
+            <span>✦ ZERO-TRUST ARCHITECTURE</span>
+          </div>
+          <h2 style={{ fontSize: 'clamp(1.8rem, 3.5vw, 2.6rem)', fontWeight: 800, letterSpacing: '-0.02em', margin: '0 0 12px 0' }}>
+            Built for Security-Conscious Cloud Teams
+          </h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.96rem', lineHeight: 1.65 }}>
+            Enterprise cybersecurity with zero compromise. We architect every scanner interaction with mathematical rigor and zero credential retention.
+          </p>
+        </div>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '20px'
+        }}>
+          {securityGuarantees.map((sec, sIdx) => {
+            const Icon = sec.icon;
+            return (
+              <div
+                key={sIdx}
+                className="evolve-card"
+                style={{
+                  padding: '28px 24px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px'
+                }}
+              >
+                <div style={{
+                  width: '42px',
+                  height: '42px',
+                  borderRadius: '12px',
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid var(--border-color)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--primary)'
+                }}>
+                  <Icon size={20} />
+                </div>
+                <h3 style={{ fontSize: '1.14rem', fontWeight: 700, margin: 0 }}>
+                  {sec.title}
+                </h3>
+                <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', lineHeight: 1.6, margin: 0 }}>
+                  {sec.desc}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
       {/* 9. "WHAT'S SLOWING YOU DOWN?" (WeEvolveIT Signature CTA) */}
       <section style={{ padding: '70px 24px', maxWidth: '1280px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
         <div style={{
@@ -1241,6 +1674,8 @@ export default function Home() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.84rem', color: 'var(--text-muted)' }}>
               <a href="#services" style={{ color: 'inherit', textDecoration: 'none' }}>Services</a>
               <a href="#method" style={{ color: 'inherit', textDecoration: 'none' }}>The 5 Method</a>
+              <a href="#capabilities" style={{ color: 'inherit', textDecoration: 'none' }}>Capabilities</a>
+              <a href="#how-it-works" style={{ color: 'inherit', textDecoration: 'none' }}>How It Works</a>
               <a href="#compliance" style={{ color: 'inherit', textDecoration: 'none' }}>Compliance Standards</a>
               <Link to="/subscription" style={{ color: 'inherit', textDecoration: 'none' }}>Pricing Plans</Link>
               <Link to="/settings" style={{ color: 'inherit', textDecoration: 'none' }}>Settings & Accounts</Link>
