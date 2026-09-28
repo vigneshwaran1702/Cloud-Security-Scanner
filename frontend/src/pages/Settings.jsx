@@ -179,7 +179,7 @@ export default function Settings() {
     }
     if (secId === 'theme') {
       return {
-        text: theme === 'dark' ? 'Cyber Dark' : 'Executive Light',
+        text: 'Cyber Dark',
         color: 'var(--accent)',
         bg: 'rgba(6, 182, 212, 0.12)',
       };
@@ -218,52 +218,80 @@ export default function Settings() {
       {!isSubPage ? (
         <div className="flex flex-col gap-6 animate-fade-in">
           
-          {/* Header & Save Bar */}
-          <div className="flex justify-between items-center flex-wrap gap-4 pb-3 border-b" style={{ borderColor: 'var(--border-color)' }}>
-            <div>
-              <div className="flex items-center gap-2" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '4px' }}>
-                <Link to="/dashboard" style={{ color: 'var(--text-muted)', textDecoration: 'none' }} className="hover:underline">
-                  Dashboard
-                </Link>
-                <ChevronRight size={14} />
-                <span style={{ color: 'var(--primary)', fontWeight: 600 }}>Platform Settings</span>
+          {/* Enhanced Command Center Style Settings Header */}
+          <div className="command-telemetry-header">
+            <div className="flex items-center justify-between gap-4 flex-wrap" style={{ marginBottom: '14px' }}>
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '7px',
+                  padding: '4px 12px',
+                  borderRadius: '9999px',
+                  background: 'rgba(255, 255, 255, 0.06)',
+                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  color: 'var(--primary)',
+                  letterSpacing: '0.04em',
+                  textTransform: 'uppercase'
+                }}>
+                  <Sparkles size={13} color="var(--primary)" />
+                  Platform Governance & Configuration
+                </div>
+
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '4px 12px',
+                  borderRadius: '9999px',
+                  background: 'rgba(16, 185, 129, 0.1)',
+                  border: '1px solid rgba(16, 185, 129, 0.25)',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  color: 'var(--success)'
+                }}>
+                  <div className="pulse-radar-dot" />
+                  Auto-Sync Ready
+                </div>
               </div>
 
-              <h2 style={{ fontSize: '1.75rem', margin: 0, fontWeight: 800, letterSpacing: '-0.02em' }} className="flex items-center gap-3">
-                <div style={{ padding: '8px', borderRadius: '12px', background: 'var(--badge-primary-bg)', color: 'var(--primary)', display: 'flex' }}>
-                  <SettingsIcon size={24} />
-                </div>
-                Settings & Platform Configuration
-              </h2>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: '4px 0 0' }}>
-                Select a settings category below to manage subscriptions, themes, connected clouds, scanner cadence, and alerts.
-              </p>
+              <div className="flex items-center gap-3">
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }} className="hidden sm:inline-flex items-center gap-1.5">
+                  <Clock size={14} />
+                  <span>Saved: {lastSavedTime}</span>
+                </span>
+
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleSaveAll}
+                  style={{
+                    padding: '8px 20px',
+                    fontSize: '0.86rem',
+                    fontWeight: 700,
+                    borderRadius: '9999px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}
+                >
+                  <Save size={15} />
+                  <span>{saved ? 'Settings Saved ✓' : 'Save All Settings'}</span>
+                </button>
+              </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }} className="hidden sm:inline-flex items-center gap-1.5">
-                <Clock size={14} />
-                <span>Saved: {lastSavedTime}</span>
-              </span>
-
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={handleSaveAll}
-                style={{
-                  padding: '10px 22px',
-                  fontSize: '0.9rem',
-                  fontWeight: 700,
-                  borderRadius: '12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  boxShadow: '0 4px 14px var(--primary-glow)',
-                }}
-              >
-                {saved ? <CheckCircle2 size={18} /> : <Save size={18} />}
-                {saved ? 'All Settings Saved ✓' : 'Save All Settings'}
-              </button>
+            <div className="flex items-end justify-between gap-4 flex-wrap">
+              <div>
+                <h1 style={{ fontSize: '2rem', margin: '0 0 6px 0', fontWeight: 800, letterSpacing: '-0.025em', color: 'var(--text-main)' }}>
+                  Platform <span className="gradient-text">Settings & Governance</span>
+                </h1>
+                <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', margin: 0, maxWidth: '640px', lineHeight: 1.45 }}>
+                  Configure connected multi-cloud credentials, automated scanner cadence, risk thresholds, and real-time alert dispatch webhooks.
+                </p>
+              </div>
             </div>
           </div>
 

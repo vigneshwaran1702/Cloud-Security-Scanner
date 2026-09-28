@@ -8,9 +8,9 @@
   --bg-color: #171717;
   --bg-secondary: #111111;
   
-  --panel-bg: rgba(23, 23, 23, 0.88);
-  --panel-bg-solid: #1c1c1c;
-  --panel-inner-bg: rgba(15, 15, 15, 0.7);
+  --panel-bg: rgba(18, 18, 24, 0.72);
+  --panel-bg-solid: rgba(20, 20, 26, 0.82);
+  --panel-inner-bg: rgba(14, 14, 20, 0.65);
   
   --border-color: rgba(255, 255, 255, 0.1);
   --border-color-hover: rgba(255, 255, 255, 0.45);
@@ -614,9 +614,9 @@ textarea::placeholder {
 }
 
 [data-theme="dark"] {
-  --gcp-surface: #1e1e1e;
-  --gcp-header-bg: #202124;
-  --gcp-border: #3c4043;
+  --gcp-surface: rgba(22, 22, 30, 0.75);
+  --gcp-header-bg: rgba(18, 18, 24, 0.72);
+  --gcp-border: rgba(255, 255, 255, 0.08);
 }
 
 .gcp-header {
@@ -624,66 +624,75 @@ textarea::placeholder {
   top: 0;
   left: 0;
   right: 0;
-  height: 56px;
-  background: var(--panel-bg-solid);
-  border-bottom: 1px solid var(--border-color);
+  height: 60px;
+  background: rgba(16, 16, 22, 0.72);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
-  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.1);
+  padding: 0 20px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.45);
 }
 
 .gcp-project-selector {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 12px;
-  border-radius: 8px;
-  background: var(--panel-inner-bg);
-  border: 1px solid var(--border-color);
+  padding: 6px 14px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--text-main);
   font-size: 0.84rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: var(--transition-fast);
+  backdrop-filter: blur(12px);
 }
 
 .gcp-project-selector:hover {
-  border-color: #1a73e8;
-  background: rgba(26, 115, 232, 0.06);
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.1);
 }
 
 .gcp-search-bar {
   display: flex;
   align-items: center;
-  background: var(--input-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 0 14px;
-  width: 480px;
+  background: rgba(14, 14, 20, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  padding: 0 16px;
+  width: 440px;
   height: 38px;
   transition: var(--transition-fast);
+  backdrop-filter: blur(12px);
 }
 
 .gcp-search-bar:focus-within {
-  border-color: #1a73e8;
-  box-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.2), 0 4px 8px 3px rgba(60, 64, 67, 0.1);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+  background: rgba(18, 18, 26, 0.85);
 }
 
 .gcp-sidebar {
-  background: var(--panel-bg-solid);
-  border-right: 1px solid var(--border-color);
-  height: calc(100vh - 56px);
+  background: rgba(14, 14, 20, 0.62);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+  height: calc(100vh - 60px);
   position: sticky;
-  top: 56px;
+  top: 60px;
   transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  box-shadow: 4px 0 30px rgba(0, 0, 0, 0.3);
 }
 
 .gcp-nav-item {
@@ -693,31 +702,98 @@ textarea::placeholder {
   padding: 10px 16px;
   border-radius: 0 24px 24px 0;
   margin-right: 12px;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
   color: var(--text-muted);
   text-decoration: none;
   font-size: 0.88rem;
   font-weight: 500;
   transition: var(--transition-fast);
   white-space: nowrap;
+  position: relative;
 }
 
 .gcp-nav-item:hover {
-  background: var(--panel-inner-bg);
-  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  transform: translateX(2px);
 }
 
 .gcp-nav-item.active {
-  background: rgba(26, 115, 232, 0.12);
-  color: #1a73e8;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.12), rgba(124, 91, 255, 0.06));
+  color: #ffffff;
   font-weight: 600;
+  box-shadow: inset 3px 0 0 0 #ffffff, 0 0 20px rgba(255, 255, 255, 0.08);
 }
 
 .gcp-main-container {
   flex: 1;
-  padding: 24px 32px 48px;
+  padding: 24px 36px 48px;
   min-width: 0;
   overflow-y: auto;
+}
+
+/* Cyber Command Center Component Tokens */
+.command-telemetry-header {
+  background: rgba(20, 20, 28, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 20px;
+  padding: 22px 28px;
+  box-shadow: 0 12px 36px -4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.command-telemetry-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), rgba(124, 91, 255, 0.5), transparent);
+}
+
+.metric-card {
+  background: rgba(20, 20, 28, 0.62) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 10px 30px -4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  box-shadow: 0 16px 40px -6px rgba(0, 0, 0, 0.7), 0 0 24px rgba(255, 255, 255, 0.08);
+}
+
+.pulse-radar-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  position: relative;
+  box-shadow: 0 0 8px #10b981;
+}
+
+.pulse-radar-dot::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid #10b981;
+  animation: radarPing 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes radarPing {
+  0% { transform: scale(0.8); opacity: 0.9; }
+  100% { transform: scale(2.4); opacity: 0; }
 }
 .cf-global-header {
   position: sticky;
