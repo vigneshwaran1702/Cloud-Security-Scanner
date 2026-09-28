@@ -141,13 +141,15 @@ export default function Subscription() {
         <div
           className="glass-panel"
           style={{
-            padding: '28px 22px',
+            padding: '30px 24px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            border: currentPlan.tierId === 'monthly' ? '2px solid var(--primary)' : '1px solid var(--border-color)',
-            background: 'var(--panel-bg-solid)',
-            borderRadius: '18px',
+            border: currentPlan.tierId === 'monthly' ? '2px solid #7c5bff' : '1px solid rgba(255, 255, 255, 0.09)',
+            background: 'rgba(20, 20, 28, 0.65)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '20px',
+            transition: 'transform 0.25s ease, border-color 0.25s ease'
           }}
         >
           <div>
@@ -162,17 +164,17 @@ export default function Subscription() {
               )}
             </div>
 
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '6px' }}>1 Month Pro Shield</h3>
-            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '18px', minHeight: '36px' }}>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '6px', color: 'var(--text-main)' }}>1 Month Pro Shield</h3>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '18px', minHeight: '36px', lineHeight: 1.4 }}>
               Monthly recurring defense with production auto-fixes, 24/7 AI SecOps, and real-time drift alerts.
             </p>
 
             <div style={{ marginBottom: '20px' }}>
-              <span style={{ fontSize: '2.4rem', fontWeight: 800, color: 'var(--text-main)' }}>$19</span>
+              <span style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-main)' }}>$19</span>
               <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}> / 1 month</span>
             </div>
 
-            <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '16px', marginBottom: '20px' }}>
+            <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '16px', marginBottom: '20px' }}>
               <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--primary)', marginBottom: '10px' }}>
                 Everything in Free, plus:
               </div>
@@ -206,14 +208,15 @@ export default function Subscription() {
             onClick={() => handleOpenCheckout('monthly')}
             style={{
               width: '100%',
-              padding: '10px',
-              borderRadius: '10px',
-              background: 'var(--panel-inner-bg)',
-              border: '1px solid var(--primary)',
-              color: 'var(--primary)',
+              padding: '12px',
+              borderRadius: '9999px',
+              background: 'rgba(255, 255, 255, 0.06)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              color: 'var(--text-main)',
               cursor: 'pointer',
               fontWeight: 700,
-              fontSize: '0.85rem'
+              fontSize: '0.86rem',
+              backdropFilter: 'blur(10px)'
             }}
           >
             {currentPlan.tierId === 'monthly' ? 'Current Plan (Active ✓)' : 'Upgrade for $19 / mo'}
@@ -224,15 +227,16 @@ export default function Subscription() {
         <div
           className="glass-panel"
           style={{
-            padding: '30px 24px',
+            padding: '32px 24px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            border: '2px solid #1a73e8',
-            boxShadow: 'var(--glass-shadow-hover)',
+            border: '2px solid rgba(124, 91, 255, 0.65)',
+            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.7), 0 0 35px rgba(124, 91, 255, 0.25)',
             position: 'relative',
-            background: 'var(--panel-bg-solid)',
-            borderRadius: '20px',
+            background: 'linear-gradient(180deg, rgba(32, 28, 48, 0.75) 0%, rgba(20, 20, 28, 0.7) 100%)',
+            backdropFilter: 'blur(24px)',
+            borderRadius: '22px',
             transform: 'scale(1.02)',
           }}
         >
@@ -243,7 +247,7 @@ export default function Subscription() {
               top: '-13px',
               left: '50%',
               transform: 'translateX(-50%)',
-              background: 'linear-gradient(135deg, #1a73e8, #4285F4)',
+              background: 'linear-gradient(135deg, #7c5bff, #06b6d4)',
               color: 'white',
               fontSize: '0.72rem',
               fontWeight: 800,
@@ -251,7 +255,7 @@ export default function Subscription() {
               borderRadius: '20px',
               letterSpacing: '0.05em',
               textTransform: 'uppercase',
-              boxShadow: '0 4px 12px rgba(26, 115, 232, 0.4)',
+              boxShadow: '0 4px 16px rgba(124, 91, 255, 0.45)',
               display: 'flex',
               alignItems: 'center',
               gap: '5px',
@@ -263,7 +267,7 @@ export default function Subscription() {
 
           <div>
             <div className="flex justify-between items-center" style={{ marginBottom: '14px', marginTop: '6px' }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#1a73e8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#7c5bff', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 Quarterly (3 Months)
               </span>
               {currentPlan.tierId === 'quarterly' && (
@@ -273,8 +277,8 @@ export default function Subscription() {
               )}
             </div>
 
-            <h3 style={{ fontSize: '1.35rem', fontWeight: 800, marginBottom: '6px' }}>3 Months Pro Defender</h3>
-            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '18px', minHeight: '36px' }}>
+            <h3 style={{ fontSize: '1.35rem', fontWeight: 800, marginBottom: '6px', color: 'var(--text-main)' }}>3 Months Pro Defender</h3>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '18px', minHeight: '36px', lineHeight: 1.4 }}>
               Best value all-inclusive package with priority auto-fixes, unlimited accounts, and risk contribution analytics.
             </p>
 
@@ -288,8 +292,8 @@ export default function Subscription() {
               </div>
             </div>
 
-            <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '16px', marginBottom: '22px' }}>
-              <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#1a73e8', marginBottom: '10px' }}>
+            <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '16px', marginBottom: '22px' }}>
+              <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#7c5bff', marginBottom: '10px' }}>
                 Everything in 1-Month, plus:
               </div>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem' }}>
@@ -319,13 +323,11 @@ export default function Subscription() {
             style={{
               width: '100%',
               padding: '12px',
-              borderRadius: '10px',
+              borderRadius: '9999px',
               fontWeight: 700,
               fontSize: '0.92rem',
-              background: '#1a73e8',
-              borderColor: '#1a73e8',
               cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(26, 115, 232, 0.35)'
+              boxShadow: '0 4px 20px rgba(124, 91, 255, 0.4)'
             }}
           >
             {currentPlan.tierId === 'quarterly' ? 'Active Plan ✓' : 'Get 3 Months for $39'}
@@ -336,13 +338,15 @@ export default function Subscription() {
         <div
           className="glass-panel"
           style={{
-            padding: '28px 22px',
+            padding: '30px 24px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            border: currentPlan.tierId === 'yearly' ? '2px solid var(--primary)' : '1px solid var(--border-color)',
-            background: 'var(--panel-bg-solid)',
-            borderRadius: '18px',
+            border: currentPlan.tierId === 'yearly' ? '2px solid #10b981' : '1px solid rgba(255, 255, 255, 0.09)',
+            background: 'rgba(20, 20, 28, 0.65)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '20px',
+            transition: 'transform 0.25s ease, border-color 0.25s ease'
           }}
         >
           <div>
@@ -357,14 +361,14 @@ export default function Subscription() {
               )}
             </div>
 
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '6px' }}>1 Year Enterprise Fortress</h3>
-            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '18px', minHeight: '36px' }}>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '6px', color: 'var(--text-main)' }}>1 Year Enterprise Fortress</h3>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '18px', minHeight: '36px', lineHeight: 1.4 }}>
               Maximum annual savings with dedicated compliance framework, SIEM exports, and 99.99% uptime SLA.
             </p>
 
             <div style={{ marginBottom: '20px' }}>
               <div className="flex items-baseline gap-1">
-                <span style={{ fontSize: '2.4rem', fontWeight: 800, color: 'var(--text-main)' }}>$149</span>
+                <span style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-main)' }}>$149</span>
                 <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}> / 1 year</span>
               </div>
               <div style={{ fontSize: '0.72rem', color: 'var(--success)', fontWeight: 700, marginTop: '2px' }}>
@@ -372,7 +376,7 @@ export default function Subscription() {
               </div>
             </div>
 
-            <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '16px', marginBottom: '20px' }}>
+            <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '16px', marginBottom: '20px' }}>
               <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--success)', marginBottom: '10px' }}>
                 Everything in 3-Month, plus:
               </div>
@@ -402,14 +406,15 @@ export default function Subscription() {
             onClick={() => handleOpenCheckout('yearly')}
             style={{
               width: '100%',
-              padding: '10px',
-              borderRadius: '10px',
-              background: 'var(--panel-inner-bg)',
-              border: '1px solid var(--border-color)',
+              padding: '12px',
+              borderRadius: '9999px',
+              background: 'rgba(255, 255, 255, 0.06)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
               color: 'var(--text-main)',
               cursor: 'pointer',
               fontWeight: 700,
-              fontSize: '0.85rem'
+              fontSize: '0.86rem',
+              backdropFilter: 'blur(10px)'
             }}
           >
             {currentPlan.tierId === 'yearly' ? 'Current Plan (Active ✓)' : 'Upgrade for $149 / yr'}

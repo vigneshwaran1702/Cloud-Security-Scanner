@@ -3,8 +3,14 @@ import { createContext, useContext, useState } from 'react';
 const EarthPortalContext = createContext();
 
 export function EarthPortalProvider({ children }) {
-  // Starts on the opening screen on load so user sees particles gathering into Earth
-  const [isEntered, setIsEntered] = useState(false);
+  // Check sessionStorage so once entered, the user stays entered across refreshes/direct routes
+  const [isEntered, setIsEntered] = useState(() => {
+    try {
+      return sessionStorage.getItem('cloudguard_earth_entered') === 'true';
+    } catch {
+      return false;
+    }
+  });
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const enterPortal = () => {

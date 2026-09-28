@@ -161,23 +161,17 @@ export default function MainLayout() {
                 width: '30px',
                 height: '30px',
                 objectFit: 'contain',
-                filter: 'drop-shadow(0 1px 4px rgba(26, 115, 232, 0.35))',
+                filter: 'drop-shadow(0 2px 8px var(--primary-glow))',
                 flexShrink: 0
               }}
             />
-            <div style={{
-              fontSize: '1.05rem',
-              fontWeight: 700,
-              color: 'var(--text-main)',
-              letterSpacing: '-0.01em',
-              whiteSpace: 'nowrap',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '4px',
-              flexShrink: 0
-            }}>
-              <span>Cloud</span>
-              <span style={{ color: '#1a73e8', fontWeight: 600 }}>Security</span>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+              <span style={{ fontWeight: 800, fontSize: '1.1rem', letterSpacing: '-0.02em', color: 'var(--text-main)' }}>
+                Cloud Security
+              </span>
+              <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.74rem', color: 'var(--primary)', fontWeight: 600 }}>
+                . evolved
+              </span>
             </div>
           </Link>
 
@@ -288,18 +282,16 @@ export default function MainLayout() {
                 onClick={() => openAuthModal({ title: 'Sign In to Cloud Security', subtitle: 'Sign in with your Google account or email/password.' })}
                 className="btn btn-primary"
                 style={{
-                  padding: '6px 14px',
-                  background: '#1a73e8',
-                  borderColor: '#1a73e8',
-                  borderRadius: '8px',
-                  fontSize: '0.82rem',
-                  fontWeight: 600,
+                  padding: '7px 18px',
+                  borderRadius: '9999px',
+                  fontSize: '0.84rem',
+                  fontWeight: 700,
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
                 }}
               >
-                <LogIn size={15} />
+                <LogIn size={14} />
                 <span>Login</span>
               </button>
               
@@ -308,16 +300,17 @@ export default function MainLayout() {
                 onClick={() => openAuthModal({ title: 'Create Cloud Security Account', subtitle: 'Create a new account with your Google account or email/password.' })}
                 className="btn"
                 style={{
-                  padding: '6px 12px',
-                  background: 'var(--panel-inner-bg)',
-                  border: '1px solid var(--border-color)',
+                  padding: '7px 16px',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
                   color: 'var(--text-main)',
-                  borderRadius: '8px',
-                  fontSize: '0.82rem',
+                  borderRadius: '9999px',
+                  fontSize: '0.84rem',
                   fontWeight: 600,
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '5px',
+                  gap: '6px',
+                  backdropFilter: 'blur(10px)'
                 }}
               >
                 <User size={14} />
