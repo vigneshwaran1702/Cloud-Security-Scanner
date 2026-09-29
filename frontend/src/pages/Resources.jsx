@@ -195,7 +195,7 @@ export default function Resources() {
         <div className="flex items-center justify-between gap-4" style={{ flexWrap: 'wrap' }}>
 
           {/* Cloud Tabs */}
-          <div className="flex gap-2">
+          <div className="flex gap-2" style={{ flexWrap: 'wrap' }}>
             {cloudTabs.map(tab => (
               <button
                 key={tab}

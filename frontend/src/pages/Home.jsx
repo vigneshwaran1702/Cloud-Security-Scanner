@@ -308,7 +308,7 @@ export default function Home() {
         </Link>
 
         {/* Center Editorial Lowercase Nav Links */}
-        <div className="hidden-mobile" style={{ display: 'flex', alignItems: 'center', gap: '20px', fontSize: '0.88rem', fontWeight: 500 }}>
+        <div className="home-desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '20px', fontSize: '0.88rem', fontWeight: 500 }}>
           <a href="#services" style={{ color: 'var(--text-muted)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '3px', transition: 'var(--transition)' }}>
             services<span style={{ fontSize: '0.65rem' }}>▾</span>
           </a>
@@ -381,7 +381,7 @@ export default function Home() {
           {/* Mobile Hamburger Toggle */}
           <button
             type="button"
-            className="visible-mobile"
+            className="home-mobile-toggle"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle navigation menu"
             style={{
@@ -405,7 +405,7 @@ export default function Home() {
       {/* Mobile Slide-Down Menu Overlay */}
       {isMobileMenuOpen && (
         <div
-          className="visible-mobile"
+          className="home-mobile-toggle"
           style={{
             position: 'sticky',
             top: '64px',
@@ -690,7 +690,7 @@ export default function Home() {
                 }
                 style={{
                   flex: 1,
-                  minWidth: '220px',
+                  minWidth: 'min(100%, 200px)',
                   background: 'transparent',
                   color: 'var(--text-main)',
                   border: 'none',
@@ -833,7 +833,7 @@ export default function Home() {
         {/* 5-Step Cards Grid */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))',
           gap: '20px'
         }}>
           {methodPhases.map((phase, idx) => (
@@ -920,7 +920,7 @@ export default function Home() {
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 290px), 1fr))',
           gap: '22px'
         }}>
           {capabilities.map((cap, i) => {
@@ -1017,7 +1017,7 @@ export default function Home() {
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
             gap: '20px'
           }}>
             {/* Tool 1 */}
@@ -1129,7 +1129,7 @@ export default function Home() {
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
           gap: '24px'
         }}>
           <div className="evolve-card" style={{ padding: '34px 28px', position: 'relative' }}>
@@ -1372,10 +1372,10 @@ export default function Home() {
 
             {/* Terminal Body */}
             <div style={{
-              padding: '24px',
+              padding: 'clamp(14px, 3vw, 24px)',
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
-              gap: '24px',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
+              gap: '20px',
               alignItems: 'center'
             }}>
               {/* Left Column: Interactive 3D Multi-Cloud Telemetry Radar */}
@@ -1423,7 +1423,7 @@ export default function Home() {
                 </div>
 
                 {/* Score & Action Row */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 140px), 1fr))', gap: '12px' }}>
                   <div style={{ background: '#141414', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '16px' }}>
                     <div style={{ fontFamily: 'JetBrains Mono', fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Security Posture</div>
                     <div style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--success)', marginTop: '4px' }}>94 / 100</div>
@@ -1480,7 +1480,7 @@ export default function Home() {
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
           gap: '16px'
         }}>
           {frameworks.map((fw, i) => (
@@ -1537,7 +1537,7 @@ export default function Home() {
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))',
           gap: '20px'
         }}>
           {securityGuarantees.map((sec, sIdx) => {
@@ -1634,7 +1634,7 @@ export default function Home() {
           maxWidth: '1280px',
           margin: '0 auto',
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))',
           gap: '36px',
           marginBottom: '48px'
         }}>
