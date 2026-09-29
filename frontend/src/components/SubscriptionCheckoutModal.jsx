@@ -826,11 +826,11 @@ export default function SubscriptionCheckoutModal({ isOpen, onClose, selectedTie
                 </div>
 
                 {/* UTR Input Form */}
-                <form onSubmit={handleConfirmPaid} style={{ background: 'var(--panel-inner-bg)', padding: '18px 20px', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
-                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
+                <form onSubmit={handleConfirmPaid} style={{ background: 'var(--panel-inner-bg)', padding: '20px', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
+                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-main)', display: 'block', marginBottom: '8px', letterSpacing: '0.01em' }}>
                     Enter 12-Digit UPI UTR / Reference ID <span style={{ color: 'var(--critical)' }}>*</span>
                   </label>
-                  <div className="flex gap-2">
+                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                     <input
                       type="text"
                       maxLength={12}
@@ -842,12 +842,13 @@ export default function SubscriptionCheckoutModal({ isOpen, onClose, selectedTie
                         if (fieldErrors.upiUtr) setFieldErrors((prev) => ({ ...prev, upiUtr: null }));
                       }}
                       style={{
-                        flex: 1,
-                        padding: '10px 14px',
+                        flex: '1 1 240px',
+                        minWidth: '220px',
+                        padding: '11px 16px',
                         background: 'var(--input-bg)',
                         border: fieldErrors.upiUtr ? '1px solid var(--critical)' : '1px solid var(--border-color)',
                         borderRadius: '10px',
-                        fontSize: '0.9rem',
+                        fontSize: '0.92rem',
                         color: 'var(--text-main)',
                         fontFamily: 'monospace',
                         outline: 'none',
@@ -857,19 +858,20 @@ export default function SubscriptionCheckoutModal({ isOpen, onClose, selectedTie
                       type="submit"
                       className="btn btn-primary"
                       style={{
-                        padding: '10px 24px',
+                        padding: '11px 24px',
                         fontSize: '0.9rem',
                         fontWeight: 700,
                         borderRadius: '10px',
                         cursor: 'pointer',
                         whiteSpace: 'nowrap',
+                        flex: '0 0 auto',
                       }}
                     >
                       I Have Paid — Confirm Subscription <ArrowRight size={16} />
                     </button>
                   </div>
                   {fieldErrors.upiUtr && (
-                    <div style={{ fontSize: '0.75rem', color: 'var(--critical)', marginTop: '6px', fontWeight: 600 }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--critical)', marginTop: '8px', fontWeight: 600 }}>
                       ⚠️ {fieldErrors.upiUtr}
                     </div>
                   )}
@@ -942,11 +944,11 @@ export default function SubscriptionCheckoutModal({ isOpen, onClose, selectedTie
                   </div>
                 </div>
 
-                <form onSubmit={handleConfirmPaid} style={{ background: 'var(--panel-inner-bg)', padding: '18px 20px', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
-                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-main)', display: 'block', marginBottom: '6px' }}>
+                <form onSubmit={handleConfirmPaid} style={{ background: 'var(--panel-inner-bg)', padding: '20px', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
+                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-main)', display: 'block', marginBottom: '8px', letterSpacing: '0.01em' }}>
                     Enter Blockchain Transaction Hash (TxHash / TxID) <span style={{ color: 'var(--critical)' }}>*</span>
                   </label>
-                  <div className="flex gap-2">
+                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                     <input
                       type="text"
                       placeholder="e.g. 0x4f8a29b8c... (from Binance, Metamask, or TrustWallet)"
@@ -956,12 +958,13 @@ export default function SubscriptionCheckoutModal({ isOpen, onClose, selectedTie
                         if (fieldErrors.cryptoTxHash) setFieldErrors((prev) => ({ ...prev, cryptoTxHash: null }));
                       }}
                       style={{
-                        flex: 1,
-                        padding: '10px 14px',
+                        flex: '1 1 240px',
+                        minWidth: '220px',
+                        padding: '11px 16px',
                         background: 'var(--input-bg)',
                         border: fieldErrors.cryptoTxHash ? '1px solid var(--critical)' : '1px solid var(--border-color)',
                         borderRadius: '10px',
-                        fontSize: '0.85rem',
+                        fontSize: '0.88rem',
                         color: 'var(--text-main)',
                         fontFamily: 'monospace',
                         outline: 'none',
@@ -971,19 +974,20 @@ export default function SubscriptionCheckoutModal({ isOpen, onClose, selectedTie
                       type="submit"
                       className="btn btn-primary"
                       style={{
-                        padding: '10px 24px',
+                        padding: '11px 24px',
                         fontSize: '0.9rem',
                         fontWeight: 700,
                         borderRadius: '10px',
                         cursor: 'pointer',
                         whiteSpace: 'nowrap',
+                        flex: '0 0 auto',
                       }}
                     >
                       Verify On-Chain & Confirm <ArrowRight size={16} />
                     </button>
                   </div>
                   {fieldErrors.cryptoTxHash && (
-                    <div style={{ fontSize: '0.75rem', color: 'var(--critical)', marginTop: '6px', fontWeight: 600 }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--critical)', marginTop: '8px', fontWeight: 600 }}>
                       ⚠️ {fieldErrors.cryptoTxHash}
                     </div>
                   )}
@@ -1126,54 +1130,54 @@ export default function SubscriptionCheckoutModal({ isOpen, onClose, selectedTie
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-6" style={{ alignItems: 'start' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px', alignItems: 'start' }}>
               {/* Left Column: Plan Summary */}
               <div
                 style={{
                   background: 'var(--panel-inner-bg)',
                   border: '1px solid var(--border-color)',
                   borderRadius: '16px',
-                  padding: '20px',
+                  padding: '22px',
                 }}
               >
-                <div className="flex justify-between items-start" style={{ marginBottom: '16px' }}>
+                <div className="flex justify-between items-start" style={{ marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
                   <div>
-                    <span style={{ fontSize: '0.72rem', background: 'var(--badge-primary-bg)', color: 'var(--badge-primary-color)', border: '1px solid var(--badge-primary-border)', padding: '2px 8px', borderRadius: '8px', fontWeight: 700 }}>
+                    <span style={{ fontSize: '0.72rem', background: 'var(--badge-primary-bg)', color: 'var(--badge-primary-color)', border: '1px solid var(--badge-primary-border)', padding: '2px 8px', borderRadius: '8px', fontWeight: 700, letterSpacing: '0.04em' }}>
                       SELECTED PLAN
                     </span>
-                    <h4 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '6px 0 0', color: 'var(--text-main)' }}>
+                    <h4 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '6px 0 0', color: 'var(--text-main)' }}>
                       {targetTier.name}
                     </h4>
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                    <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.02em' }}>
                       ${discountedPrice}
                     </div>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                    <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
                       /{targetTier.period}
                     </span>
                   </div>
                 </div>
 
-                <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '14px', marginBottom: '16px' }}>
-                  <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--primary)', marginBottom: '10px' }}>
+                <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '16px', marginBottom: '16px' }}>
+                  <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--primary)', marginBottom: '12px', letterSpacing: '0.04em' }}>
                     KEY HIGHLIGHTS:
                   </div>
-                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.8rem' }}>
-                    <li className="flex items-center gap-2">
-                      <ShieldCheck size={14} color="var(--success)" />
+                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.82rem' }}>
+                    <li className="flex items-start gap-2.5" style={{ lineHeight: 1.45 }}>
+                      <ShieldCheck size={15} color="var(--success)" style={{ marginTop: '2px', flexShrink: 0 }} />
                       <span>Safe Production Zero-Downtime Auto-Fixes</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <Sparkles size={14} color="var(--primary)" />
+                    <li className="flex items-start gap-2.5" style={{ lineHeight: 1.45 }}>
+                      <Sparkles size={15} color="var(--primary)" style={{ marginTop: '2px', flexShrink: 0 }} />
                       <span>24/7 Instant AI SecOps Help Hotline</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <Activity size={14} color="var(--success)" />
+                    <li className="flex items-start gap-2.5" style={{ lineHeight: 1.45 }}>
+                      <Activity size={15} color="var(--success)" style={{ marginTop: '2px', flexShrink: 0 }} />
                       <span>Risk Contribution & Blast-Radius Simulator</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <Layers size={14} color="var(--primary)" />
+                    <li className="flex items-start gap-2.5" style={{ lineHeight: 1.45 }}>
+                      <Layers size={15} color="var(--primary)" style={{ marginTop: '2px', flexShrink: 0 }} />
                       <span>Continuous Multi-Cloud Scanning (AWS/Azure/GCP)</span>
                     </li>
                   </ul>
@@ -1188,11 +1192,11 @@ export default function SubscriptionCheckoutModal({ isOpen, onClose, selectedTie
                     onChange={(e) => setCouponCode(e.target.value)}
                     style={{
                       flex: 1,
-                      padding: '8px 12px',
+                      padding: '9px 14px',
                       background: 'var(--input-bg)',
                       border: '1px solid var(--border-color)',
                       borderRadius: '8px',
-                      fontSize: '0.8rem',
+                      fontSize: '0.82rem',
                       color: 'var(--text-main)',
                       outline: 'none',
                     }}
@@ -1204,8 +1208,8 @@ export default function SubscriptionCheckoutModal({ isOpen, onClose, selectedTie
                       background: 'var(--badge-primary-bg)',
                       border: '1px solid var(--badge-primary-border)',
                       color: 'var(--badge-primary-color)',
-                      padding: '8px 12px',
-                      fontSize: '0.78rem',
+                      padding: '9px 16px',
+                      fontSize: '0.8rem',
                       fontWeight: 700,
                       borderRadius: '8px',
                       cursor: 'pointer',
@@ -1229,11 +1233,11 @@ export default function SubscriptionCheckoutModal({ isOpen, onClose, selectedTie
 
               {/* Right Column: Payment Form with strict validations */}
               <div>
-                <div style={{ marginBottom: '14px' }}>
-                  <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                <div style={{ marginBottom: '16px' }}>
+                  <label style={{ fontSize: '0.76rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     Select Payment Method
                   </label>
-                  <div className="grid grid-cols-3 gap-2" style={{ marginTop: '6px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginTop: '8px' }}>
                     {[
                       { id: 'upi', label: 'UPI / QR', icon: Smartphone },
                       { id: 'card', label: 'Credit Card', icon: CreditCard },
@@ -1250,22 +1254,23 @@ export default function SubscriptionCheckoutModal({ isOpen, onClose, selectedTie
                             setFieldErrors({});
                           }}
                           style={{
-                            padding: '10px 8px',
-                            borderRadius: '10px',
+                            padding: '12px 8px',
+                            borderRadius: '12px',
                             background: active ? 'var(--badge-primary-bg)' : 'var(--panel-inner-bg)',
                             border: active ? '2px solid var(--primary)' : '1px solid var(--border-color)',
                             color: active ? 'var(--primary)' : 'var(--text-muted)',
-                            fontSize: '0.78rem',
+                            fontSize: '0.8rem',
                             fontWeight: 700,
+                            lineHeight: 1.3,
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
-                            gap: '4px',
+                            gap: '6px',
                             cursor: 'pointer',
                             transition: 'all 0.15s',
                           }}
                         >
-                          <Icon size={18} />
+                          <Icon size={20} />
                           {m.label}
                         </button>
                       );

@@ -180,7 +180,7 @@ export default function Register() {
                 placeholder="Your Name"
                 style={{
                   width: '100%',
-                  padding: '12px 14px 12px 42px',
+                  padding: '12px 16px 12px 44px',
                   borderRadius: '10px',
                   fontSize: '0.95rem',
                   outline: 'none',
@@ -204,7 +204,7 @@ export default function Register() {
                 placeholder="yourname@gmail.com"
                 style={{
                   width: '100%',
-                  padding: '12px 14px 12px 42px',
+                  padding: '12px 16px 12px 44px',
                   borderRadius: '10px',
                   fontSize: '0.95rem',
                   outline: 'none',
@@ -229,7 +229,7 @@ export default function Register() {
                 placeholder="At least 6 characters"
                 style={{
                   width: '100%',
-                  padding: '12px 42px 12px 42px',
+                  padding: '12px 48px 12px 44px',
                   borderRadius: '10px',
                   fontSize: '0.95rem',
                   outline: 'none',
@@ -274,7 +274,7 @@ export default function Register() {
                 placeholder="Re-enter password"
                 style={{
                   width: '100%',
-                  padding: '12px 42px 12px 42px',
+                  padding: '12px 48px 12px 44px',
                   borderRadius: '10px',
                   fontSize: '0.95rem',
                   outline: 'none',

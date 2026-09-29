@@ -252,11 +252,39 @@ export default function WorldAnimation({ className = '', onRegionClick = null })
           ctx.arc(node.proj.px, node.proj.py, size * 0.45, 0, Math.PI * 2);
           ctx.fill();
 
-          // Node Label for prominent front nodes
+          // Node Label for prominent front nodes with neat background pill
           if (node.proj.z > 0.4) {
-            ctx.font = `${Math.round(9 * (window.devicePixelRatio || 1))}px JetBrains Mono, monospace`;
-            ctx.fillStyle = 'rgba(240, 240, 248, 0.9)';
-            ctx.fillText(node.provider, node.proj.px + size + 4, node.proj.py + 3);
+            const dpr = window.devicePixelRatio || 1;
+            const fontSize = Math.round(9 * dpr);
+            ctx.font = `600 ${fontSize}px JetBrains Mono, monospace`;
+            
+            const labelText = node.provider;
+            const textMetrics = ctx.measureText(labelText);
+            const textWidth = textMetrics.width;
+            const labelX = node.proj.px + size + 8 * dpr;
+            const labelY = node.proj.py;
+            const boxPaddingX = 5 * dpr;
+            const boxPaddingY = 3 * dpr;
+
+            // Clean pill container behind text to protect letters from intersecting lines
+            ctx.fillStyle = 'rgba(16, 16, 24, 0.85)';
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.lineWidth = 1 * dpr;
+            ctx.beginPath();
+            ctx.roundRect(
+              labelX - boxPaddingX,
+              labelY - fontSize * 0.7 - boxPaddingY,
+              textWidth + boxPaddingX * 2,
+              fontSize + boxPaddingY * 2,
+              4 * dpr
+            );
+            ctx.fill();
+            ctx.stroke();
+
+            // Clear text letters
+            ctx.fillStyle = '#f0f0f8';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(labelText, labelX, labelY);
           }
         }
       });
@@ -365,10 +393,10 @@ export default function WorldAnimation({ className = '', onRegionClick = null })
         position: 'absolute',
         top: '12px',
         left: '12px',
-        background: 'rgba(23, 23, 23, 0.85)',
+        background: 'rgba(23, 23, 23, 0.88)',
         border: '1px solid var(--border-color)',
         backdropFilter: 'blur(12px)',
-        padding: '8px 14px',
+        padding: '6px 14px',
         borderRadius: '9999px',
         display: 'flex',
         alignItems: 'center',
@@ -376,47 +404,63 @@ export default function WorldAnimation({ className = '', onRegionClick = null })
         fontSize: '0.74rem',
         fontFamily: 'JetBrains Mono, monospace',
         color: 'var(--text-main)',
-        boxShadow: '0 4px 16px rgba(0,0,0,0.5)'
+        boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
+        whiteSpace: 'nowrap',
+        zIndex: 2,
       }}>
-        <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', display: 'inline-block', boxShadow: '0 0 8px #10b981' }} />
+        <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', display: 'inline-block', boxShadow: '0 0 8px #10b981', flexShrink: 0 }} />
         <span>10 REGIONS ACTIVE</span>
-        <span style={{ opacity: 0.3 }}>|</span>
+        <span style={{ opacity: 0.35 }}>|</span>
         <span style={{ color: 'var(--primary)' }}>{activeTelemetry.latencyMs}ms</span>
       </div>
 
+      {/* Drag Hint Pill (Cleanly placed at top right) */}
       <div style={{
         position: 'absolute',
-        bottom: '12px',
+        top: '12px',
         right: '12px',
-        background: 'rgba(23, 23, 23, 0.85)',
+        background: 'rgba(23, 23, 23, 0.75)',
         border: '1px solid var(--border-color)',
         backdropFilter: 'blur(12px)',
-        padding: '8px 14px',
+        padding: '5px 10px',
         borderRadius: '9999px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        fontSize: '0.74rem',
-        fontFamily: 'JetBrains Mono, monospace',
-        color: 'var(--text-main)',
-        boxShadow: '0 4px 16px rgba(0,0,0,0.5)'
-      }}>
-        <Shield size={13} color="var(--primary)" />
-        <span>MULTI-CLOUD CSPM TELEMETRY</span>
-      </div>
-
-      {/* Subtle Drag Hint */}
-      <div style={{
-        position: 'absolute',
-        bottom: '12px',
-        left: '12px',
         fontSize: '0.68rem',
         fontFamily: 'JetBrains Mono, monospace',
         color: 'var(--text-muted)',
         pointerEvents: 'none',
-        opacity: 0.6
+        display: 'flex',
+        alignItems: 'center',
+        gap: '4px',
+        whiteSpace: 'nowrap',
+        zIndex: 2,
       }}>
-        drag to rotate ⤾
+        <span>drag to rotate</span>
+        <span style={{ color: 'var(--primary)' }}>⤾</span>
+      </div>
+
+      {/* Bottom Telemetry Pill */}
+      <div style={{
+        position: 'absolute',
+        bottom: '12px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        background: 'rgba(23, 23, 23, 0.88)',
+        border: '1px solid var(--border-color)',
+        backdropFilter: 'blur(12px)',
+        padding: '6px 14px',
+        borderRadius: '9999px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        fontSize: '0.72rem',
+        fontFamily: 'JetBrains Mono, monospace',
+        color: 'var(--text-main)',
+        boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
+        whiteSpace: 'nowrap',
+        zIndex: 2,
+      }}>
+        <Shield size={13} color="var(--primary)" style={{ flexShrink: 0 }} />
+        <span>MULTI-CLOUD CSPM TELEMETRY</span>
       </div>
     </div>
   );

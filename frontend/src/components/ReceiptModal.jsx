@@ -126,17 +126,17 @@ export default function ReceiptModal({ isOpen, onClose, invoice }) {
         </button>
 
         {/* Header: Brand & Invoice Meta */}
-        <div className="flex justify-between items-start" style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '20px', marginBottom: '22px' }}>
+        <div className="flex justify-between items-start" style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '20px', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
           <div>
-            <div className="flex items-center gap-2" style={{ marginBottom: '6px' }}>
-              <div style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent))', padding: '6px', borderRadius: '10px' }}>
+            <div className="flex items-center gap-2.5" style={{ marginBottom: '6px' }}>
+              <div style={{ background: 'linear-gradient(135deg, var(--primary), var(--accent))', padding: '7px', borderRadius: '10px' }}>
                 <ShieldCheck size={20} color="white" />
               </div>
-              <span style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-main)' }}>
+              <span style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.01em' }}>
                 {websiteName}
               </span>
             </div>
-            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
               {companyName}
             </div>
           </div>
@@ -149,9 +149,11 @@ export default function ReceiptModal({ isOpen, onClose, invoice }) {
                 background: 'rgba(16, 185, 129, 0.15)',
                 color: 'var(--success)',
                 border: '1px solid rgba(16, 185, 129, 0.3)',
-                padding: '3px 10px',
+                padding: '4px 10px',
                 borderRadius: '8px',
                 textTransform: 'uppercase',
+                letterSpacing: '0.04em',
+                display: 'inline-block',
               }}
             >
               Official Receipt ✓
@@ -166,27 +168,27 @@ export default function ReceiptModal({ isOpen, onClose, invoice }) {
         </div>
 
         {/* 2-Column Overview */}
-        <div className="grid grid-cols-2 gap-4" style={{ marginBottom: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '18px', marginBottom: '22px' }}>
           {/* Box 1: Package & Details */}
-          <div style={{ background: 'var(--panel-inner-bg)', padding: '16px', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
-            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, marginBottom: '4px' }}>
+          <div style={{ background: 'var(--panel-inner-bg)', padding: '20px', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
+            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, marginBottom: '6px', letterSpacing: '0.04em' }}>
               Subscribed Package
             </div>
-            <div style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '4px' }}>
+            <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '6px' }}>
               {planName}
             </div>
-            <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: '0 0 10px', lineHeight: 1.4 }}>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: '0 0 12px', lineHeight: 1.5 }}>
               {invoice.planDescription || 'Full autonomous cloud security & compliance defense.'}
             </p>
 
-            <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '8px' }}>
-              <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--primary)', marginBottom: '6px' }}>
+            <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '10px' }}>
+              <div style={{ fontSize: '0.74rem', fontWeight: 700, color: 'var(--primary)', marginBottom: '8px', letterSpacing: '0.03em' }}>
                 Included Safeguards:
               </div>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.75rem', color: 'var(--text-main)' }}>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.78rem', color: 'var(--text-main)' }}>
                 {features.slice(0, 3).map((feat, idx) => (
-                  <li key={idx} className="flex items-center gap-1.5">
-                    <CheckCircle2 size={12} color="var(--success)" />
+                  <li key={idx} className="flex items-start gap-2" style={{ lineHeight: 1.4 }}>
+                    <CheckCircle2 size={13} color="var(--success)" style={{ marginTop: '2px', flexShrink: 0 }} />
                     <span>{feat}</span>
                   </li>
                 ))}
@@ -195,28 +197,28 @@ export default function ReceiptModal({ isOpen, onClose, invoice }) {
           </div>
 
           {/* Box 2: Payment Method & Purchase Date */}
-          <div style={{ background: 'var(--panel-inner-bg)', padding: '16px', borderRadius: '16px', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div style={{ background: 'var(--panel-inner-bg)', padding: '20px', borderRadius: '16px', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div>
-              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, marginBottom: '6px' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, marginBottom: '6px', letterSpacing: '0.04em' }}>
                 Payment Method Used
               </div>
-              <div className="flex items-center gap-2" style={{ marginBottom: '4px' }}>
+              <div className="flex items-center gap-2" style={{ marginBottom: '6px' }}>
                 {methodIcon}
-                <span style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                <span style={{ fontSize: '0.94rem', fontWeight: 700, color: 'var(--text-main)' }}>
                   {methodTitle}
                 </span>
               </div>
-              <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', fontFamily: 'monospace', wordBreak: 'break-all', marginBottom: '12px' }}>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontFamily: 'monospace', overflowWrap: 'break-word', wordBreak: 'break-word', marginBottom: '14px', lineHeight: 1.45 }}>
                 {methodDetails}
               </div>
             </div>
 
-            <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '10px' }}>
-              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, marginBottom: '4px' }}>
+            <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '12px' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, marginBottom: '6px', letterSpacing: '0.04em' }}>
                 Date & Time of Purchase
               </div>
-              <div className="flex items-center gap-1.5" style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>
-                <Calendar size={14} color="var(--primary)" />
+              <div className="flex items-center gap-2" style={{ fontSize: '0.86rem', fontWeight: 600, color: 'var(--text-main)' }}>
+                <Calendar size={14} color="var(--primary)" style={{ flexShrink: 0 }} />
                 <span>{purchaseDateFull}</span>
               </div>
             </div>
@@ -224,7 +226,7 @@ export default function ReceiptModal({ isOpen, onClose, invoice }) {
         </div>
 
         {/* Pricing Summary Line Items */}
-        <div style={{ background: 'var(--panel-inner-bg)', padding: '18px 20px', borderRadius: '16px', border: '1px solid var(--border-color)', marginBottom: '24px' }}>
+        <div style={{ background: 'var(--panel-inner-bg)', padding: '20px 22px', borderRadius: '16px', border: '1px solid var(--border-color)', marginBottom: '24px' }}>
           <div className="flex justify-between items-center" style={{ marginBottom: '8px', fontSize: '0.85rem' }}>
             <span style={{ color: 'var(--text-muted)' }}>Package Rate ({planName}):</span>
             <span style={{ color: 'var(--text-main)', fontWeight: 600 }}>${amount}.00 USD</span>
@@ -233,20 +235,20 @@ export default function ReceiptModal({ isOpen, onClose, invoice }) {
             <span style={{ color: 'var(--text-muted)' }}>Taxes & Cloud Compliance Surcharge:</span>
             <span style={{ color: 'var(--success)', fontWeight: 600 }}>$0.00 (Included)</span>
           </div>
-          <div className="flex justify-between items-center" style={{ borderTop: '1px solid var(--border-color)', paddingTop: '10px', marginTop: '10px' }}>
+          <div className="flex justify-between items-center" style={{ borderTop: '1px solid var(--border-color)', paddingTop: '12px', marginTop: '12px' }}>
             <span style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-main)' }}>Total Amount Paid:</span>
-            <span style={{ fontSize: '1.4rem', fontWeight: 900, color: 'var(--primary)' }}>${amount}.00 USD</span>
+            <span style={{ fontSize: '1.45rem', fontWeight: 900, color: 'var(--primary)', letterSpacing: '-0.02em' }}>${amount}.00 USD</span>
           </div>
         </div>
 
         {/* Footer Actions */}
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-1.5" style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-            <Lock size={13} />
+        <div className="flex justify-between items-center" style={{ flexWrap: 'wrap', gap: '14px' }}>
+          <div className="flex items-center gap-2" style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+            <Lock size={14} style={{ flexShrink: 0 }} />
             <span>Cryptographically Verified Receipt • 256-Bit TLS</span>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex gap-2.5">
             <button
               className="btn btn-primary"
               onClick={() => window.print()}

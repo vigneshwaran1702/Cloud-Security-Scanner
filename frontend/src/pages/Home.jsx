@@ -542,15 +542,18 @@ export default function Home() {
           <div style={{
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '8px',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+            gap: '10px',
             background: 'var(--badge-primary-bg)',
             border: '1px solid var(--badge-primary-border)',
-            padding: '7px 22px',
+            padding: '8px 22px',
             borderRadius: '9999px',
             fontSize: '0.84rem',
+            lineHeight: 1.4,
             fontFamily: 'JetBrains Mono, monospace',
             color: 'var(--badge-primary-color)',
-            marginBottom: '26px',
+            marginBottom: '28px',
             boxShadow: '0 2px 16px var(--primary-glow)'
           }}>
             <span style={{ color: 'var(--primary)' }}>✦</span>
@@ -563,13 +566,13 @@ export default function Home() {
           <h1 style={{
             fontSize: 'clamp(2.5rem, 5.5vw, 4.4rem)',
             fontWeight: 850,
-            lineHeight: 1.1,
+            lineHeight: 1.2,
             letterSpacing: '-0.035em',
             margin: '0 0 24px 0',
             textTransform: 'lowercase'
           }}>
             your cloud security partner. <br />
-            <span className="evolve-gradient-text">evolved.</span>
+            <span className="evolve-gradient-text" style={{ display: 'inline-block', marginTop: '4px' }}>evolved.</span>
           </h1>
 
           {/* Detailed Subtitle */}
@@ -578,7 +581,7 @@ export default function Home() {
             color: 'var(--text-muted)',
             lineHeight: 1.7,
             maxWidth: '740px',
-            margin: '0 auto 24px auto'
+            margin: '0 auto 28px auto'
           }}>
             AI specialists. A five-phase method — <strong style={{ color: 'var(--text-main)' }}>Discover</strong>, <strong style={{ color: 'var(--text-main)' }}>Diagnose</strong>, <strong style={{ color: 'var(--text-main)' }}>Design</strong>, <strong style={{ color: 'var(--text-main)' }}>Deliver</strong>, <strong style={{ color: 'var(--text-main)' }}>Evolve</strong> — that transforms how your business runs on the cloud. Multi-cloud telemetry across AWS, Azure &amp; GCP with zero agents required.
           </p>
@@ -588,73 +591,73 @@ export default function Home() {
             display: 'flex',
             flexWrap: 'wrap',
             justifyContent: 'center',
-            gap: '8px',
-            marginBottom: '28px'
+            gap: '10px',
+            marginBottom: '32px'
           }}>
             <span style={{
               background: 'rgba(255, 255, 255, 0.05)',
               border: '1px solid var(--border-color)',
-              padding: '4px 12px',
+              padding: '6px 14px',
               borderRadius: '999px',
               fontSize: '0.78rem',
               fontFamily: 'JetBrains Mono, monospace',
               color: 'var(--text-muted)',
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '6px'
+              gap: '7px'
             }}>
-              <ShieldCheck size={13} color="var(--success)" /> Zero-Agent Telemetry
+              <ShieldCheck size={14} color="var(--success)" /> Zero-Agent Telemetry
             </span>
             <span style={{
               background: 'rgba(255, 255, 255, 0.05)',
               border: '1px solid var(--border-color)',
-              padding: '4px 12px',
+              padding: '6px 14px',
               borderRadius: '999px',
               fontSize: '0.78rem',
               fontFamily: 'JetBrains Mono, monospace',
               color: 'var(--text-muted)',
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '6px'
+              gap: '7px'
             }}>
-              <Zap size={13} color="#eab308" /> Sub-Second Drift Detection
+              <Zap size={14} color="#eab308" /> Sub-Second Drift Detection
             </span>
             <span style={{
               background: 'rgba(255, 255, 255, 0.05)',
               border: '1px solid var(--border-color)',
-              padding: '4px 12px',
+              padding: '6px 14px',
               borderRadius: '999px',
               fontSize: '0.78rem',
               fontFamily: 'JetBrains Mono, monospace',
               color: 'var(--text-muted)',
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '6px'
+              gap: '7px'
             }}>
-              <Sparkles size={13} color="#a855f7" /> 1-Click AI Terraform Fixes
+              <Sparkles size={14} color="#a855f7" /> 1-Click AI Terraform Fixes
             </span>
             <span style={{
               background: 'rgba(255, 255, 255, 0.05)',
               border: '1px solid var(--border-color)',
-              padding: '4px 12px',
+              padding: '6px 14px',
               borderRadius: '999px',
               fontSize: '0.78rem',
               fontFamily: 'JetBrains Mono, monospace',
               color: 'var(--text-muted)',
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '6px'
+              gap: '7px'
             }}>
-              <Lock size={13} color="#38bdf8" /> 100% Read-Only Access
+              <Lock size={14} color="#38bdf8" /> 100% Read-Only Access
             </span>
           </div>
 
           {/* Quick Instant Audit Box (WeEvolveIT Diagnostic Pill) */}
-          <div id="audit-tool" style={{ width: '100%', maxWidth: '740px', marginBottom: '28px' }}>
+          <div id="audit-tool" style={{ width: '100%', maxWidth: '760px', marginBottom: '28px' }}>
             <form onSubmit={handleStartAudit} className="evolve-audit-form">
               {/* Provider Selector */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Cloud size={16} color="var(--primary)" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingLeft: '4px' }}>
+                <Cloud size={17} color="var(--primary)" />
                 <select
                   value={provider}
                   onChange={(e) => setProvider(e.target.value)}
@@ -666,7 +669,7 @@ export default function Home() {
                     fontSize: '0.88rem',
                     outline: 'none',
                     cursor: 'pointer',
-                    padding: '4px 8px 4px 0',
+                    padding: '6px 10px 6px 2px',
                     fontFamily: 'inherit'
                   }}
                 >
@@ -676,7 +679,7 @@ export default function Home() {
                 </select>
               </div>
 
-              <div className="audit-divider" style={{ width: '1px', height: '24px', background: 'var(--border-color)' }} />
+              <div className="audit-divider" style={{ width: '1px', height: '24px', background: 'var(--border-color)', margin: '0 4px' }} />
 
               {/* Cloud ID Input */}
               <input
@@ -699,7 +702,7 @@ export default function Home() {
                   fontSize: '0.88rem',
                   fontFamily: 'JetBrains Mono, monospace',
                   outline: 'none',
-                  padding: '6px 8px'
+                  padding: '8px 12px'
                 }}
               />
 
@@ -708,7 +711,7 @@ export default function Home() {
                 type="submit"
                 disabled={isSimulating}
                 className="evolve-pill-btn evolve-pill-btn-primary"
-                style={{ padding: '10px 24px', fontSize: '0.88rem', whiteSpace: 'nowrap' }}
+                style={{ padding: '10px 22px', fontSize: '0.88rem', whiteSpace: 'nowrap' }}
               >
                 {isSimulating ? (
                   <>
@@ -835,15 +838,15 @@ export default function Home() {
         {/* 5-Step Cards Grid */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-          gap: '18px'
+          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+          gap: '20px'
         }}>
           {methodPhases.map((phase, idx) => (
             <div
               key={idx}
               className="evolve-card"
               style={{
-                padding: '28px 22px',
+                padding: '28px 24px',
                 display: 'flex',
                 flexDirection: 'column',
                 position: 'relative',
@@ -1290,8 +1293,8 @@ export default function Home() {
                       transition: 'var(--transition)'
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '6px' }}>
-                      <span style={{ fontWeight: 700, fontSize: '0.94rem', color: 'var(--text-main)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', flexWrap: 'wrap', marginBottom: '6px' }}>
+                      <span style={{ fontWeight: 700, fontSize: '0.94rem', color: 'var(--text-main)', flex: '1 1 auto', lineHeight: 1.35 }}>
                         {srv.title}
                       </span>
                       {srv.tag && (
@@ -1299,10 +1302,12 @@ export default function Home() {
                           fontFamily: 'JetBrains Mono',
                           fontSize: '0.68rem',
                           color: srv.tag.includes('AI') ? 'var(--primary)' : 'var(--text-muted)',
-                          background: srv.tag.includes('AI') ? 'rgba(255, 255, 255, 0.12)' : 'var(--panel-inner-bg)',
-                          padding: '1px 6px',
+                          background: srv.tag.includes('AI') ? 'rgba(255, 255, 255, 0.14)' : 'var(--panel-inner-bg)',
+                          border: '1px solid var(--border-color)',
+                          padding: '2px 8px',
                           borderRadius: '999px',
-                          whiteSpace: 'nowrap'
+                          whiteSpace: 'nowrap',
+                          flexShrink: 0
                         }}>
                           {srv.tag}
                         </span>

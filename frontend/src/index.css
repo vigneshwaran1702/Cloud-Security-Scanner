@@ -217,8 +217,15 @@ code, pre, .font-mono {
 /* ================= Typography & Gradients ================= */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
   color: var(--text-main);
+  line-height: 1.28;
+}
+
+p {
+  line-height: 1.62;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 .gradient-text {
@@ -227,6 +234,7 @@ h1, h2, h3, h4, h5, h6 {
   background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
+  line-height: inherit;
 }
 
 /* ================= Buttons ================= */
@@ -239,6 +247,7 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 12px;
   font-weight: 600;
   font-size: 0.88rem;
+  line-height: 1.4;
   cursor: pointer;
   transition: var(--transition);
   border: 1px solid transparent;
@@ -246,6 +255,7 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
   overflow: hidden;
   user-select: none;
+  text-align: center;
 }
 
 .btn:active {
@@ -414,13 +424,15 @@ textarea::placeholder {
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  font-size: 0.72rem;
+  gap: 6px;
+  font-size: 0.74rem;
   font-weight: 700;
-  padding: 3px 9px;
+  padding: 4px 10px;
   border-radius: 9999px;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
+  line-height: 1.35;
+  white-space: nowrap;
 }
 
 .badge-primary {
@@ -1045,8 +1057,10 @@ textarea::placeholder {
 .evolve-card {
   background: var(--panel-bg-solid);
   border: 1px solid var(--border-color);
-  border-radius: 16px;
+  border-radius: 18px;
   transition: var(--transition);
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 .evolve-card:hover {
@@ -1059,14 +1073,17 @@ textarea::placeholder {
 .evolve-pill-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 10px 22px;
   border-radius: 9999px;
   font-size: 0.88rem;
   font-weight: 600;
+  line-height: 1.4;
   text-decoration: none;
   transition: var(--transition);
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .evolve-pill-btn-primary {
@@ -1101,14 +1118,16 @@ textarea::placeholder {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.75rem;
   letter-spacing: 0.04em;
-  padding: 4px 10px;
+  padding: 5px 12px;
   border-radius: 9999px;
   border: 1px solid var(--border-color);
   background: var(--panel-inner-bg);
   color: var(--text-muted);
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
+  line-height: 1.35;
+  white-space: nowrap;
 }
 
 /* WeEvolveIT Editorial Gradient Text */
@@ -1117,6 +1136,7 @@ textarea::placeholder {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  line-height: inherit;
 }
 
 /* WeEvolveIT Diagnostic Pill Audit Form */
@@ -1124,11 +1144,11 @@ textarea::placeholder {
   background: rgba(26, 26, 26, 0.88);
   border: 1px solid var(--border-color);
   border-radius: 9999px;
-  padding: 6px 8px 6px 20px;
+  padding: 8px 12px 8px 22px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  max-width: 740px;
+  gap: 14px;
+  max-width: 760px;
   margin: 0 auto;
   box-shadow: 0 20px 48px -12px rgba(0, 0, 0, 0.9), 0 0 30px var(--primary-glow);
   backdrop-filter: blur(20px);
@@ -1146,8 +1166,8 @@ textarea::placeholder {
     border-radius: 20px;
     flex-direction: column;
     align-items: stretch;
-    padding: 14px;
-    gap: 10px;
+    padding: 16px;
+    gap: 12px;
   }
   .evolve-audit-form .audit-divider {
     display: none;
