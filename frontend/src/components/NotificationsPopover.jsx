@@ -316,14 +316,14 @@ export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
                   <Icon size={16} color={config.color} />
                 </div>
 
-                <div style={{ flex: 1, minWidth: 0, paddingRight: item.isRead ? '18px' : '24px' }}>
-                  <div className="flex items-center gap-2" style={{ marginBottom: '3px' }}>
-                    <span style={{ fontSize: '0.86rem', fontWeight: item.isRead ? 600 : 700, color: 'var(--text-main)' }}>
+                <div style={{ flex: 1, minWidth: 0, paddingRight: '28px', paddingBottom: '2px' }}>
+                  <div className="flex items-center gap-2" style={{ marginBottom: '4px' }}>
+                    <span style={{ fontSize: '0.86rem', fontWeight: item.isRead ? 600 : 700, color: 'var(--text-main)', lineHeight: 1.35 }}>
                       {item.title}
                     </span>
                   </div>
 
-                  <p style={{ margin: '2px 0 6px 0', fontSize: '0.79rem', color: 'var(--text-muted)', lineHeight: 1.45 }}>
+                  <p style={{ margin: '2px 0 8px 0', fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: 1.5, overflowWrap: 'break-word' }}>
                     {item.description}
                   </p>
 
@@ -334,7 +334,7 @@ export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
                           background: 'var(--panel-inner-bg)',
                           border: '1px solid var(--border-color)',
                           color: 'var(--text-main)',
-                          padding: '2px 6px',
+                          padding: '2px 7px',
                           borderRadius: '4px',
                           fontWeight: 600,
                           fontSize: '0.7rem',
@@ -348,7 +348,7 @@ export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
                   </div>
                 </div>
 
-                {/* Delete button */}
+                {/* Delete button (Cleanly positioned with dedicated clearance) */}
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -357,15 +357,15 @@ export default function NotificationsPopover({ isOpen, onClose, triggerRef }) {
                   title="Dismiss notification"
                   style={{
                     position: 'absolute',
-                    bottom: '8px',
-                    right: '8px',
-                    background: 'transparent',
-                    border: 'none',
+                    top: '12px',
+                    right: item.isRead ? '10px' : '26px',
+                    background: 'var(--panel-inner-bg)',
+                    border: '1px solid var(--border-color)',
                     color: 'var(--text-muted)',
                     cursor: 'pointer',
-                    opacity: 0.6,
-                    padding: '4px',
-                    borderRadius: '4px',
+                    opacity: 0.75,
+                    padding: '5px',
+                    borderRadius: '6px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',

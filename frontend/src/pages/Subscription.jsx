@@ -227,7 +227,7 @@ export default function Subscription() {
         <div
           className="glass-panel"
           style={{
-            padding: '32px 24px',
+            padding: '36px 26px 30px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
@@ -244,29 +244,30 @@ export default function Subscription() {
           <div
             style={{
               position: 'absolute',
-              top: '-13px',
+              top: '-14px',
               left: '50%',
               transform: 'translateX(-50%)',
               background: 'linear-gradient(135deg, #7c5bff, #06b6d4)',
               color: 'white',
-              fontSize: '0.72rem',
+              fontSize: '0.74rem',
               fontWeight: 800,
-              padding: '3px 14px',
+              padding: '4px 16px',
               borderRadius: '20px',
-              letterSpacing: '0.05em',
+              letterSpacing: '0.06em',
               textTransform: 'uppercase',
               boxShadow: '0 4px 16px rgba(124, 91, 255, 0.45)',
               display: 'flex',
               alignItems: 'center',
-              gap: '5px',
-              whiteSpace: 'nowrap'
+              gap: '6px',
+              whiteSpace: 'nowrap',
+              zIndex: 3
             }}
           >
-            <Sparkles size={13} /> RECOMMENDED • 3 MONTHS ($39)
+            <Sparkles size={14} /> RECOMMENDED • 3 MONTHS ($39)
           </div>
 
           <div>
-            <div className="flex justify-between items-center" style={{ marginBottom: '14px', marginTop: '6px' }}>
+            <div className="flex justify-between items-center" style={{ marginBottom: '14px', marginTop: '10px' }}>
               <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#7c5bff', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 Quarterly (3 Months)
               </span>
@@ -549,12 +550,12 @@ export default function Subscription() {
                   }}
                 >
                   {/* Top Row: Website Name, Invoice ID & Paid Status */}
-                  <div className="flex justify-between items-center" style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '10px' }}>
-                    <div className="flex items-center gap-2">
-                      <div style={{ background: 'var(--badge-primary-bg)', padding: '4px 8px', borderRadius: '8px', fontSize: '0.72rem', fontWeight: 800, color: 'var(--primary)' }}>
+                  <div className="flex justify-between items-center" style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '12px', flexWrap: 'wrap', gap: '10px' }}>
+                    <div className="flex items-center gap-2.5" style={{ flexWrap: 'wrap' }}>
+                      <div style={{ background: 'var(--badge-primary-bg)', padding: '5px 10px', borderRadius: '8px', fontSize: '0.74rem', fontWeight: 800, color: 'var(--primary)', letterSpacing: '0.02em' }}>
                         {websiteName}
                       </div>
-                      <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                      <span style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '0.02em' }}>
                         {inv.id}
                       </span>
                     </div>
@@ -566,70 +567,70 @@ export default function Subscription() {
                   </div>
 
                   {/* Middle Grid: Package Name, Package Details, Payment Method, Date */}
-                  <div className="grid grid-cols-4 gap-4" style={{ fontSize: '0.82rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '16px', fontSize: '0.84rem' }}>
                     {/* 1. Package Name */}
                     <div>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '2px' }}>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '4px', letterSpacing: '0.04em' }}>
                         Package Name
                       </div>
-                      <div style={{ fontWeight: 800, color: 'var(--text-main)', fontSize: '0.92rem' }}>
+                      <div style={{ fontWeight: 800, color: 'var(--text-main)', fontSize: '0.94rem' }}>
                         {planName}
                       </div>
                     </div>
 
                     {/* 2. Package Details */}
                     <div>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '2px' }}>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '4px', letterSpacing: '0.04em' }}>
                         Package Details
                       </div>
-                      <div style={{ color: 'var(--text-muted)', fontSize: '0.78rem', lineHeight: 1.3 }}>
+                      <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', lineHeight: 1.45, overflowWrap: 'break-word' }}>
                         Safe Auto-Remediation • 24/7 AI SecOps • Real-Time Drift Alerts
                       </div>
                     </div>
 
                     {/* 3. Payment Method */}
                     <div>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '2px' }}>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '4px', letterSpacing: '0.04em' }}>
                         Payment Method
                       </div>
-                      <div className="flex items-center gap-1.5" style={{ fontWeight: 700, color: 'var(--text-main)' }}>
-                        {isUpi ? <Smartphone size={14} color="#097939" /> : isCrypto ? <Coins size={14} color="#f59e0b" /> : <CreditCard size={14} color="var(--primary)" />}
-                        <span style={{ fontSize: '0.8rem', wordBreak: 'break-all' }}>{methodDisplay}</span>
+                      <div className="flex items-center gap-2" style={{ fontWeight: 700, color: 'var(--text-main)' }}>
+                        {isUpi ? <Smartphone size={15} color="#097939" style={{ flexShrink: 0 }} /> : isCrypto ? <Coins size={15} color="#f59e0b" style={{ flexShrink: 0 }} /> : <CreditCard size={15} color="var(--primary)" style={{ flexShrink: 0 }} />}
+                        <span style={{ fontSize: '0.82rem', overflowWrap: 'break-word', wordBreak: 'break-word' }}>{methodDisplay}</span>
                       </div>
                     </div>
 
                     {/* 4. Date of Purchase */}
                     <div>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '2px' }}>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '4px', letterSpacing: '0.04em' }}>
                         Date of Purchase
                       </div>
-                      <div className="flex items-center gap-1.5" style={{ color: 'var(--text-main)', fontWeight: 600, fontSize: '0.8rem' }}>
-                        <Calendar size={13} color="var(--primary)" />
+                      <div className="flex items-center gap-1.5" style={{ color: 'var(--text-main)', fontWeight: 600, fontSize: '0.82rem' }}>
+                        <Calendar size={14} color="var(--primary)" style={{ flexShrink: 0 }} />
                         <span>{dateStr}</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Bottom Action Bar */}
-                  <div className="flex justify-between items-center" style={{ borderTop: '1px solid var(--border-color)', paddingTop: '10px', marginTop: '2px' }}>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
+                  <div className="flex justify-between items-center" style={{ borderTop: '1px solid var(--border-color)', paddingTop: '12px', marginTop: '2px', flexWrap: 'wrap', gap: '10px' }}>
+                    <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
                       Ref: {inv.paymentReference || inv.transactionId || 'Confirmed on ledger'}
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2.5">
                       <button
                         onClick={() => handleOpenReceipt(inv)}
                         style={{
                           background: 'var(--badge-primary-bg)',
                           border: '1px solid var(--badge-primary-border)',
                           color: 'var(--primary)',
-                          padding: '6px 14px',
+                          padding: '7px 16px',
                           borderRadius: '8px',
-                          fontSize: '0.78rem',
+                          fontSize: '0.8rem',
                           fontWeight: 700,
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
-                          gap: '5px',
+                          gap: '6px',
                         }}
                       >
                         <Eye size={14} /> View Receipt Details
@@ -643,14 +644,14 @@ export default function Subscription() {
                           background: 'var(--panel-inner-bg)',
                           border: '1px solid var(--border-color)',
                           color: 'var(--text-main)',
-                          padding: '6px 12px',
+                          padding: '7px 14px',
                           borderRadius: '8px',
-                          fontSize: '0.78rem',
+                          fontSize: '0.8rem',
                           fontWeight: 600,
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
-                          gap: '4px',
+                          gap: '5px',
                         }}
                       >
                         <Printer size={14} /> Print

@@ -98,7 +98,7 @@ export default function CloudflareLearningModal({ isOpen, onClose }) {
         </p>
 
         {/* Topic Selector Tabs */}
-        <div className="flex gap-2" style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '12px', marginBottom: '24px', flexWrap: 'wrap' }}>
+        <div className="flex gap-2.5" style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '14px', marginBottom: '24px', flexWrap: 'wrap' }}>
           {[
             { id: 'what-is-cloud', label: '1. What is the Cloud?', icon: Cloud },
             { id: 'shared-responsibility', label: '2. Shared Responsibility', icon: Shield },
@@ -115,13 +115,16 @@ export default function CloudflareLearningModal({ isOpen, onClose }) {
                   background: isTab ? '#f6821f' : 'var(--panel-inner-bg)',
                   color: isTab ? '#ffffff' : 'var(--text-main)',
                   border: isTab ? 'none' : '1px solid var(--border-color)',
-                  padding: '8px 16px',
-                  borderRadius: '10px',
+                  padding: '9px 18px',
+                  borderRadius: '12px',
                   fontSize: '0.85rem',
                   fontWeight: 600,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
                 }}
               >
-                <Icon size={15} />
+                <Icon size={16} />
                 {t.label}
               </button>
             );
@@ -131,21 +134,21 @@ export default function CloudflareLearningModal({ isOpen, onClose }) {
         {/* Content Section */}
         {activeTab === 'what-is-cloud' && (
           <div className="flex flex-col gap-4">
-            <div className="grid grid-cols-3 gap-4" style={{ marginBottom: '16px' }}>
-              <div style={{ background: 'var(--panel-inner-bg)', padding: '16px', borderRadius: '14px', border: '1px solid var(--border-color)' }}>
-                <div style={{ color: '#f6821f', fontWeight: 700, fontSize: '0.95rem', marginBottom: '6px' }}>Infrastructure (IaaS)</div>
-                <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Virtual machines, compute instances, storage buckets, and networking (AWS EC2, Azure VMs, GCP Compute).</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '18px' }}>
+              <div style={{ background: 'var(--panel-inner-bg)', padding: '18px', borderRadius: '14px', border: '1px solid var(--border-color)' }}>
+                <div style={{ color: '#f6821f', fontWeight: 700, fontSize: '0.95rem', marginBottom: '8px' }}>Infrastructure (IaaS)</div>
+                <div style={{ fontSize: '0.84rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>Virtual machines, compute instances, storage buckets, and networking (AWS EC2, Azure VMs, GCP Compute).</div>
               </div>
-              <div style={{ background: 'var(--panel-inner-bg)', padding: '16px', borderRadius: '14px', border: '1px solid var(--border-color)' }}>
-                <div style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '0.95rem', marginBottom: '6px' }}>Platform (PaaS)</div>
-                <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Managed databases, Kubernetes clusters, and runtime environments (Cloud SQL, BigQuery, EKS).</div>
+              <div style={{ background: 'var(--panel-inner-bg)', padding: '18px', borderRadius: '14px', border: '1px solid var(--border-color)' }}>
+                <div style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '0.95rem', marginBottom: '8px' }}>Platform (PaaS)</div>
+                <div style={{ fontSize: '0.84rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>Managed databases, Kubernetes clusters, and runtime environments (Cloud SQL, BigQuery, EKS).</div>
               </div>
-              <div style={{ background: 'var(--panel-inner-bg)', padding: '16px', borderRadius: '14px', border: '1px solid var(--border-color)' }}>
-                <div style={{ color: 'var(--success)', fontWeight: 700, fontSize: '0.95rem', marginBottom: '6px' }}>Software (SaaS)</div>
-                <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Complete cloud-hosted software applications accessed through web browsers and APIs.</div>
+              <div style={{ background: 'var(--panel-inner-bg)', padding: '18px', borderRadius: '14px', border: '1px solid var(--border-color)' }}>
+                <div style={{ color: 'var(--success)', fontWeight: 700, fontSize: '0.95rem', marginBottom: '8px' }}>Software (SaaS)</div>
+                <div style={{ fontSize: '0.84rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>Complete cloud-hosted software applications accessed through web browsers and APIs.</div>
               </div>
             </div>
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
+            <p style={{ fontSize: '0.92rem', color: 'var(--text-muted)', lineHeight: 1.65 }}>
               Cloud computing makes it possible for companies to scale globally in seconds without purchasing physical hardware. However, it introduces dynamic security challenges including misconfigured storage buckets, over-privileged IAM identities, and exposed ports.
             </p>
           </div>
@@ -153,16 +156,16 @@ export default function CloudflareLearningModal({ isOpen, onClose }) {
 
         {activeTab === 'shared-responsibility' && (
           <div className="flex flex-col gap-4">
-            <div style={{ background: 'var(--panel-inner-bg)', padding: '20px', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
-              <h4 style={{ margin: '0 0 8px 0', fontSize: '1.05rem', color: 'var(--text-main)' }}>The Shared Responsibility Model</h4>
-              <p style={{ margin: 0, fontSize: '0.88rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+            <div style={{ background: 'var(--panel-inner-bg)', padding: '22px', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
+              <h4 style={{ margin: '0 0 10px 0', fontSize: '1.1rem', color: 'var(--text-main)' }}>The Shared Responsibility Model</h4>
+              <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
                 Cloud providers (AWS, Azure, GCP) are responsible for <strong>Security OF the Cloud</strong> (physical datacenters, virtualization layer, hardware). <strong>YOU are responsible for Security IN the Cloud</strong> (customer data, IAM roles, firewalls, and configuration posture).
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div style={{ padding: '14px', borderRadius: '12px', background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.25)' }}>
-                <div style={{ fontWeight: 700, color: 'var(--success)', fontSize: '0.85rem' }}>Cloud Provider Responsibilities</div>
-                <ul style={{ margin: '8px 0 0 0', paddingLeft: '18px', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
+              <div style={{ padding: '16px', borderRadius: '14px', background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.25)' }}>
+                <div style={{ fontWeight: 700, color: 'var(--success)', fontSize: '0.88rem' }}>Cloud Provider Responsibilities</div>
+                <ul style={{ margin: '10px 0 0 0', paddingLeft: '18px', fontSize: '0.82rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
                   <li>Physical host hardware security</li>
                   <li>Hypervisor & virtualization isolation</li>
                   <li>Core cloud region infrastructure</li>

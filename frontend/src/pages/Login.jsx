@@ -160,7 +160,7 @@ export default function Login() {
                 placeholder="your.email@gmail.com or name@company.com"
                 style={{
                   width: '100%',
-                  padding: '12px 14px 12px 42px',
+                  padding: '12px 16px 12px 44px',
                   borderRadius: '10px',
                   fontSize: '0.95rem',
                   outline: 'none',
@@ -184,7 +184,7 @@ export default function Login() {
                 placeholder="••••••••"
                 style={{
                   width: '100%',
-                  padding: '12px 42px 12px 42px',
+                  padding: '12px 48px 12px 44px',
                   borderRadius: '10px',
                   fontSize: '0.95rem',
                   outline: 'none',
