@@ -8,33 +8,41 @@ function isEarthLand(lat, lon) {
   while (lon < -180) lon += 360;
 
   // Antarctica & Sub-Antarctic
-  if (lat < -62) return true;
+  if (lat < -60) return true;
 
   // Greenland
-  if (lat >= 60 && lat <= 83 && lon >= -73 && lon <= -12) return true;
+  if (lat >= 59 && lat <= 83 && lon >= -74 && lon <= -11) return true;
 
   // North America
-  // Canada & Alaska
-  if (lat >= 54 && lat <= 72 && lon >= -168 && lon <= -55) return true;
+  // Alaska & Canadian Arctic Archipelago
+  if (lat >= 54 && lat <= 74 && lon >= -169 && lon <= -55) return true;
   // Conterminous USA & Southern Canada
-  if (lat >= 25 && lat <= 54 && lon >= -125 && lon <= -66) {
+  if (lat >= 24 && lat <= 54 && lon >= -125 && lon <= -66) {
     // Exclude Gulf of Mexico
-    if (lat < 30 && lon >= -97 && lon <= -82) return false;
+    if (lat < 30 && lon >= -97 && lon <= -81) return false;
+    // Exclude Hudson Bay
+    if (lat >= 51 && lat <= 64 && lon >= -95 && lon <= -78) return false;
     return true;
   }
-  // Mexico
-  if (lat >= 14 && lat <= 32 && lon >= -117 && lon <= -86) return true;
+  // Mexico & Baja California
+  if (lat >= 14 && lat <= 33 && lon >= -118 && lon <= -86) {
+    if (lat >= 23 && lat <= 32 && lon >= -115 && lon <= -109) {
+      // Gulf of California cut
+      if (lat >= 24 && lat <= 31 && lon >= -114 && lon <= -110) return false;
+    }
+    return true;
+  }
   // Central America
-  if (lat >= 7 && lat <= 18 && lon >= -92 && lon <= -77) return true;
-  // Caribbean Islands (Cuba, Hispaniola, Puerto Rico)
-  if (lat >= 18 && lat <= 26 && lon >= -85 && lon <= -65) return true;
+  if (lat >= 7 && lat <= 18 && lon >= -93 && lon <= -77) return true;
+  // Caribbean Islands (Cuba, Hispaniola, Puerto Rico, Jamaica)
+  if (lat >= 17 && lat <= 26 && lon >= -85 && lon <= -64) return true;
 
   // South America
-  if (lat >= -56 && lat <= 12 && lon >= -81 && lon <= -34) {
-    if (lat < -20) {
-      // Southern tapering cone (Chile, Argentina)
-      const left = -75 + (lat + 20) * 0.15;
-      const right = -45 + (lat + 20) * 0.45;
+  if (lat >= -56 && lat <= 13 && lon >= -82 && lon <= -34) {
+    if (lat < -18) {
+      // Southern cone tapering (Chile, Argentina)
+      const left = -76 + (lat + 18) * 0.18;
+      const right = -43 + (lat + 18) * 0.52;
       return lon >= left && lon <= right;
     }
     return true;
@@ -43,80 +51,95 @@ function isEarthLand(lat, lon) {
   // Europe
   if (lat >= 36 && lat <= 71 && lon >= -10 && lon <= 45) {
     // Mediterranean Sea Exclusion (cut out water between Europe and Africa)
-    if (lat >= 36 && lat <= 42 && lon >= -5 && lon <= 25) {
-      // Iberian peninsula, Italy, Greece
-      if ((lon >= -10 && lon <= 3) || (lon >= 8 && lon <= 18) || (lon >= 20 && lon <= 28)) {
-        return true;
-      }
+    if (lat >= 36 && lat <= 44 && lon >= -5 && lon <= 28) {
+      // Iberian peninsula (Spain/Portugal)
+      if (lat >= 36 && lat <= 44 && lon >= -10 && lon <= 3) return true;
+      // Italian peninsula
+      if (lat >= 37 && lat <= 46 && lon >= 8 && lon <= 19) return true;
+      // Greece & Balkans
+      if (lat >= 36 && lat <= 42 && lon >= 20 && lon <= 27) return true;
+      // Mediterranean islands (Sicily, Sardinia, Corsica, Crete, Cyprus)
+      if (lat >= 34.5 && lat <= 35.5 && lon >= 23.5 && lon <= 26.5) return true; // Crete
+      if (lat >= 34.5 && lat <= 35.8 && lon >= 32.0 && lon <= 34.5) return true; // Cyprus
+      if (lat >= 36.5 && lat <= 38.5 && lon >= 12.0 && lon <= 15.5) return true; // Sicily
       return false;
+    }
+    // Baltic Sea exclusion
+    if (lat >= 54 && lat <= 65 && lon >= 15 && lon <= 25) {
+      if (lat >= 56 && lat <= 64 && lon >= 18 && lon <= 22) return false;
     }
     return true;
   }
-  // British Isles
-  if (lat >= 50 && lat <= 60 && lon >= -11 && lon <= 2) return true;
-  // Scandinavia
-  if (lat >= 55 && lat <= 71 && lon >= 5 && lon <= 32) return true;
+  // British Isles (UK & Ireland)
+  if (lat >= 49 && lat <= 61 && lon >= -11 && lon <= 2) return true;
+  // Scandinavia & Fennoscandia (Norway, Sweden, Finland)
+  if (lat >= 55 && lat <= 71 && lon >= 4 && lon <= 34) return true;
+  // Iceland
+  if (lat >= 63 && lat <= 67 && lon >= -25 && lon <= -13) return true;
 
   // Africa
   if (lat >= -35 && lat <= 37 && lon >= -18 && lon <= 52) {
     // Southern cone taper
     if (lat < 0) {
-      const left = 10 + lat * 0.2;
-      const right = 42 + lat * 0.4;
+      const left = 11 + lat * 0.22;
+      const right = 42 + lat * 0.38;
       return lon >= left && lon <= right;
     }
     // Red Sea cut
-    if (lat >= 12 && lat <= 28 && lon >= 38 && lon <= 44) return false;
+    if (lat >= 12 && lat <= 28 && lon >= 37 && lon <= 44) return false;
     return true;
   }
   // Madagascar
   if (lat >= -26 && lat <= -12 && lon >= 43 && lon <= 51) return true;
 
   // Asia
-  // Russia / Siberia
-  if (lat >= 50 && lat <= 75 && lon >= 45 && lon <= 180) return true;
+  // Russia / Siberia / Northern Asia
+  if (lat >= 50 && lat <= 78 && lon >= 45 && lon <= 180) return true;
   // Middle East & Arabia
   if (lat >= 12 && lat <= 35 && lon >= 35 && lon <= 62) {
     if (lat >= 12 && lat <= 27 && lon >= 38 && lon <= 43) return false; // Red Sea
     if (lat >= 24 && lat <= 30 && lon >= 48 && lon <= 56) return false; // Persian Gulf
     return true;
   }
-  // Central Asia
+  // Central Asia & Caspian Sea boundary
   if (lat >= 35 && lat <= 55 && lon >= 45 && lon <= 90) {
-    if (lat >= 37 && lat <= 47 && lon >= 47 && lon <= 54) return false; // Caspian Sea
+    if (lat >= 36 && lat <= 47 && lon >= 47 && lon <= 54) return false; // Caspian Sea
     return true;
   }
   // Indian Subcontinent
-  if (lat >= 8 && lat <= 35 && lon >= 68 && lon <= 90) {
-    if (lat < 22) {
+  if (lat >= 7 && lat <= 35 && lon >= 67 && lon <= 92) {
+    if (lat < 23) {
       // Tapering Indian peninsula
-      const left = 68 + (22 - lat) * 0.7;
-      const right = 89 - (22 - lat) * 0.6;
+      const left = 68 + (23 - lat) * 0.72;
+      const right = 89 - (23 - lat) * 0.62;
       return lon >= left && lon <= right;
     }
     return true;
   }
   // Sri Lanka
-  if (lat >= 5 && lat <= 10 && lon >= 79 && lon <= 82) return true;
+  if (lat >= 5.5 && lat <= 10 && lon >= 79 && lon <= 82) return true;
   // East Asia (China, Mongolia, Korea)
   if (lat >= 18 && lat <= 52 && lon >= 90 && lon <= 135) {
-    if (lat >= 32 && lat <= 40 && lon >= 119 && lon <= 126) return false; // Yellow Sea
+    if (lat >= 32 && lat <= 39 && lon >= 119 && lon <= 126) return false; // Yellow Sea
     return true;
   }
-  // Japan
-  if (lat >= 30 && lat <= 46 && lon >= 129 && lon <= 146) return true;
-  // Southeast Asia
+  // Korean Peninsula
+  if (lat >= 34 && lat <= 43 && lon >= 124 && lon <= 130) return true;
+  // Japan (Honshu, Hokkaido, Kyushu, Shikoku)
+  if (lat >= 30 && lat <= 46 && lon >= 128 && lon <= 146) return true;
+  // Southeast Asia (Indochina, Thailand, Vietnam)
   if (lat >= 8 && lat <= 24 && lon >= 92 && lon <= 110) return true;
-  // Indonesia, Malaysia, Philippines, Papua
+  // Maritime Southeast Asia (Indonesia, Malaysia, Philippines, Papua)
   if (lat >= -11 && lat <= 7 && lon >= 95 && lon <= 142) return true;
-  if (lat >= 5 && lat <= 20 && lon >= 117 && lon <= 127) return true;
+  if (lat >= 5 && lat <= 20 && lon >= 116 && lon <= 127) return true; // Philippines
+  if (lat >= -10 && lat <= 0 && lon >= 130 && lon <= 152) return true; // New Guinea
 
   // Australia & Oceania
   if (lat >= -44 && lat <= -10 && lon >= 112 && lon <= 154) {
     if (lat < -38) return lat >= -44 && lat <= -40 && lon >= 144 && lon <= 149; // Tasmania
     return true;
   }
-  // New Zealand
+  // New Zealand (North and South Island)
   if (lat >= -47 && lat <= -34 && lon >= 166 && lon <= 179) return true;
 
   return false;
@@ -375,16 +398,25 @@ export default function ParticleEarth({
     });
 
     let time = 0;
+    let lastTimestamp = performance.now();
 
     // ==========================================
-    // Render Loop
+    // Render Loop (High-Precision Delta Time Normalized)
+    // Guarantees stable, identical animation velocity on 60Hz, 120Hz, 144Hz displays
     // ==========================================
-    const render = () => {
-      time += 0.03;
+    const render = (nowTimestamp) => {
+      const now = typeof nowTimestamp === 'number' ? nowTimestamp : performance.now();
+      const elapsed = now - lastTimestamp;
+      lastTimestamp = now;
+
+      // Normalize delta against 60Hz baseline (16.67ms) with safety clamping
+      const dt = Math.min(Math.max(elapsed / 16.67, 0.2), 2.5);
+
+      time += 0.03 * dt;
 
       // Particle gathering progress
       if (stage === 'opening') {
-        gatherTimeRef.current += 0.018;
+        gatherTimeRef.current += 0.018 * dt;
         if (gatherTimeRef.current >= 1.8 && !assembledRef.current) {
           assembledRef.current = true;
           if (onAssembled) onAssembled();
@@ -397,12 +429,12 @@ export default function ParticleEarth({
       const rot = rotation.current;
 
       if (!rot.isDragging) {
-        rot.rotY += rot.autoSpeed;
+        rot.rotY += rot.autoSpeed * dt;
       }
 
       // Shockwave update during transition
       if (shockwave.current.active) {
-        shockwave.current.progress += 0.025;
+        shockwave.current.progress += 0.025 * dt;
         if (shockwave.current.progress > 1.2) {
           shockwave.current.active = false;
         }
