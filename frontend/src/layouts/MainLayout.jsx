@@ -118,7 +118,7 @@ export default function MainLayout() {
       {/* 1. GOOGLE CLOUD CONSOLE TOP APP BAR */}
       <header className="gcp-header">
         {/* Left: Navigation Drawer Toggle & Cloud Brand & Project Selector */}
-        <div className="flex items-center gap-3" style={{ flexShrink: 0, minWidth: 'max-content' }}>
+        <div className="flex items-center gap-2 sm:gap-3" style={{ minWidth: 0, flex: '1 1 auto', overflow: 'hidden' }}>
           <button
             type="button"
             onClick={() => setIsSidebarOpen(prev => !prev)}
@@ -182,7 +182,7 @@ export default function MainLayout() {
               maxWidth: '210px',
               whiteSpace: 'nowrap',
               overflow: 'hidden',
-              flexShrink: 0,
+              flexShrink: 1,
               cursor: 'pointer'
             }}
           >

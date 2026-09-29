@@ -366,7 +366,7 @@ export default function Dashboard() {
             flexWrap: 'wrap'
           }}
         >
-          <div className="flex items-center gap-4" style={{ flex: 1, minWidth: '280px' }}>
+          <div className="flex items-center gap-4" style={{ flex: 1, minWidth: 'min(100%, 280px)' }}>
             <div style={{
               background: 'linear-gradient(135deg, var(--primary), var(--accent))',
               padding: '16px',
@@ -643,10 +643,10 @@ export default function Dashboard() {
       </div>
 
       {/* Main Content Area: Risks & Remediation / Chart */}
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-3 gap-6 dashboard-main-grid">
 
         {/* Left 2 Cols: Identified Risks & Failures */}
-        <div className="glass-panel" style={{ gridColumn: 'span 2', padding: '24px' }}>
+        <div className="glass-panel dashboard-col-span-2" style={{ padding: '24px' }}>
           <div className="flex items-center justify-between flex-wrap gap-3" style={{ marginBottom: '16px' }}>
             <div className="flex items-center gap-2.5">
               <ShieldAlert size={20} color="var(--primary)" />

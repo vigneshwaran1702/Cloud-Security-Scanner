@@ -187,8 +187,8 @@ export default function ParticleEarth({
 
     const getDims = () => {
       const rect = canvas.getBoundingClientRect();
-      const w = Math.max(320, rect.width || canvas.offsetWidth || 500) * dpr;
-      const h = Math.max(320, rect.height || canvas.offsetHeight || 500) * dpr;
+      const w = Math.max(180, rect.width || canvas.offsetWidth || 300) * dpr;
+      const h = Math.max(180, rect.height || canvas.offsetHeight || 300) * dpr;
       return { w, h };
     };
 
