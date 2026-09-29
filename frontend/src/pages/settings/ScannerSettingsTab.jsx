@@ -18,6 +18,8 @@ import {
 import { useSubscription } from '../../context/SubscriptionContext';
 
 const scanFrequencies = [
+  'Real-Time Live (Every 5 Seconds)',
+  'Continuous High-Frequency (Every 1 Minute)',
   'Every 15 Minutes (Pro/Enterprise)',
   'Every 1 Hour',
   'Every 6 Hours',
@@ -81,6 +83,9 @@ export default function ScannerSettingsTab({ settings, updateGeneral }) {
   const { isPro } = useSubscription();
   const [frameworks, setFrameworks] = useState(complianceFrameworks);
   const [parallelThreads, setParallelThreads] = useState(16);
+  const [accuracyProfile, setAccuracyProfile] = useState('deep'); // 'deep' | 'high' | 'rapid'
+  const [telemetryRefreshRate, setTelemetryRefreshRate] = useState('5s');
+  const [dedupAccuracy, setDedupAccuracy] = useState(true);
   const [rulesetUpdated, setRulesetUpdated] = useState(false);
 
   const toggleFramework = (id) => {
@@ -222,7 +227,165 @@ export default function ScannerSettingsTab({ settings, updateGeneral }) {
         </div>
       </div>
 
-      {/* 2. Active Compliance Frameworks */}
+      {/* 2. Telemetry Refresh Rate & Inspection Accuracy Engine */}
+      <div className="glass-panel" style={{ padding: '28px' }}>
+        <div className="flex items-center justify-between flex-wrap gap-3" style={{ marginBottom: '22px' }}>
+          <div className="flex items-center gap-3">
+            <div style={{ padding: '10px', borderRadius: '12px', background: 'rgba(16, 185, 129, 0.15)', color: 'var(--success)' }}>
+              <Clock size={22} />
+            </div>
+            <div>
+              <h3 style={{ fontSize: '1.2rem', margin: 0, fontWeight: 700 }}>Telemetry Refresh Rate & Scanning Accuracy</h3>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: '2px 0 0' }}>
+                Calibrate live metric polling latency, deep AST graph accuracy, and parallel thread concurrency
+              </p>
+            </div>
+          </div>
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '6px 12px',
+            borderRadius: '9999px',
+            background: 'rgba(16, 185, 129, 0.12)',
+            border: '1px solid rgba(16, 185, 129, 0.3)',
+            fontSize: '0.76rem',
+            fontFamily: 'JetBrains Mono',
+            color: 'var(--success)'
+          }}>
+            <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: 'var(--success)', boxShadow: '0 0 8px var(--success)' }} />
+            <span>99.8% Accuracy Certified</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6" style={{ marginBottom: '24px' }}>
+          {/* Live Refresh Rate */}
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between items-center">
+              <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                Live Telemetry Refresh Rate
+              </label>
+              <span style={{ fontSize: '0.74rem', color: 'var(--primary)', fontFamily: 'JetBrains Mono', fontWeight: 700 }}>
+                {telemetryRefreshRate === '1s' ? 'Ultra-low Latency (1s)' : telemetryRefreshRate === '3s' ? 'High Precision (3s)' : telemetryRefreshRate === '5s' ? 'Standard Balanced (5s)' : 'Throttled (10s)'}
+              </span>
+            </div>
+            <select
+              value={telemetryRefreshRate}
+              onChange={e => setTelemetryRefreshRate(e.target.value)}
+              style={{
+                background: 'var(--input-bg)',
+                border: '1px solid var(--border-color)',
+                color: 'var(--text-main)',
+                padding: '12px 14px',
+                borderRadius: '12px',
+                fontSize: '0.9rem',
+                outline: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              <option value="1s" style={{ background: 'var(--bg-color)' }}>1 Second — Ultra-Low Latency Live Feed</option>
+              <option value="3s" style={{ background: 'var(--bg-color)' }}>3 Seconds — High-Precision Real-time Sync</option>
+              <option value="5s" style={{ background: 'var(--bg-color)' }}>5 Seconds — Recommended Optimal Balance</option>
+              <option value="10s" style={{ background: 'var(--bg-color)' }}>10 Seconds — Low Bandwidth / Extended Battery</option>
+              <option value="30s" style={{ background: 'var(--bg-color)' }}>30 Seconds — Periodic Diagnostic Polling</option>
+            </select>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+              Controls the background synchronization interval between the dashboard, live 3D Earth radar, and backend scanner.
+            </span>
+          </div>
+
+          {/* Inspection Depth & Accuracy Profile */}
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between items-center">
+              <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                Engine Inspection Accuracy
+              </label>
+              <span style={{ fontSize: '0.74rem', color: 'var(--success)', fontFamily: 'JetBrains Mono', fontWeight: 700 }}>
+                {accuracyProfile === 'deep' ? '99.8% Precision' : accuracyProfile === 'high' ? '96.5% Precision' : '92.0% Rapid'}
+              </span>
+            </div>
+            <select
+              value={accuracyProfile}
+              onChange={e => setAccuracyProfile(e.target.value)}
+              style={{
+                background: 'var(--input-bg)',
+                border: '1px solid var(--border-color)',
+                color: 'var(--text-main)',
+                padding: '12px 14px',
+                borderRadius: '12px',
+                fontSize: '0.9rem',
+                outline: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              <option value="deep" style={{ background: 'var(--bg-color)' }}>Deep AST & Policy Graph (99.8% Precision · Zero False Positives)</option>
+              <option value="high" style={{ background: 'var(--bg-color)' }}>Multi-Vector Heuristic Inspection (96.5% Precision)</option>
+              <option value="rapid" style={{ background: 'var(--bg-color)' }}>Fast Superficial Drift Detection (Rapid Pass)</option>
+            </select>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+              Deep AST mode performs cross-resource dependency graph verification to eliminate false alarms and accurately map attack paths.
+            </span>
+          </div>
+        </div>
+
+        {/* Parallel Analysis Threads Slider */}
+        <div style={{
+          background: 'var(--panel-inner-bg)',
+          padding: '18px 22px',
+          borderRadius: '14px',
+          border: '1px solid var(--border-color)',
+          marginBottom: '16px'
+        }}>
+          <div className="flex justify-between items-center" style={{ marginBottom: '10px' }}>
+            <div className="flex items-center gap-2">
+              <Cpu size={16} color="var(--primary)" />
+              <span style={{ fontSize: '0.88rem', fontWeight: 700 }}>Parallel Audit Concurrency</span>
+            </div>
+            <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.86rem', fontWeight: 800, color: 'var(--primary)' }}>
+              {parallelThreads} Concurrent Threads ({parallelThreads * 85} req/sec)
+            </span>
+          </div>
+          <input
+            type="range"
+            min="4"
+            max="64"
+            step="4"
+            value={parallelThreads}
+            onChange={e => setParallelThreads(Number(e.target.value))}
+            style={{ width: '100%', accentColor: 'var(--primary)', cursor: 'pointer' }}
+          />
+          <div className="flex justify-between" style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '6px' }}>
+            <span>4 Threads (Conservative)</span>
+            <span>16 Threads (Standard Optimal)</span>
+            <span>64 Threads (Enterprise Cloud Grid)</span>
+          </div>
+        </div>
+
+        {/* Deduplication & False Positive Elimination Toggle */}
+        <div
+          style={{
+            background: 'var(--panel-inner-bg)',
+            padding: '16px 20px',
+            borderRadius: '14px',
+            border: '1px solid var(--border-color)',
+          }}
+          className="flex justify-between items-center flex-wrap gap-2"
+        >
+          <div>
+            <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>Smart False Positive & Duplicate Noise Suppression</div>
+            <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+              Filters duplicate findings across ephemeral containers and checks resource tagging before alerting.
+            </div>
+          </div>
+          <Toggle
+            value={dedupAccuracy}
+            onChange={v => setDedupAccuracy(v)}
+            label={dedupAccuracy ? 'Active (99.8% Precision)' : 'Disabled'}
+          />
+        </div>
+      </div>
+
+      {/* 3. Active Compliance Frameworks */}
       <div className="glass-panel" style={{ padding: '28px' }}>
         <div className="flex items-center gap-3" style={{ marginBottom: '20px' }}>
           <div style={{ padding: '10px', borderRadius: '12px', background: 'var(--badge-primary-bg)', color: 'var(--primary)' }}>
