@@ -165,14 +165,9 @@ export default function MainLayout() {
                 flexShrink: 0
               }}
             />
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
-              <span style={{ fontWeight: 800, fontSize: '1.1rem', letterSpacing: '-0.02em', color: 'var(--text-main)' }}>
-                Cloud Security
-              </span>
-              <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.74rem', color: 'var(--primary)', fontWeight: 600 }}>
-                . evolved
-              </span>
-            </div>
+            <span style={{ fontWeight: 800, fontSize: '1.1rem', letterSpacing: '-0.02em', color: 'var(--text-main)' }}>
+              Cloud Security
+            </span>
           </Link>
 
           {/* Cloud Project Selector (Strictly Single Line with Truncation) */}

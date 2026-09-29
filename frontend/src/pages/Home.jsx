@@ -302,14 +302,9 @@ export default function Home() {
               filter: 'drop-shadow(0 2px 8px var(--primary-glow))'
             }}
           />
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
-            <span style={{ fontWeight: 800, fontSize: '1.18rem', letterSpacing: '-0.02em', color: 'var(--text-main)' }}>
-              Cloud Security
-            </span>
-            <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.78rem', color: 'var(--primary)', fontWeight: 600 }}>
-              . evolved
-            </span>
-          </div>
+          <span style={{ fontWeight: 800, fontSize: '1.18rem', letterSpacing: '-0.02em', color: 'var(--text-main)' }}>
+            Cloud Security
+          </span>
         </Link>
 
         {/* Center Editorial Lowercase Nav Links */}
