@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
@@ -18,6 +19,27 @@ import OpeningEarthScreen from './components/OpeningEarthScreen';
 import BackgroundEarth from './components/BackgroundEarth';
 
 function App() {
+  // Global 60-120fps Scroll Performance Booster
+  useEffect(() => {
+    let scrollTimeout = null;
+    const onScroll = () => {
+      if (!document.body.classList.contains('is-scrolling')) {
+        document.body.classList.add('is-scrolling');
+      }
+      if (scrollTimeout) clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        document.body.classList.remove('is-scrolling');
+      }, 100);
+    };
+
+    window.addEventListener('scroll', onScroll, { capture: true, passive: true });
+
+    return () => {
+      if (scrollTimeout) clearTimeout(scrollTimeout);
+      window.removeEventListener('scroll', onScroll, { capture: true });
+      document.body.classList.remove('is-scrolling');
+    };
+  }, []);
   return (
     <ThemeProvider>
       <EarthPortalProvider>

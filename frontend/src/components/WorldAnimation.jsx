@@ -87,8 +87,26 @@ export default function WorldAnimation({ className = '', onRegionClick = null })
 
     let pulseTime = 0;
 
+    let isIntersecting = true;
+    let cachedGlowGrad = null;
+    let lastGradRadius = -1;
+
+    const updateGlowGradient = (cx, cy, r) => {
+      if (r === lastGradRadius && cachedGlowGrad) return;
+      lastGradRadius = r;
+      cachedGlowGrad = ctx.createRadialGradient(cx, cy, r * 0.7, cx, cy, r * 1.35);
+      cachedGlowGrad.addColorStop(0, 'rgba(255, 255, 255, 0.15)');
+      cachedGlowGrad.addColorStop(0.5, 'rgba(124, 91, 255, 0.07)');
+      cachedGlowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    };
+
     // Projection & Render Loop
     const render = () => {
+      if (!isIntersecting || (typeof document !== 'undefined' && document.hidden)) {
+        animFrameId.current = null;
+        return;
+      }
+
       pulseTime += 0.035;
       const rot = rotationRef.current;
       if (!rot.isDragging) {
@@ -102,11 +120,8 @@ export default function WorldAnimation({ className = '', onRegionClick = null })
       const globeRadius = Math.min(width, height) * 0.38;
 
       // Outer Atmospheric Glow
-      const glowGrad = ctx.createRadialGradient(cx, cy, globeRadius * 0.7, cx, cy, globeRadius * 1.35);
-      glowGrad.addColorStop(0, 'rgba(255, 255, 255, 0.15)');
-      glowGrad.addColorStop(0.5, 'rgba(124, 91, 255, 0.07)');
-      glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = glowGrad;
+      updateGlowGradient(cx, cy, globeRadius);
+      ctx.fillStyle = cachedGlowGrad;
       ctx.beginPath();
       ctx.arc(cx, cy, globeRadius * 1.35, 0, Math.PI * 2);
       ctx.fill();
@@ -209,18 +224,20 @@ export default function WorldAnimation({ className = '', onRegionClick = null })
           ctx.lineWidth = 1.2 * (window.devicePixelRatio || 1);
           ctx.stroke();
 
-          // Traveling Telemetry Pulse Dot
+          // Traveling Telemetry Pulse Dot: fast hardware-accelerated dual-circle glow
           const t = (pulseTime * 0.6 + arcIdx * 0.22) % 1;
-          const pulseX = (1 - t) * (1 - t) * n1.proj.px + 2 * (1 - t) * t * peakProj.px + t * t * n2.proj.px;
-          const pulseY = (1 - t) * (1 - t) * n1.proj.py + 2 * (1 - t) * t * peakProj.py + t * t * n2.proj.py;
+          const pulseX = (1 - t) * (1 - t) * n1.proj.px + 2 * (1 - t) * t * peakProj.sx + t * t * n2.proj.px;
+          const pulseY = (1 - t) * (1 - t) * n1.proj.py + 2 * (1 - t) * t * peakProj.sy + t * t * n2.proj.py;
+
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.32)';
+          ctx.beginPath();
+          ctx.arc(pulseX, pulseY, 5 * (window.devicePixelRatio || 1), 0, Math.PI * 2);
+          ctx.fill();
 
           ctx.fillStyle = '#ffffff';
-          ctx.shadowColor = '#ffffff';
-          ctx.shadowBlur = 8;
           ctx.beginPath();
           ctx.arc(pulseX, pulseY, 2.5 * (window.devicePixelRatio || 1), 0, Math.PI * 2);
           ctx.fill();
-          ctx.shadowBlur = 0; // Reset
         }
       });
 
@@ -237,14 +254,19 @@ export default function WorldAnimation({ className = '', onRegionClick = null })
           ctx.arc(node.proj.px, node.proj.py, Math.max(size, pulseRadius), 0, Math.PI * 2);
           ctx.stroke();
 
-          // Solid Core Node
-          ctx.fillStyle = node.provider === 'AWS' ? '#ffffff' : node.provider === 'AZURE' ? '#7c5bff' : '#06b6d4';
-          ctx.shadowColor = '#ffffff';
-          ctx.shadowBlur = 10;
+          // Soft Halo & Solid Core Node
+          const nodeColor = node.provider === 'AWS' ? '#ffffff' : node.provider === 'AZURE' ? '#7c5bff' : '#06b6d4';
+          ctx.fillStyle = nodeColor;
+          ctx.globalAlpha = 0.28;
+          ctx.beginPath();
+          ctx.arc(node.proj.px, node.proj.py, size * 1.5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.globalAlpha = 1.0;
+
+          ctx.fillStyle = nodeColor;
           ctx.beginPath();
           ctx.arc(node.proj.px, node.proj.py, size, 0, Math.PI * 2);
           ctx.fill();
-          ctx.shadowBlur = 0;
 
           // Inner white highlight
           ctx.fillStyle = '#ffffff';
@@ -349,8 +371,32 @@ export default function WorldAnimation({ className = '', onRegionClick = null })
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
     window.addEventListener('touchend', handleTouchEnd);
 
+    // Pause canvas render loop when off-screen to give 100% CPU/GPU power to smooth scrolling
+    let observer = null;
+    if (typeof IntersectionObserver !== 'undefined' && containerRef.current) {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          isIntersecting = entry.isIntersecting;
+          if (isIntersecting && !animFrameId.current) {
+            animFrameId.current = requestAnimationFrame(render);
+          }
+        },
+        { threshold: 0.05 }
+      );
+      observer.observe(containerRef.current);
+    }
+
+    const handleVisibility = () => {
+      if (!document.hidden && isIntersecting && !animFrameId.current) {
+        animFrameId.current = requestAnimationFrame(render);
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
     return () => {
       if (animFrameId.current) cancelAnimationFrame(animFrameId.current);
+      if (observer) observer.disconnect();
+      document.removeEventListener('visibilitychange', handleVisibility);
       window.removeEventListener('resize', handleResize);
       domCanvas.removeEventListener('mousedown', handleMouseDown);
       window.removeEventListener('mousemove', handleMouseMove);
