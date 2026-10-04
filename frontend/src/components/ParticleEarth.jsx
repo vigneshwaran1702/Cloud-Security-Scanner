@@ -302,7 +302,9 @@ export default function ParticleEarth({
     // Generate Realistic 3D Earth Particle System
     // ==========================================
     const particles = [];
-    const totalSphereSamples = 2200;
+    // Opening screen gets high-density particles for close inspection;
+    // background mode uses an optimized count to guarantee 60-120fps smooth scrolling
+    const totalSphereSamples = stage === 'opening' ? 2000 : 640;
     const goldenRatio = (1 + Math.sqrt(5)) / 2;
 
     for (let i = 0; i < totalSphereSamples; i++) {
@@ -339,8 +341,8 @@ export default function ParticleEarth({
           twinkleOffset: Math.random() * Math.PI * 2
         });
 
-        // Add additional sub-particles on continents to give solid land texture
-        if (Math.random() > 0.45) {
+        // Add additional sub-particles on continents only for opening stage
+        if (stage === 'opening' && Math.random() > 0.45) {
           const jitterAngle = Math.random() * Math.PI * 2;
           const jitterDist = 0.012;
           const jx = x + Math.cos(jitterAngle) * jitterDist;
@@ -367,8 +369,8 @@ export default function ParticleEarth({
         }
       } else {
         // OCEAN PARTICLES: Faint, sparse, dark cyber blue-grey dots showing water depth
-        // Only keep a fraction of ocean points to give continents high contrast
-        if (Math.random() > 0.52) {
+        const keepRatio = stage === 'opening' ? 0.52 : 0.68;
+        if (Math.random() > keepRatio) {
           particles.push({
             origX: x,
             origY: y,
@@ -397,6 +399,58 @@ export default function ParticleEarth({
       };
     });
 
+    // Pre-calculate cached radial gradients to avoid recreating gradients on every frame
+    let cachedOceanGrad = null;
+    let cachedGlowGrad = null;
+    let lastGradRadius = -1;
+
+    const updateGradients = (cx, cy, r) => {
+      if (r === lastGradRadius && cachedOceanGrad && cachedGlowGrad) return;
+      lastGradRadius = r;
+
+      cachedOceanGrad = ctx.createRadialGradient(
+        cx - r * 0.3,
+        cy - r * 0.3,
+        r * 0.1,
+        cx,
+        cy,
+        r
+      );
+      cachedOceanGrad.addColorStop(0, 'rgba(18, 22, 34, 0.95)');
+      cachedOceanGrad.addColorStop(0.7, 'rgba(10, 12, 18, 0.95)');
+      cachedOceanGrad.addColorStop(1, 'rgba(4, 5, 8, 0.98)');
+
+      cachedGlowGrad = ctx.createRadialGradient(cx, cy, r * 0.85, cx, cy, r * 1.35);
+      cachedGlowGrad.addColorStop(0, 'rgba(255, 255, 255, 0.14)');
+      cachedGlowGrad.addColorStop(0.3, 'rgba(120, 160, 255, 0.09)');
+      cachedGlowGrad.addColorStop(0.7, 'rgba(124, 91, 255, 0.04)');
+      cachedGlowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    };
+
+    let isScrolling = false;
+    let scrollDebounceTimer = null;
+    const handleScroll = () => {
+      isScrolling = true;
+      if (scrollDebounceTimer) clearTimeout(scrollDebounceTimer);
+      scrollDebounceTimer = setTimeout(() => {
+        isScrolling = false;
+      }, 75);
+    };
+
+    let isTabVisible = typeof document !== 'undefined' ? !document.hidden : true;
+    const handleVisibilityChange = () => {
+      isTabVisible = !document.hidden;
+      if (isTabVisible && !animFrameId.current) {
+        lastTimestamp = performance.now();
+        animFrameId.current = requestAnimationFrame(render);
+      }
+    };
+
+    if (stage === 'background') {
+      window.addEventListener('scroll', handleScroll, { passive: true });
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
     let time = 0;
     let lastTimestamp = performance.now();
 
@@ -405,6 +459,17 @@ export default function ParticleEarth({
     // Guarantees stable, identical animation velocity on 60Hz, 120Hz, 144Hz displays
     // ==========================================
     const render = (nowTimestamp) => {
+      if (!isTabVisible) {
+        animFrameId.current = null;
+        return;
+      }
+
+      // During active page scrolling in background mode, yield rendering completely to ensure 60-120fps smooth scrolling
+      if (stage === 'background' && isScrolling) {
+        animFrameId.current = requestAnimationFrame(render);
+        return;
+      }
+
       const now = typeof nowTimestamp === 'number' ? nowTimestamp : performance.now();
       const elapsed = now - lastTimestamp;
       lastTimestamp = now;
@@ -478,32 +543,16 @@ export default function ParticleEarth({
         ctx.save();
         ctx.globalAlpha = globeDiscAlpha;
 
+        updateGradients(cx, cy, baseRadius);
+
         // 1. Dark Oceanic Globe Sphere Disc (Creates solid 3D Earth depth behind continents)
-        const oceanGrad = ctx.createRadialGradient(
-          cx - baseRadius * 0.3,
-          cy - baseRadius * 0.3,
-          baseRadius * 0.1,
-          cx,
-          cy,
-          baseRadius
-        );
-        oceanGrad.addColorStop(0, 'rgba(18, 22, 34, 0.95)');
-        oceanGrad.addColorStop(0.7, 'rgba(10, 12, 18, 0.95)');
-        oceanGrad.addColorStop(1, 'rgba(4, 5, 8, 0.98)');
-        
-        ctx.fillStyle = oceanGrad;
+        ctx.fillStyle = cachedOceanGrad;
         ctx.beginPath();
         ctx.arc(cx, cy, baseRadius, 0, Math.PI * 2);
         ctx.fill();
 
         // Atmospheric Rim Light Glow (Glowing White / Subtle Blue Rim)
-        const glowGrad = ctx.createRadialGradient(cx, cy, baseRadius * 0.85, cx, cy, baseRadius * 1.35);
-        glowGrad.addColorStop(0, 'rgba(255, 255, 255, 0.14)');
-        glowGrad.addColorStop(0.3, 'rgba(120, 160, 255, 0.09)');
-        glowGrad.addColorStop(0.7, 'rgba(124, 91, 255, 0.04)');
-        glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-        
-        ctx.fillStyle = glowGrad;
+        ctx.fillStyle = cachedGlowGrad;
         ctx.beginPath();
         ctx.arc(cx, cy, baseRadius * 1.35, 0, Math.PI * 2);
         ctx.fill();
@@ -675,13 +724,16 @@ export default function ParticleEarth({
             const pulseX = (1 - t) * (1 - t) * n1.proj.sx + 2 * (1 - t) * t * peakProj.sx + t * t * n2.proj.sx;
             const pulseY = (1 - t) * (1 - t) * n1.proj.sy + 2 * (1 - t) * t * peakProj.sy + t * t * n2.proj.sy;
 
+            // Traveling Pulse Beacon: fast dual-ring glow without expensive shadowBlur rasterization
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+            ctx.beginPath();
+            ctx.arc(pulseX, pulseY, 4.5 * dpr, 0, Math.PI * 2);
+            ctx.fill();
+
             ctx.fillStyle = '#ffffff';
-            ctx.shadowColor = '#ffffff';
-            ctx.shadowBlur = 8 * dpr;
             ctx.beginPath();
             ctx.arc(pulseX, pulseY, 2.2 * dpr, 0, Math.PI * 2);
             ctx.fill();
-            ctx.shadowBlur = 0;
           }
         });
 
@@ -698,14 +750,16 @@ export default function ParticleEarth({
             ctx.arc(hub.proj.sx, hub.proj.sy, Math.max(sz, pulseRad), 0, Math.PI * 2);
             ctx.stroke();
 
-            // Core node
+            // Core node with soft glow halo
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.28)';
+            ctx.beginPath();
+            ctx.arc(hub.proj.sx, hub.proj.sy, sz * 1.45, 0, Math.PI * 2);
+            ctx.fill();
+
             ctx.fillStyle = '#ffffff';
-            ctx.shadowColor = '#ffffff';
-            ctx.shadowBlur = 10 * dpr;
             ctx.beginPath();
             ctx.arc(hub.proj.sx, hub.proj.sy, sz, 0, Math.PI * 2);
             ctx.fill();
-            ctx.shadowBlur = 0;
 
             // Inner white pinhead
             ctx.fillStyle = '#0c0c0c';
@@ -721,7 +775,7 @@ export default function ParticleEarth({
 
     render();
 
-    // Mouse & Touch Drag & Click Listeners
+    // Mouse & Touch Drag & Click Listeners (Only needed in opening screen)
     let dragStartX = 0;
     let dragStartY = 0;
     let totalMoved = 0;
@@ -795,24 +849,34 @@ export default function ParticleEarth({
     };
 
     const dom = canvas;
-    dom.addEventListener('mousedown', handleMouseDown);
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
-    dom.addEventListener('mouseleave', handleMouseLeave);
-    dom.addEventListener('touchstart', handleTouchStart, { passive: true });
-    window.addEventListener('touchmove', handleTouchMove, { passive: true });
-    window.addEventListener('touchend', handleTouchEnd);
+    if (stage === 'opening') {
+      dom.addEventListener('mousedown', handleMouseDown);
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+      dom.addEventListener('mouseleave', handleMouseLeave);
+      dom.addEventListener('touchstart', handleTouchStart, { passive: true });
+      window.addEventListener('touchmove', handleTouchMove, { passive: true });
+      window.addEventListener('touchend', handleTouchEnd);
+    }
 
     return () => {
       if (animFrameId.current) cancelAnimationFrame(animFrameId.current);
+      if (scrollDebounceTimer) clearTimeout(scrollDebounceTimer);
       window.removeEventListener('resize', handleResize);
-      dom.removeEventListener('mousedown', handleMouseDown);
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-      dom.removeEventListener('mouseleave', handleMouseLeave);
-      dom.removeEventListener('touchstart', handleTouchStart);
-      window.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('touchend', handleTouchEnd);
+      if (stage === 'background') {
+        window.removeEventListener('scroll', handleScroll);
+      }
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+
+      if (stage === 'opening') {
+        dom.removeEventListener('mousedown', handleMouseDown);
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('mouseup', handleMouseUp);
+        dom.removeEventListener('mouseleave', handleMouseLeave);
+        dom.removeEventListener('touchstart', handleTouchStart);
+        window.removeEventListener('touchmove', handleTouchMove);
+        window.removeEventListener('touchend', handleTouchEnd);
+      }
     };
   }, [stage, isTransitioning]);
 

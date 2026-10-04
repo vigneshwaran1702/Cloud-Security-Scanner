@@ -3,6 +3,11 @@ import ParticleEarth from './ParticleEarth';
 import { Globe, RefreshCw } from 'lucide-react';
 
 export default function BackgroundEarth() {
+  const { isEntered } = useEarthPortal();
+
+  // If opening screen is still visible, avoid running a second concurrent 3D canvas
+  if (!isEntered) return null;
+
   return (
     <div
       style={{
@@ -12,7 +17,9 @@ export default function BackgroundEarth() {
         pointerEvents: 'none',
         overflow: 'hidden',
         opacity: 0.56,
-        transition: 'opacity 1s ease'
+        transition: 'opacity 1s ease',
+        transform: 'translateZ(0)',
+        contain: 'strict'
       }}
       aria-hidden="true"
     >
@@ -23,7 +30,8 @@ export default function BackgroundEarth() {
           position: 'absolute',
           inset: 0,
           background: 'radial-gradient(ellipse at 50% 40%, rgba(15, 15, 20, 0.25) 0%, rgba(10, 10, 14, 0.72) 100%)',
-          pointerEvents: 'none'
+          pointerEvents: 'none',
+          transform: 'translateZ(0)'
         }}
       />
     </div>

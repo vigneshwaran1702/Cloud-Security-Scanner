@@ -169,13 +169,14 @@
   padding: 0;
 }
 
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
 html, body {
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: var(--bg-color);
-  background-image: 
-    radial-gradient(at 15% 15%, var(--bg-gradient-1) 0px, transparent 45%),
-    radial-gradient(at 85% 85%, var(--bg-gradient-2) 0px, transparent 45%);
-  background-attachment: fixed;
   color: var(--text-main);
   line-height: 1.55;
   min-height: 100vh;
@@ -185,6 +186,28 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* GPU-accelerated fixed ambient gradient layer: completely eliminates full-page repaints on every scroll pixel */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background-image: 
+    radial-gradient(at 15% 15%, var(--bg-gradient-1) 0px, transparent 45%),
+    radial-gradient(at 85% 85%, var(--bg-gradient-2) 0px, transparent 45%);
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Rapid Scroll Performance: disables expensive hover recalculations while scrolling */
+body.is-scrolling {
+  pointer-events: none !important;
+}
+body.is-scrolling * {
+  pointer-events: none !important;
 }
 
 #root {
@@ -210,6 +233,8 @@ code, pre, .font-mono {
   box-shadow: var(--glass-shadow);
   padding: 24px;
   transition: var(--transition);
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .glass-panel:hover {
@@ -807,6 +832,10 @@ textarea::placeholder {
   padding: 24px 36px 48px;
   min-width: 0;
   overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  transform: translateZ(0);
 }
 
 /* Cyber Command Center Component Tokens */
@@ -820,6 +849,8 @@ textarea::placeholder {
   box-shadow: 0 12px 36px -4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   position: relative;
   overflow: hidden;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .command-telemetry-header::before {
@@ -842,6 +873,8 @@ textarea::placeholder {
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
   position: relative;
   overflow: hidden;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .metric-card:hover {
