@@ -8,6 +8,6 @@
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.6",
-    "@supabase/supabase-js": "^2.117.1"
+    "@supabase/supabase-js": "^2.117.2"
   }
 }
