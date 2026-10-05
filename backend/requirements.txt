@@ -13,6 +13,6 @@ azure-mgmt-resource>=23.1.0
 azure-mgmt-storage>=25.2.0
 azure-mgmt-network>=33.0.0
 azure-identity>=1.15.0
-openai>=3.19.2
+openai>=3.23.0
 python-dotenv>=1.0.1
 cryptography>=42.0.5
